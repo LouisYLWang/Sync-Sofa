@@ -47,16 +47,27 @@
                 console.log(data);
                 sessionPair = JSON.parse(JSON.stringify(data));
                 if(sessionPair != null){
-                    inputbox.value = sessionPair.hostID;
+                    inputbox.value = sessionPair.selfID;
                 }
             })
         }
 
         function copyToClipboard(e){
             e.preventDefault();
+            let url = `ws://localhost:3000/ws/?id=${inputbox.value}`
             inputbox.select();
             document.execCommand("copy");
-            alert("copied the text: " + inputbox.value + " to clipboard");        
+            alert("copied the text: " + inputbox.value + " to clipboard");     
+            
+            let websocket = new WebSocket(url);
+            websocket.onmessage = (event) => {
+            console.log(`RECEIVED ${event.data}`);
+            }
+            testbutton.addEventListener("click", ev =>{
+                ev.preventDefault();
+                console.log(`SENDING PAUSE`);
+                websocket.send('1');
+            })
         }
 
         function handleBeginSessions(e){
@@ -73,8 +84,17 @@
                 console.log(data);
                 sessionPair = JSON.parse(JSON.stringify(data));
                 if(sessionPair != null){
-                    inputbox.value = sessionPair.hostID;
+                    inputbox.value = sessionPair.selfID;
                 }
+                let websocket = new WebSocket(`ws://localhost:3000/ws/?id=${sessionPair.selfID}`);
+                websocket.onmessage = (event) => {
+                console.log(`RECEIVED ${event.data}`);
+                }
+                testbutton.addEventListener("click", ev =>{
+                    ev.preventDefault();
+                    console.log(`SENDING PAUSE`);
+                    websocket.send('1');
+                })
             })
         }
     </script>

@@ -49,14 +49,12 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 		defer conn.Close()
 		defer ctx.RemoveConnection(id, conn)
 		for {
-			messageType, p, _ := conn.ReadMessage()
-			if messageType == websocket.BinaryMessage {
-				fmt.Print("client says", string(p))
-				conn.WriteMessage(websocket.TextMessage, p)
-				partnerID := ctx.SessionStore.SessionMap[id].GuestID // CHANGE TO pairID, also cascading change session relavant code
-				partnerConn := ctx.SocketStore.ConnectionsMap[partnerID]
-				partnerConn.WriteMessage(websocket.TextMessage, p)
-			}
+			_, p, _ := conn.ReadMessage()
+			fmt.Print("client says", string(p))
+			conn.WriteMessage(websocket.TextMessage, p)
+			partnerID := ctx.SessionStore.SessionMap[id].PartnerID
+			partnerConn := ctx.SocketStore.ConnectionsMap[partnerID]
+			partnerConn.WriteMessage(websocket.TextMessage, p)
 		}
 	})(conn, sessionID)
 }

@@ -23,8 +23,8 @@ type Store struct {
 }
 
 type Pair struct {
-	HostID    SessionID `json:"hostID,omitempty"`
-	GuestID   SessionID `json:"guestID,omitempty"`
+	PartnerID SessionID `json:"partnerID,omitempty"`
+	SelfID    SessionID `json:"selfID,omitempty"`
 	BeginTime time.Time `json:"beginTime,omitempty"`
 }
 
@@ -46,7 +46,7 @@ func (s Store) CreateHostSession() (SessionID, error) {
 	}
 	sessionID := SessionID(b64.URLEncoding.EncodeToString(id))
 	newPair := &Pair{
-		HostID: sessionID,
+		SelfID: sessionID,
 	}
 	s.SessionMap[sessionID] = newPair
 	log.Printf("add session by %s", sessionID)
@@ -71,12 +71,19 @@ func (s Store) BeginSessions(r *http.Request) (SessionID, error) {
 	if err != nil {
 		return InvalidSessionID, fmt.Errorf("not correctly generate cryptographically random: %v", err)
 	}
+	timeNow := time.Now()
 	sessionID := SessionID(b64.URLEncoding.EncodeToString(id))
-	pair := s.SessionMap[hostSessionID]
+	guestPair := &Pair{
+		SelfID:    sessionID,
+		PartnerID: hostSessionID,
+		BeginTime: timeNow,
+	}
+	s.SessionMap[sessionID] = guestPair
 
-	pair.GuestID = sessionID
-	pair.BeginTime = time.Now()
-	s.SessionMap[sessionID] = pair
+	hostPair := s.SessionMap[hostSessionID]
+	hostPair.PartnerID = sessionID
+	hostPair.BeginTime = timeNow
+
 	log.Printf("add session by %s", sessionID)
 	return sessionID, nil
 }

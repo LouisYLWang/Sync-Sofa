@@ -20,9 +20,9 @@ func main() {
 	ctx := handlers.NewContext(socketStore, sessionStore)
 
 	mux := mux.NewRouter()
-	//mux.HandleFunc("/ws", ctx.)
 	mux.HandleFunc("/v1/session", ctx.SessionHandler)
 	mux.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
+	mux.HandleFunc("/ws/", ctx.WebSocketConnHandler)
 
 	corsMux := handlers.NewCORSHandler(mux)
 	log.Fatal(http.ListenAndServe("localhost:3000", corsMux))
