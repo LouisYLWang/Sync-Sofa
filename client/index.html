@@ -1,0 +1,81 @@
+<body>
+    <button id="requestbutton">REQUEST SHARE ID</button>
+    <input id="inputbox">
+    <button id="copybutton">copy id</button>
+    <button id="startbutton">START SYNC!</button>
+    <button id="testbutton">TEST PAUSE!</button>
+    <button id="stopbutton">STOP SYNC!</button>
+
+
+
+
+    <script>
+        let requestbutton = document.getElementById("requestbutton")
+        let copybutton = document.getElementById("copybutton")
+        let startbutton = document.getElementById("startbutton")
+        let testbutton = document.getElementById("testbutton")
+        let stopbutton = document.getElementById("stopbutton")
+
+        const inputbox = document.getElementById("inputbox");
+
+        copybutton.addEventListener("click", e =>{
+            e.preventDefault();
+            copyToClipboard(e)
+        })
+
+        requestbutton.addEventListener("click", e =>{
+            e.preventDefault();
+            handleCreateHostSession(e)
+        })
+
+        startbutton.addEventListener("click", e =>{
+            e.preventDefault();
+            handleBeginSessions(e)
+        })
+
+        function handleCreateHostSession(e){
+            e.preventDefault();
+            let url = 'http://localhost:3000/v1/session'
+            fetch(url,{
+                method: 'GET',          
+                }).then(res => {
+                    if (res.status < 300) {
+                        return res.json();
+                    }
+                    return res.text();
+                }).then(data => {
+                console.log(data);
+                sessionPair = JSON.parse(JSON.stringify(data));
+                if(sessionPair != null){
+                    inputbox.value = sessionPair.hostID;
+                }
+            })
+        }
+
+        function copyToClipboard(e){
+            e.preventDefault();
+            inputbox.select();
+            document.execCommand("copy");
+            alert("copied the text: " + inputbox.value + " to clipboard");        
+        }
+
+        function handleBeginSessions(e){
+            e.preventDefault();
+            let url = `http://localhost:3000/v1/session/?id=${inputbox.value}`
+            fetch(url,{
+                method: 'GET',          
+                }).then(res => {
+                    if (res.status < 300) {
+                        return res.json();
+                    }
+                    return res.text();
+                }).then(data => {
+                console.log(data);
+                sessionPair = JSON.parse(JSON.stringify(data));
+                if(sessionPair != null){
+                    inputbox.value = sessionPair.hostID;
+                }
+            })
+        }
+    </script>
+</body>
