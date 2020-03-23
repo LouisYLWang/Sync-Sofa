@@ -30,6 +30,13 @@ func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn) 
 func (ctx *Context) RemoveConnection(id session.SessionID, conn *websocket.Conn) {
 	ctx.SocketStore.Lock.Lock()
 	defer ctx.SocketStore.Lock.Unlock()
+	partnerID := ctx.SessionStore.SessionMap[id].PartnerID
+	partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
+	if exist {
+		log.Printf("partner cient %s been force closed\n", id)
+		partnerConn.WriteMessage(websocket.TextMessage, []byte("-1"))
+	}
+	conn.WriteMessage(websocket.TextMessage, []byte("-1"))
 	delete(ctx.SocketStore.ConnectionsMap, id)
 	log.Println("socket remove connection to session: ", id)
 }
@@ -49,12 +56,31 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 		defer conn.Close()
 		defer ctx.RemoveConnection(id, conn)
 		for {
-			_, p, _ := conn.ReadMessage()
-			fmt.Print("client says", string(p))
-			conn.WriteMessage(websocket.TextMessage, p)
+			messageType, p, err := conn.ReadMessage()
+			if err != nil {
+				log.Printf("forced close by cient %s \n", id)
+				break
+			}
+			log.Printf("client %s pause \n", id)
+			//conn.WriteMessage(websocket.TextMessage, p)
 			partnerID := ctx.SessionStore.SessionMap[id].PartnerID
-			partnerConn := ctx.SocketStore.ConnectionsMap[partnerID]
-			partnerConn.WriteMessage(websocket.TextMessage, p)
+			if messageType == websocket.TextMessage {
+				partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
+				if !exist {
+					log.Printf("partner cient %s been disconnected\n", id)
+					conn.WriteMessage(websocket.TextMessage, []byte("-2"))
+					break
+				}
+				partnerConn.WriteMessage(websocket.TextMessage, p)
+			} else if messageType == websocket.CloseMessage {
+				log.Printf("close message received from cient %s \n", id)
+				delete(ctx.SessionStore.SessionMap, sessionID)
+				delete(ctx.SessionStore.SessionMap, partnerID)
+				break
+			} else if err != nil {
+				log.Printf("error reading message %v \n", err)
+				break
+			}
 		}
 	})(conn, sessionID)
 }

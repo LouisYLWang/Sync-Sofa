@@ -10,13 +10,13 @@
 
 
     <script>
-        let requestbutton = document.getElementById("requestbutton")
-        let copybutton = document.getElementById("copybutton")
-        let startbutton = document.getElementById("startbutton")
-        let testbutton = document.getElementById("testbutton")
-        let stopbutton = document.getElementById("stopbutton")
-
+        const requestbutton = document.getElementById("requestbutton")
+        const copybutton = document.getElementById("copybutton")
+        const startbutton = document.getElementById("startbutton")
+        const testbutton = document.getElementById("testbutton")
+        const stopbutton = document.getElementById("stopbutton")
         const inputbox = document.getElementById("inputbox");
+        var websocket;
 
         copybutton.addEventListener("click", e =>{
             e.preventDefault();
@@ -32,6 +32,8 @@
             e.preventDefault();
             handleBeginSessions(e)
         })
+
+        
 
         function handleCreateHostSession(e){
             e.preventDefault();
@@ -59,15 +61,11 @@
             document.execCommand("copy");
             alert("copied the text: " + inputbox.value + " to clipboard");     
             
-            let websocket = new WebSocket(url);
+            var websocket = new WebSocket(url);
             websocket.onmessage = (event) => {
             console.log(`RECEIVED ${event.data}`);
             }
-            testbutton.addEventListener("click", ev =>{
-                ev.preventDefault();
-                console.log(`SENDING PAUSE`);
-                websocket.send('1');
-            })
+            handleOnSessions(e, websocket)
         }
 
         function handleBeginSessions(e){
@@ -86,16 +84,38 @@
                 if(sessionPair != null){
                     inputbox.value = sessionPair.selfID;
                 }
-                let websocket = new WebSocket(`ws://localhost:3000/ws/?id=${sessionPair.selfID}`);
-                websocket.onmessage = (event) => {
-                console.log(`RECEIVED ${event.data}`);
+                var websocket = new WebSocket(`ws://localhost:3000/ws/?id=${sessionPair.selfID}`);
+                websocket.onmessage = (msg) => {
+                    console.log(`RECEIVED ${msg.data}`);
+                    if(msg.data == "-1"){
+                        alert("socket connection closed by other partner");
+                        console.log("socket connection closed by other partner");
+                        return
+                    } else if(msg.data == "-2"){
+                        alert("not connected to other partner");
+                        return
+                    }
                 }
+                handleOnSessions(e, websocket)
+            })
+        }
+
+        function handleOnSessions(e, websocket){
+            stopbutton.addEventListener("click", e =>{
+                    e.preventDefault();
+                    function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
+                    websocket.close();
+                    return
+                 })
+
                 testbutton.addEventListener("click", ev =>{
                     ev.preventDefault();
-                    console.log(`SENDING PAUSE`);
-                    websocket.send('1');
+                    function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
+                    if (isOpen(websocket)){
+                        console.log(`SENDING PAUSE`);
+                        websocket.send('1');
+                    }
                 })
-            })
         }
     </script>
 </body>
