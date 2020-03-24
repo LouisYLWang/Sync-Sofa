@@ -3,7 +3,6 @@ const copybutton = document.getElementById("copybutton")
 const startbutton = document.getElementById("startbutton")
 const testbutton = document.getElementById("testbutton")
 const testbutton2 = document.getElementById("testbutton2")
-
 const stopbutton = document.getElementById("stopbutton")
 const inputbox = document.getElementById("inputbox");
 
@@ -11,6 +10,7 @@ const PAUSECODE = "1";
 const PLAYCODE = "2";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
+const apihost = "localhost:3000"
 
 const params = {
   active: true,
@@ -35,7 +35,7 @@ startbutton.addEventListener("click", e =>{
 
 function handleCreateHostSession(e){
     e.preventDefault();
-    let url = 'http://localhost:3000/v1/session'
+    let url = `http://${apihost}/v1/session`
     fetch(url,{
         method: 'GET',          
         }).then(res => {
@@ -54,21 +54,16 @@ function handleCreateHostSession(e){
 
 function copyToClipboard(e){
     e.preventDefault();
-    let url = `ws://localhost:3000/ws/?id=${inputbox.value}`
+    let url = `ws://${apihost}/ws/?id=${inputbox.value}`
     inputbox.select();
     document.execCommand("copy");
     alert("copied the text: " + inputbox.value + " to clipboard");     
-    
-    var websocket = new WebSocket(url);
-    websocket.onmessage = (event) => {
-    console.log(`RECEIVED ${event.data}`);
-    }
-    handleOnSessions(e, websocket)
+    handleOnSessions(e, url)
 }
 
 function handleBeginSessions(e){
     e.preventDefault();
-    let url = `http://localhost:3000/v1/session/?id=${inputbox.value}`
+    let url = `http://${apihost}/v1/session/?id=${inputbox.value}`
     fetch(url,{
         method: 'GET',          
         }).then(res => {
@@ -82,9 +77,13 @@ function handleBeginSessions(e){
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        let url = `ws://localhost:3000/ws/?id=${sessionPair.selfID}`
+        let url = `ws://${apihost}/ws/?id=${sessionPair.selfID}`
+        handleOnSessions(e, url)
+    })
+}
 
-        var websocket = new WebSocket(url);
+function handleOnSessions(e, url){
+  var websocket = new WebSocket(url);
         websocket.onmessage = (msg) => {
             console.log(`RECEIVED ${msg.data}`);
             if(msg.data == CLOSEDCODE){
@@ -94,17 +93,13 @@ function handleBeginSessions(e){
             } else if(msg.data == DISCONNECTCODE){
                 alert("not connected to other partner");
                 return
-            } else{
+            } else {
               chrome.tabs.query(params,(tabs) => {
                 chrome.tabs.sendMessage(tabs[0].id, msg.data);
               });
             }
         }
-        handleOnSessions(e, websocket)
-    })
-}
 
-function handleOnSessions(e, websocket){
   stopbutton.addEventListener("click", e =>{
           e.preventDefault();
           function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
