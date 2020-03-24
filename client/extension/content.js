@@ -18,24 +18,6 @@ function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
 
 function handleOnSessions(url){
   var websocket = new WebSocket(url);
-  websocket.onmessage = (msg) => {
-      switch (msg.data) {
-        case CLOSEDCODE:
-          alert("socket connection closed by other partner");
-          console.log("socket connection closed by other partner");
-          return;
-        case DISCONNECTCODE:
-          alert("not connected to other partner");
-          return
-        case PAUSECODE:      
-          console.log(`RECEIVED PAUSECODE`);
-          video.pause();
-        case PLAYCODE:
-          console.log(`RECEIVED PLAYCODE`);
-          video.play();
-      }
-  }
-
   video.addEventListener("pause", ()=>{
     if (isOpen(websocket)){
       websocket.send(PAUSECODE)
@@ -49,4 +31,37 @@ function handleOnSessions(url){
       console.log(`SENT PLAYCODE`);
     };
   })
+
+  chrome.runtime.onMessage.addListener((msg)=> {
+    if (msg.status === "end"){
+      video.pause();
+      websocket.close();
+      console.log("socket connection closed");
+      return;
+    }
+  });
+
+  websocket.onmessage = (msg) => {
+    switch (msg.data) {
+      case CLOSEDCODE:
+        video.pause();
+        alert("socket connection closed by other partner");
+        console.log("socket connection closed by other partner");
+        websocket.close();
+        return;
+      case DISCONNECTCODE:
+        video.pause();
+        alert("not connected to other partner");
+        websocket.close();
+        return;
+      case PAUSECODE:   
+        video.pause();   
+        console.log(`RECEIVED PAUSECODE`);
+        return;
+      case PLAYCODE:
+        video.play();
+        console.log(`RECEIVED PLAYCODE`);
+        return;
+    }
+  }
 }

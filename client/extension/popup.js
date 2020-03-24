@@ -35,6 +35,11 @@ startbutton.addEventListener("click", e =>{
     handleBeginSessions(e)
 })
 
+stopbutton.addEventListener("click", e =>{
+  e.preventDefault();
+  sentMsgToContent("end", DISCONNECTCODE)
+})   
+
 function handleCreateHostSession(e){
     e.preventDefault();
     let url = `http://${apihost}/v1/session`
@@ -51,7 +56,7 @@ function handleCreateHostSession(e){
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent(sessionPair.selfID);
+        sentMsgToContent("start", sessionPair.selfID);
         if (copybutton.style.display === "none") {
           copybutton.style.display = "block";
         } 
@@ -68,10 +73,10 @@ function copyToClipboard(e){
     } 
 }
 
-function sentMsgToContent(body){
+function sentMsgToContent(status, body){
   chrome.tabs.query(params,(tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, 
-      {"status":"start", "body":body});
+      {"status":status, "body":body});
     console.log(`SENT sessionID ${body}`);
   });  
 }
@@ -92,6 +97,6 @@ function handleBeginSessions(e){
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent(sessionPair.selfID)
+        sentMsgToContent("start", sessionPair.selfID)
     })
   }
