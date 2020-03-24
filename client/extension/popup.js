@@ -5,6 +5,8 @@ const testbutton = document.getElementById("testbutton")
 const testbutton2 = document.getElementById("testbutton2")
 const stopbutton = document.getElementById("stopbutton")
 const inputbox = document.getElementById("inputbox");
+var hostdiv = document.getElementById("hostdiv");
+var guestdiv = document.getElementById("guestdiv");
 
 const PAUSECODE = "1";
 const PLAYCODE = "2";
@@ -18,14 +20,14 @@ const params = {
 }
 var websocket;
 
+requestbutton.addEventListener("click", e =>{
+  e.preventDefault();
+  handleCreateHostSession(e)
+})
+
 copybutton.addEventListener("click", e =>{
     e.preventDefault();
     copyToClipboard(e)
-})
-
-requestbutton.addEventListener("click", e =>{
-    e.preventDefault();
-    handleCreateHostSession(e)
 })
 
 startbutton.addEventListener("click", e =>{
@@ -49,16 +51,29 @@ function handleCreateHostSession(e){
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-    })
+        sentMsgToContent(sessionPair.selfID);
+        if (copybutton.style.display === "none") {
+          copybutton.style.display = "block";
+        } 
+      })
 }
 
 function copyToClipboard(e){
     e.preventDefault();
-    let url = `ws://${apihost}/ws/?id=${inputbox.value}`
     inputbox.select();
     document.execCommand("copy");
-    alert("copied the text: " + inputbox.value + " to clipboard");     
-    handleOnSessions(e, url)
+    alert("copied the text: " + inputbox.value + " to clipboard");  
+    if (guestdiv.style.display === "block") {
+      guestdiv.style.display = "none";
+    } 
+}
+
+function sentMsgToContent(body){
+  chrome.tabs.query(params,(tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, 
+      {"status":"start", "body":body});
+    console.log(`SENT sessionID ${body}`);
+  });  
 }
 
 function handleBeginSessions(e){
@@ -77,59 +92,6 @@ function handleBeginSessions(e){
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        let url = `ws://${apihost}/ws/?id=${sessionPair.selfID}`
-        handleOnSessions(e, url)
+        sentMsgToContent(sessionPair.selfID)
     })
-}
-
-function handleOnSessions(e, url){
-  var websocket = new WebSocket(url);
-        websocket.onmessage = (msg) => {
-            console.log(`RECEIVED ${msg.data}`);
-            if(msg.data == CLOSEDCODE){
-                alert("socket connection closed by other partner");
-                console.log("socket connection closed by other partner");
-                return
-            } else if(msg.data == DISCONNECTCODE){
-                alert("not connected to other partner");
-                return
-            } else {
-              chrome.tabs.query(params,(tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, msg.data);
-              });
-            }
-        }
-
-  stopbutton.addEventListener("click", e =>{
-          e.preventDefault();
-          function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
-          websocket.close();
-          return
-  })     
-
-  testbutton.addEventListener("click", ev =>{
-    ev.preventDefault();
-    function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
-    if (isOpen(websocket)){
-        console.log(`SENDING PAUSE`);
-        websocket.send(PAUSECODE);
-    }
-  })
-
-  testbutton2.addEventListener("click", ev =>{
-    ev.preventDefault();
-    function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
-    if (isOpen(websocket)){
-        console.log(`SENDING PAUSE`);
-        websocket.send(PLAYCODE);
-    }
-  })
-
-  chrome.runtime.onMessage.addListener((status)=> {
-    function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
-    if (isOpen(websocket)){
-        console.log(status);
-        websocket.send(status);
-    }
-  });
-}
+  }
