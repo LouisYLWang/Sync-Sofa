@@ -2,12 +2,12 @@ const PAUSECODE = "1";
 const PLAYCODE = "2";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
-const apihost = "localhost:3000"
+const apihost = "app.ylwang.me"
 
 chrome.runtime.onMessage.addListener((msg)=> {
   if (msg.status === "start"){
     console.log(`RECEIVED sessionID ${msg.body}`);
-    let url = `ws://${apihost}/ws/?id=${msg.body}`
+    let url = `wss://${apihost}/ws/?id=${msg.body}`
     handleOnSessions(url)
   }
 });

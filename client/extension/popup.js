@@ -1,18 +1,13 @@
 const requestbutton = document.getElementById("requestbutton")
-const copybutton = document.getElementById("copybutton")
 const startbutton = document.getElementById("startbutton")
-const testbutton = document.getElementById("testbutton")
-const testbutton2 = document.getElementById("testbutton2")
 const stopbutton = document.getElementById("stopbutton")
 const inputbox = document.getElementById("inputbox");
-var hostdiv = document.getElementById("hostdiv");
-var guestdiv = document.getElementById("guestdiv");
 
 const PAUSECODE = "1";
 const PLAYCODE = "2";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
-const apihost = "localhost:3000"
+const apihost = "app.ylwang.me"
 
 const params = {
   active: true,
@@ -25,24 +20,30 @@ requestbutton.addEventListener("click", e =>{
   handleCreateHostSession(e)
 })
 
-copybutton.addEventListener("click", e =>{
-    e.preventDefault();
-    copyToClipboard(e)
+startbutton.addEventListener("click", e =>{
+  e.preventDefault();
+  handleBeginSessions(e)
 })
 
-startbutton.addEventListener("click", e =>{
-    e.preventDefault();
-    handleBeginSessions(e)
+inputbox.addEventListener("click", e => {
+  e.preventDefault();
+  if(requestbutton.style.display === "block"){
+    requestbutton.style.display = "none";
+  }
 })
 
 stopbutton.addEventListener("click", e =>{
   e.preventDefault();
   sentMsgToContent("end", DISCONNECTCODE)
+  toggleButtonsOn();
+  if (inputbox.value !== "") {
+    inputbox.value = "";
+  } 
 })   
 
 function handleCreateHostSession(e){
     e.preventDefault();
-    let url = `http://${apihost}/v1/session`
+    let url = `https://${apihost}/v1/session`
     fetch(url,{
         method: 'GET',          
         }).then(res => {
@@ -57,20 +58,36 @@ function handleCreateHostSession(e){
             inputbox.value = sessionPair.selfID;
         }
         sentMsgToContent("start", sessionPair.selfID);
-        if (copybutton.style.display === "none") {
-          copybutton.style.display = "block";
-        } 
-      })
-}
+        inputbox.select();
+        document.execCommand("copy");
 
-function copyToClipboard(e){
-    e.preventDefault();
-    inputbox.select();
-    document.execCommand("copy");
-    alert("copied the text: " + inputbox.value + " to clipboard");  
-    if (guestdiv.style.display === "block") {
-      guestdiv.style.display = "none";
-    } 
+        var $form = document.querySelectorAll('#signup-form')[0],
+        $submit = document.querySelectorAll('#signup-form input[type="submit"]')[0],
+        $message;
+
+        $message = document.createElement('a');
+        $message.classList.add('message');
+        $form.appendChild($message);
+      
+        $message._show = function(type, text) {
+          $message.innerHTML = text;
+          $message.classList.add(type);
+          $message.classList.add('visible');
+          window.setTimeout(function() {
+            $message._hide();
+          }, 3000);
+          $message._hide = function() {
+            $message.classList.remove('visible');
+          };
+        }
+          $submit.disabled = true;
+          window.setTimeout(function() {
+              $submit.disabled = false;
+              $message._show('success', "code copied to clipboard");
+          }, 750);
+        //alert("copied the text: " + inputbox.value + " to clipboard");  
+        toggleButtonsOff();
+      })
 }
 
 function sentMsgToContent(status, body){
@@ -83,7 +100,7 @@ function sentMsgToContent(status, body){
 
 function handleBeginSessions(e){
     e.preventDefault();
-    let url = `http://${apihost}/v1/session/?id=${inputbox.value}`
+    let url = `https://${apihost}/v1/session/?id=${inputbox.value}`
     fetch(url,{
         method: 'GET',          
         }).then(res => {
@@ -97,6 +114,18 @@ function handleBeginSessions(e){
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent("start", sessionPair.selfID)
+        sentMsgToContent("start", sessionPair.selfID);
+        toggleButtonsOff();
     })
   }
+
+
+function toggleButtonsOff(){
+  startbutton.style.display = "none";
+  requestbutton.style.display = "none";
+}
+
+function toggleButtonsOn(){
+  startbutton.style.display = "block";
+  requestbutton.style.display = "block";
+}
