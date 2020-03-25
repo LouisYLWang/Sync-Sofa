@@ -1,7 +1,7 @@
 {
-    "name": "Getting Started Example",
+    "name": "WatchToGether",
     "version": "1.0",
-    "description": "Build an Extension!",
+    "description": "This extension sync video",
     "content_scripts" :[
         {
             "matches" :[
