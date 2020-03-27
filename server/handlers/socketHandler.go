@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/LouisYLWang/WatchTogether/server/session"
+	"github.com/LouisYLWang/Sync-Sofa/server/session"
 	"github.com/gorilla/websocket"
 )
 

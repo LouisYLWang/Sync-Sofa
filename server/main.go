@@ -7,9 +7,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/LouisYLWang/WatchTogether/server/handlers"
-	"github.com/LouisYLWang/WatchTogether/server/session"
-	"github.com/LouisYLWang/WatchTogether/server/socket"
+	"github.com/LouisYLWang/Sync-Sofa/server/handlers"
+	"github.com/LouisYLWang/Sync-Sofa/server/session"
+	"github.com/LouisYLWang/Sync-Sofa/server/socket"
 
 	"github.com/gorilla/mux"
 )
@@ -20,6 +20,7 @@ func main() {
 	addr := os.Getenv("ADDR")
 	tlsCertPath := os.Getenv("TLSCERT")
 	tlsKeyPath := os.Getenv("TLSKEY")
+	googleHostVerifyURI := os.Getenv("VERIFYURI")
 
 	if len(addr) == 0 {
 		addr = ":443"
@@ -40,13 +41,14 @@ func main() {
 	r.HandleFunc("/v1/session", ctx.SessionHandler)
 	r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
 	r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
-	r.HandleFunc("/google8e646393df72ecae.html", file)
+	r.HandleFunc(googleHostVerifyURI, file)
 	corsMux := handlers.NewCORSHandler(r)
 	log.Fatal(http.ListenAndServeTLS(addr, tlsCertPath, tlsKeyPath, corsMux))
 
 }
 
 func file(w http.ResponseWriter, r *http.Request) {
+	googleHostVerifyContent := os.Getenv("VERIFYCONTENT")
 	w.Header().Set("Content-type", "text/html")
-	w.Write([]byte("google-site-verification: google8e646393df72ecae.html"))
+	w.Write([]byte(googleHostVerifyContent))
 }

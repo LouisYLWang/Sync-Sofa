@@ -3,7 +3,7 @@ package socket
 import (
 	"sync"
 
-	"github.com/LouisYLWang/WatchTogether/server/session"
+	"github.com/LouisYLWang/Sync-Sofa/server/session"
 	"github.com/gorilla/websocket"
 )
 
