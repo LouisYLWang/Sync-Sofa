@@ -1,5 +1,5 @@
 {
-    "name": "Sync Sofa - Online Video Synchronizer",
+    "name": "Sync Sofa (beta) - Online Video Synchronizer",
     "version": "0.0.1",
     "description": "This extension can sync online video playing by multi-user in a fast, simple and stable way.",
     "content_scripts" :[
