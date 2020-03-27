@@ -1,0 +1,26 @@
+{
+    "name": "Sync Sofa - Online Video Synchronizer",
+    "version": "0.0.1",
+    "description": "This extension can sync online video playing by multi-user in a fast, simple and stable way.",
+    "content_scripts" :[
+        {
+            "matches" :[
+                "https://*.bilibili.com/*",
+                "https://www.dandanzan.com/*",
+                "https://91mjw.com/*",
+                "http://duonaolive.com/*",
+                "https://www.youtube.com/*",
+                "https://*.pornhub.com/*"
+            ],
+            "js" :["content.js"]
+        }
+    ],
+    "browser_action":{
+        "default_popup":"popup.html"
+    },
+    "manifest_version": 2,
+    "icons": { "16": "/icons/icon16_on.png",
+        "48": "/icons/icon48_on.png",
+       "128": "/icons/icon128_on.png" 
+    }  
+}
