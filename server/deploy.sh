@@ -1,4 +1,4 @@
-docker rm -f watchtogether
+docker rm -f wtgt
 docker pull louisylwang/watchtogether
 
 docker run -d \

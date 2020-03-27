@@ -36,13 +36,17 @@ func main() {
 	sessionStore := session.NewStore(sessionDuration)
 	ctx := handlers.NewContext(socketStore, sessionStore)
 
-	mux := mux.NewRouter()
-	mux.HandleFunc("/v1/session", ctx.SessionHandler)
-	mux.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
-	mux.HandleFunc("/ws/", ctx.WebSocketConnHandler)
-
-	corsMux := handlers.NewCORSHandler(mux)
-	//log.Fatal(http.ListenAndServe("localhost:3000", corsMux))
+	r := mux.NewRouter()
+	r.HandleFunc("/v1/session", ctx.SessionHandler)
+	r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
+	r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
+	r.HandleFunc("/google8e646393df72ecae.html", file)
+	corsMux := handlers.NewCORSHandler(r)
 	log.Fatal(http.ListenAndServeTLS(addr, tlsCertPath, tlsKeyPath, corsMux))
 
+}
+
+func file(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-type", "text/html")
+	w.Write([]byte("google-site-verification: google8e646393df72ecae.html"))
 }
