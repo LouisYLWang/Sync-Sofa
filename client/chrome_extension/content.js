@@ -11,7 +11,7 @@ const STATUSSYNC = "sync"
 chrome.runtime.onMessage.addListener((msg)=> {
   if (msg.status === STATUSSTART){
       console.log(`RECEIVED sessionID ${msg.body}`);
-      let url = `wss://${apihost}/ws/?id=${msg.body}`;
+      let url = `ws://${apihost}/ws/?id=${msg.body}`;
       var websocket = new WebSocket(url);
       var video = document.querySelectorAll('video')[0]  
       handleOnSessions(websocket, video);

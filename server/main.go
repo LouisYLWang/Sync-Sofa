@@ -18,33 +18,56 @@ var sessionDuration = time.Hour
 
 func main() {
 	addr := os.Getenv("ADDR")
-	tlsCertPath := os.Getenv("TLSCERT")
-	tlsKeyPath := os.Getenv("TLSKEY")
-	googleHostVerifyURI := os.Getenv("VERIFYURI")
+	runmode := os.Getenv("RUNMODE")
 
-	if len(addr) == 0 {
-		addr = ":443"
-	}
-	if tlsCertPath == "" {
-		fmt.Printf("invalid path to TLS public certificate")
-		os.Exit(1)
-	}
-	if tlsKeyPath == "" {
-		fmt.Printf("invalid path to the associated private key")
-		os.Exit(1)
-	}
-	socketStore := socket.NewStore()
-	sessionStore := session.NewStore(sessionDuration)
-	ctx := handlers.NewContext(socketStore, sessionStore)
+	switch runmode {
+	case "dev":
+		if len(addr) == 0 {
+			addr = ":3000"
+		}
+		socketStore := socket.NewStore()
+		sessionStore := session.NewStore(sessionDuration)
+		ctx := handlers.NewContext(socketStore, sessionStore)
 
-	r := mux.NewRouter()
-	r.HandleFunc("/v1/session", ctx.SessionHandler)
-	r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
-	r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
-	r.HandleFunc(googleHostVerifyURI, file)
-	corsMux := handlers.NewCORSHandler(r)
-	log.Fatal(http.ListenAndServeTLS(addr, tlsCertPath, tlsKeyPath, corsMux))
+		r := mux.NewRouter()
+		r.HandleFunc("/v1/session", ctx.SessionHandler)
+		r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
+		r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
+		corsMux := handlers.NewCORSHandler(r)
 
+		log.Printf("server is listening at %s...", addr)
+		log.Fatal(http.ListenAndServe(addr, corsMux))
+
+	case "prod":
+		tlsCertPath := os.Getenv("TLSCERT")
+		tlsKeyPath := os.Getenv("TLSKEY")
+		googleHostVerifyURI := os.Getenv("VERIFYURI")
+
+		if len(addr) == 0 {
+			addr = ":443"
+		}
+		if tlsCertPath == "" {
+			fmt.Printf("invalid path to TLS public certificate")
+			os.Exit(1)
+		}
+		if tlsKeyPath == "" {
+			fmt.Printf("invalid path to the associated private key")
+			os.Exit(1)
+		}
+		socketStore := socket.NewStore()
+		sessionStore := session.NewStore(sessionDuration)
+		ctx := handlers.NewContext(socketStore, sessionStore)
+
+		r := mux.NewRouter()
+		r.HandleFunc("/v1/session", ctx.SessionHandler)
+		r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
+		r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
+		r.HandleFunc(googleHostVerifyURI, file)
+		corsMux := handlers.NewCORSHandler(r)
+
+		log.Printf("server is listening at %s...", addr)
+		log.Fatal(http.ListenAndServeTLS(addr, tlsCertPath, tlsKeyPath, corsMux))
+	}
 }
 
 func file(w http.ResponseWriter, r *http.Request) {

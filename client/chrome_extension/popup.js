@@ -10,7 +10,7 @@ const DISCONNECTCODE = "-2";
 const STATUSSTART = "start"
 const STATUSEND = "end"
 const STATUSSYNC = "sync"
-const apihost = "app.ylwang.me"
+const apihost = "localhost:3000" 
 
 const params = {
   active: true,
@@ -51,7 +51,7 @@ stopbutton.addEventListener("click", e =>{
 
 function handleCreateHostSession(e){
     e.preventDefault();
-    let url = `https://${apihost}/v1/session`
+    let url = `http://${apihost}/v1/session`
     fetch(url,{
         method: 'GET',          
         }).then(res => {
@@ -84,7 +84,7 @@ function sentMsgToContent(status, body){
 
 function handleBeginSessions(e){
     e.preventDefault();
-    let url = `https://${apihost}/v1/session/?id=${inputbox.value}`
+    let url = `http://${apihost}/v1/session/?id=${inputbox.value}`
     fetch(url,{
         method: 'GET',          
         }).then(res => {
