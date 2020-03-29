@@ -1,19 +1,21 @@
-const requestbutton = document.getElementById("requestbutton")
-const startbutton = document.getElementById("startbutton")
-const stopbutton = document.getElementById("stopbutton")
+const requestbutton = document.getElementById("requestbutton");
+const startbutton = document.getElementById("startbutton");
+const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
-
+const syncbutton = document.getElementById("syncbutton");
 const PAUSECODE = "1";
 const PLAYCODE = "2";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
+const STATUSSTART = "start"
+const STATUSEND = "end"
+const STATUSSYNC = "sync"
 const apihost = "app.ylwang.me"
 
 const params = {
   active: true,
   currentWindow: true
 }
-var websocket;
 
 requestbutton.addEventListener("click", e =>{
   e.preventDefault();
@@ -32,9 +34,15 @@ inputbox.addEventListener("click", e => {
   }
 })
 
+syncbutton.addEventListener("click", e => {
+  e.preventDefault();
+  sentMsgToContent(STATUSSYNC, 'synctime');
+})
+
+
 stopbutton.addEventListener("click", e =>{
   e.preventDefault();
-  sentMsgToContent("end", DISCONNECTCODE)
+  sentMsgToContent(STATUSEND, DISCONNECTCODE)
   toggleButtonsOn();
   if (inputbox.value !== "") {
     inputbox.value = "";
@@ -52,18 +60,16 @@ function handleCreateHostSession(e){
             }
             return res.text();
         }).then(data => {
-        console.log(data);
         sessionPair = JSON.parse(JSON.stringify(data));
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent("start", sessionPair.selfID);
+        sentMsgToContent(STATUSSTART, sessionPair.selfID);
         inputbox.select();
         document.execCommand("copy");
 
         notification(`code copied to clipboard \n
                       session started`)
-        //alert("copied the text: " + inputbox.value + " to clipboard");  
         toggleButtonsOff();
       })
 }
@@ -72,7 +78,7 @@ function sentMsgToContent(status, body){
   chrome.tabs.query(params,(tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, 
       {"status":status, "body":body});
-    console.log(`SENT sessionID ${body}`);
+    //console.log(`SENT sessionID ${body}`);
   });  
 }
 
@@ -87,12 +93,11 @@ function handleBeginSessions(e){
             }
             return res.text();
         }).then(data => {
-        console.log(data);
         sessionPair = JSON.parse(JSON.stringify(data));
         if(sessionPair != null){
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent("start", sessionPair.selfID);
+        sentMsgToContent(STATUSSTART, sessionPair.selfID);
         notification("session started")
         toggleButtonsOff();
     })
@@ -102,11 +107,13 @@ function handleBeginSessions(e){
 function toggleButtonsOff(){
   startbutton.style.display = "none";
   requestbutton.style.display = "none";
+  syncbutton.style.display = "block"
 }
 
 function toggleButtonsOn(){
   startbutton.style.display = "block";
   requestbutton.style.display = "block";
+  syncbutton.style.display = "none"
 }
 
 function notification(body){

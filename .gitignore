@@ -1,3 +1,7 @@
 client/node_modules
 .vscode
 server/*.exe
+*.crx
+*.pem
+server/server
+*.zip
