@@ -11,7 +11,7 @@ import (
 )
 
 const paramID = "id"
-const idLength = 16
+const idLength = 3
 const InvalidSessionID SessionID = ""
 
 type SessionID string
