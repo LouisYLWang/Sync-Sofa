@@ -78,7 +78,7 @@ function sentMsgToContent(status, body){
   chrome.tabs.query(params,(tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, 
       {"status":status, "body":body});
-    //console.log(`SENT sessionID ${body}`);
+    console.log(`SENT sessionID ${body}`);
   });  
 }
 
