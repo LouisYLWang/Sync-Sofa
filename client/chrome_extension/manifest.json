@@ -1,7 +1,7 @@
 {
     "name": "Sync Sofa (beta) - Online Video Synchronizer",
-    "version": "0.0.1",
-    "description": "This extension can sync online video playing by multi-user in a fast, simple and stable way.",
+    "version": "1.0.0",
+    "description": "This extension allows multi-user sync streaming video in a fast, simple and stable way.",
     "content_scripts" :[
         {
             "matches" :[
@@ -9,8 +9,7 @@
                 "https://www.dandanzan.com/*",
                 "https://91mjw.com/*",
                 "http://duonaolive.com/*",
-                "https://www.youtube.com/*",
-                "https://*.pornhub.com/*"
+                "https://www.youtube.com/*"
             ],
             "js" :["content.js"]
         }

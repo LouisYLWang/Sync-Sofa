@@ -41,6 +41,12 @@ function handleOnSessions(websocket, video){
     };
   })
 
+  video.onseeking= function() {
+    websocket.send(video.currentTime)
+    console.log(`SENT CURRENT TIME`);
+    return;
+  }
+
   websocket.onmessage = (msg) => {
     switch (msg.data) {
       case CLOSEDCODE:
@@ -70,7 +76,7 @@ function handleOnSessions(websocket, video){
         return;
       default:
         if(msg.data <= video.duration && msg.data >= 0){
-          if (msg.data != video.currentTime){
+          if (Math.abs(msg.data - video.currentTime) > 1){
             video.currentTime = msg.data;
             console.log(`RECEIVED CURRENT TIME`);
           }
