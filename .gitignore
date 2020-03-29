@@ -4,3 +4,4 @@ server/*.exe
 *.crx
 *.pem
 server/server
+*.zip
