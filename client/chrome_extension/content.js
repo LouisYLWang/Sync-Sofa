@@ -20,7 +20,7 @@ chrome.runtime.onMessage.addListener((msg)=> {
 
 function isOpen(websocket) { return websocket.readyState === websocket.OPEN }
 
-async function handleOnSessions(websocket, video){
+function handleOnSessions(websocket, video){
   video.addEventListener("pause", (e)=>{
     e.stopPropagation();
     if (isOpen(websocket)){
@@ -41,7 +41,7 @@ async function handleOnSessions(websocket, video){
     };
   })
 
-  websocket.addEventListener('message', (msg) =>{
+  websocket.onmessage = (msg) => {
     switch (msg.data) {
       case CLOSEDCODE:
         video.pause();
@@ -57,9 +57,11 @@ async function handleOnSessions(websocket, video){
       case PAUSECODE: 
         console.log(`RECEIVED PAUSECODE`);
         if(!video.paused){
-          video.pause();   
-          return;
+          setTimeout(function () {
+            video.pause();   
+        }, 500);
         }
+        return;
       case PLAYCODE:
         console.log(`RECEIVED PLAYCODE`);
         if(video.paused){
@@ -75,5 +77,5 @@ async function handleOnSessions(websocket, video){
         }
         return;
     }
-  })
+  }
 }

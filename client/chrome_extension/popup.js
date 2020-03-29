@@ -16,7 +16,6 @@ const params = {
   active: true,
   currentWindow: true
 }
-var websocket;
 
 requestbutton.addEventListener("click", e =>{
   e.preventDefault();
