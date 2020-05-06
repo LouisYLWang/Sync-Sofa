@@ -25,7 +25,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 Before hosting, make sure your server can communicate securely with HTTPS and link to an domian name. The deploy script only support Let's Encrypt certificates, you can customized with your own SSL certificate providers.
 
 ```sh
-./server/deploy -{your host name}
+./server/deploy.sh {your host name}
 ```
 
 ##### local host (dev env)
