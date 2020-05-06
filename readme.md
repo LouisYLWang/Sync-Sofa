@@ -7,7 +7,7 @@
 
 One to two paragraph statement about your product and what it does.
 
-Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently the feartures includes:
+Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently the feartures include:
 
 - 2 party connection: either party can be the host of a sync room and the other can join with connection code.
 - sync pause/play: each user pause/play the video, the other side will do the same
@@ -43,14 +43,12 @@ cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
 go install
 cd $GOPATH/bin
 
-# setup
+# set environment variables
 export ADDR={your port}
 export TLSKEY={your ssl certificate key file location}
 export TLSCERT={your ssl ssl certificate file location}
 ./server(.exe if you are using windows)
 ```
-
-in repo folder:
 
 ### Install extension client:
 
