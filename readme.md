@@ -5,8 +5,6 @@
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square)
 [![Chrome web store users][chrome-image]][chrome-url]
 
-One to two paragraph statement about your product and what it does.
-
 Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently the feartures include:
 
 - 2 party connection: either party can be the host of a sync room and the other can join with connection code.
