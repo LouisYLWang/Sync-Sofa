@@ -37,17 +37,17 @@ https://github.com/LouisYLWang/Sync-Sofa/blob/localdev/README.md
 #### Without Docker:
 
 ```sh
-go get github.com/LouisYLWang/Sync-Sofa
+go get github.com/LouisYLWang/Sync-Sofa/server
 
 cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
 go install
 cd $GOPATH/bin
 
 # setup
-$ADDR = {your port}
-$TLSKEY = {your ssl privatekey file local}
-$TLSCERT = {your ssl publickey file local}
-./server.exe
+export ADDR = {your port}
+export TLSKEY = {your ssl privatekey file local}
+export TLSCERT = {your ssl publickey file local}
+./server(.exe if you are using windows)
 ```
 
 in repo folder:
