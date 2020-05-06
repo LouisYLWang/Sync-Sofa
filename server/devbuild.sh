@@ -4,6 +4,8 @@ go clean
 
 docker rm -f syncsofadev
 
+sleep 2
+
 docker run -d \
 -e ADDR=:3000 \
 -e RUNMODE="dev" \
