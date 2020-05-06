@@ -44,9 +44,9 @@ go install
 cd $GOPATH/bin
 
 # setup
-export ADDR = {your port}
-export TLSKEY = {your ssl privatekey file local}
-export TLSCERT = {your ssl publickey file local}
+export ADDR={your port}
+export TLSKEY={your ssl certificate key file location}
+export TLSCERT={your ssl ssl certificate file location}
 ./server(.exe if you are using windows)
 ```
 
