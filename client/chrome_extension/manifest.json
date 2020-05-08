@@ -2,24 +2,33 @@
     "name": "Sync Sofa (beta) - Online Video Synchronizer",
     "version": "1.0.0",
     "description": "This extension allows multi-user sync streaming video in a fast, simple and stable way.",
-    "content_scripts" :[
+    "permissions": [
+        "storage"
+    ],
+    "content_scripts": [
         {
-            "matches" :[
+            "matches": [
                 "https://*.bilibili.com/*",
                 "https://www.dandanzan.com/*",
                 "https://91mjw.com/*",
                 "http://duonaolive.com/*",
+                "https://v.qq.com/*",
+                "https://www.weiyun.com/*",
                 "https://www.youtube.com/*"
             ],
-            "js" :["content.js"]
+            "run_at": "document_end",
+            "js": [
+                "content.js"
+            ]
         }
     ],
-    "browser_action":{
-        "default_popup":"popup.html"
+    "browser_action": {
+        "default_popup": "popup.html"
     },
     "manifest_version": 2,
-    "icons": { "16": "/icons/icon16_on.png",
+    "icons": {
+        "16": "/icons/icon16_on.png",
         "48": "/icons/icon48_on.png",
-       "128": "/icons/icon128_on.png" 
-    }  
+        "128": "/icons/icon128_on.png"
+    }
 }
