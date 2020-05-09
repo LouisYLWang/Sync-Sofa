@@ -2,7 +2,6 @@ const PAUSECODE = "1";
 const PLAYCODE = "2";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
-const SYNCCODE = "3";
 const apihost = "api2.ylwang.me"
 const STATUSSTART = "start"
 const STATUSEND = "end"
@@ -32,11 +31,6 @@ chrome.runtime.onMessage.addListener(
             var video = document.querySelectorAll('video')[0];
             status = STATUSSYNC;
             handleOnSessions(websocket, video);
-        }
-        
-        if (request.status === STATUSSYNC) {
-            websocket.send(SYNCCODE);
-            console.log(`SENT SYNCCODE`);
         }
 
         if (request.status === STATUSEND) {

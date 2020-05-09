@@ -2,7 +2,6 @@ const requestbutton = document.getElementById("requestbutton");
 const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
-const syncbutton = document.getElementById("syncbutton");
 const PAUSECODE = "1";
 const PLAYCODE = "2";
 const CLOSEDCODE = "-1";
@@ -38,12 +37,6 @@ inputbox.addEventListener("click", e => {
         requestbutton.style.display = "none";
     }
 })
-
-syncbutton.addEventListener("click", e => {
-    e.preventDefault();
-    sentMsgToContent(STATUSSYNC);
-})
-
 
 stopbutton.addEventListener("click", e => {
     e.preventDefault();
@@ -84,13 +77,10 @@ function handleResponse(response) {
     if(response.status == STATUSASK) {
         // notification(response.body);
         if(response.body == STATUSEND) {
-            syncbutton.style.display = "none";
-            stopbutton.style.display = "none";
+            toggleButtonsOn();
         }
         if(response.body == STATUSSYNC) {
-            requestbutton.style.display = "none";
-            syncbutton.style.display = "block";
-            startbutton.style.display = "none";
+            toggleButtonsOff();
         }
     }
 }
@@ -128,14 +118,14 @@ function handleBeginSessions(e) {
 function toggleButtonsOff() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
-    syncbutton.style.display = "block";
     stopbutton.style.display = "block";
 }
 
 function toggleButtonsOn() {
+    selfID = "";
+    inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
-    syncbutton.style.display = "none";
     stopbutton.style.display = "none";
 }
 
