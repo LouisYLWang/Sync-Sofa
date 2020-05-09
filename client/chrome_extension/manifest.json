@@ -11,11 +11,12 @@
                 "https://*.bilibili.com/*",
                 "https://www.dandanzan.com/*",
                 "https://91mjw.com/*",
-                "http://duonaolive.com/*",
+                "https://duonaolive.com/*",
                 "https://v.qq.com/*",
                 "https://www.iqiyi.com/*",
                 "https://www.weiyun.com/*",
-                "https://www.youtube.com/*"
+                "https://www.youtube.com/*",
+                "https://v.youku.com/*"
             ],
             "run_at": "document_end",
             "js": [

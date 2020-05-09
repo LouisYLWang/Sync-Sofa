@@ -10,7 +10,7 @@ const STATUSSTART = "start"
 const STATUSEND = "end"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
-const apihost = "api2.ylwang.me"
+const apihost = "app.ylwang.me"
 
 const params = {
     active: true,
@@ -74,12 +74,12 @@ function handleCreateHostSession(e) {
 }
 
 function handleResponse(response) {
-    if(response.status == STATUSASK) {
+    if (response.status == STATUSASK) {
         // notification(response.body);
-        if(response.body == STATUSEND) {
+        if (response.body == STATUSEND) {
             toggleButtonsOn();
         }
-        if(response.body == STATUSSYNC) {
+        if (response.body == STATUSSYNC) {
             toggleButtonsOff();
         }
     }
