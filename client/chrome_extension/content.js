@@ -10,6 +10,7 @@ const STATUSASK = "ask"
 
 var status = STATUSEND;
 var websocket = null;
+var flag = true;
 
 // check connection every 30s.
 setInterval(function () {
@@ -55,31 +56,41 @@ function isOpen(websocket) {
 function handleOnSessions(websocket, video) {
     video.addEventListener("pause", (e) => {
         e.stopPropagation();
-        if (isOpen(websocket)) {
+        if (isOpen(websocket) && flag) {
             websocket.send(PAUSECODE)
             console.log(`SENT PAUSECODE`);
             return;
-        };
+        } else {
+            flag = true;
+        }
     })
 
     video.addEventListener("play", (e) => {
         e.stopPropagation();
-        if (isOpen(websocket)) {
+        if (isOpen(websocket) && flag) {
             websocket.send(video.currentTime)
             console.log(`SENT CURRENT TIME`);
             websocket.send(PLAYCODE)
             console.log(`SENT PLAYCODE`);
             return;
-        };
+        } else {
+            flag = true;
+        }
     })
 
     video.onseeking = function () {
-        websocket.send(video.currentTime)
-        console.log(`SENT CURRENT TIME`);
-        return;
+        if (flag) {
+            websocket.send(video.currentTime)
+            console.log(`SENT CURRENT TIME`);
+            video.pause();
+            return;
+        } else {
+            flag = true;
+        }
     }
 
     websocket.onmessage = (msg) => {
+        flag = false;
         switch (msg.data) {
             case CLOSEDCODE:
                 video.pause();
@@ -97,9 +108,7 @@ function handleOnSessions(websocket, video) {
             case PAUSECODE:
                 console.log(`RECEIVED PAUSECODE`);
                 if (!video.paused) {
-                    setTimeout(function () {
-                        video.pause();
-                    }, 500);
+                    video.pause();
                 }
                 return;
             case PLAYCODE:
