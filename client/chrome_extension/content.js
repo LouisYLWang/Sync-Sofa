@@ -1,5 +1,6 @@
-const PAUSECODE = "1";
-const PLAYCODE = "2";
+const PAUSECODE = "-5";
+const PLAYCODE = "-4";
+const HELLOCODE = "-3";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
 const apihost = "api2.ylwang.me"
@@ -11,24 +12,42 @@ const STATUSASK = "ask"
 var status = STATUSEND;
 var websocket = null;
 var flag = true;
+var timer = null;
+var debug = false;
 
 // check connection every 30s.
 setInterval(function () {
     isOpen(websocket) ? status = STATUSSYNC : status = STATUSEND;
 }, 1000 * 30);
 
+class Debugger {
+    static log(msg) {
+        if(debug) {
+            console.log(msg);
+        }
+    }
+}
 
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        console.log(sender.tab ?
+        Debugger.log(sender.tab ?
             "from a content script:" + sender.tab.url :
             "from the extension");
 
         if (request.status === STATUSSTART) {
-            console.log(`RECEIVED sessionID ${request.body}`);
+            Debugger.log(`RECEIVED sessionID ${request.body}`);
             let url = `wss://${apihost}/ws/?id=${request.body}`;
             if (websocket) { websocket.close(); }
             websocket = new WebSocket(url);
+            if (request.message && request.message.beginFlag) {
+                timer = setInterval(function () {
+                    if (isOpen(websocket)) {
+                        Debugger.log('sent hello code');
+                        websocket.send(HELLOCODE);
+                        clearInterval(timer);
+                    }
+                }, 500);
+            }
             var video = document.querySelectorAll('video')[0];
             status = STATUSSYNC;
             handleOnSessions(websocket, video);
@@ -36,14 +55,14 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSEND) {
             websocket.send(CLOSEDCODE);
-            console.log(`SENT CLOSEDCODE`);
-            console.log("socket connection closed");
+            Debugger.log(`SENT CLOSEDCODE`);
+            Debugger.log("socket connection closed");
             websocket.close();
             status = STATUSEND;
         }
 
         if (request.status == STATUSASK) {
-            console.log("ask for status: " + status);
+            Debugger.log("ask for status: " + status);
             sendResponse({ "status": STATUSASK, "body": status });
         }
 
@@ -58,7 +77,7 @@ function handleOnSessions(websocket, video) {
         e.stopPropagation();
         if (isOpen(websocket) && flag) {
             websocket.send(PAUSECODE)
-            console.log(`SENT PAUSECODE`);
+            Debugger.log(`SENT PAUSECODE`);
             return;
         } else {
             flag = true;
@@ -69,9 +88,9 @@ function handleOnSessions(websocket, video) {
         e.stopPropagation();
         if (isOpen(websocket) && flag) {
             websocket.send(video.currentTime)
-            console.log(`SENT CURRENT TIME`);
+            Debugger.log(`SENT CURRENT TIME`);
             websocket.send(PLAYCODE)
-            console.log(`SENT PLAYCODE`);
+            Debugger.log(`SENT PLAYCODE`);
             return;
         } else {
             flag = true;
@@ -81,7 +100,7 @@ function handleOnSessions(websocket, video) {
     video.onseeking = function () {
         if (flag) {
             websocket.send(video.currentTime)
-            console.log(`SENT CURRENT TIME`);
+            Debugger.log(`SENT CURRENT TIME`);
             video.pause();
             return;
         } else {
@@ -91,11 +110,12 @@ function handleOnSessions(websocket, video) {
 
     websocket.onmessage = (msg) => {
         flag = false;
+        Debugger.log(msg.data)
         switch (msg.data) {
             case CLOSEDCODE:
                 video.pause();
                 alert("socket connection closed by other partner");
-                console.log("socket connection closed by other partner");
+                Debugger.log("socket connection closed by other partner");
                 websocket.close();
                 status = STATUSEND;
                 return;
@@ -106,22 +126,25 @@ function handleOnSessions(websocket, video) {
                 status = STATUSEND;
                 return;
             case PAUSECODE:
-                console.log(`RECEIVED PAUSECODE`);
+                Debugger.log(`RECEIVED PAUSECODE`);
                 if (!video.paused) {
                     video.pause();
                 }
                 return;
             case PLAYCODE:
-                console.log(`RECEIVED PLAYCODE`);
+                Debugger.log(`RECEIVED PLAYCODE`);
                 if (video.paused) {
                     video.play();
                 }
+                return;
+            case HELLOCODE:
+                alert("connected to other partner successfully, now you both can enjoy yourselves");
                 return;
             default:
                 if (msg.data <= video.duration && msg.data >= 0) {
                     if (Math.abs(msg.data - video.currentTime) > 1) {
                         video.currentTime = msg.data;
-                        console.log(`RECEIVED CURRENT TIME`);
+                        Debugger.log(`RECEIVED CURRENT TIME`);
                     }
                 }
                 return;

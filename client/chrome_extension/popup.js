@@ -74,20 +74,20 @@ function handleCreateHostSession(e) {
 }
 
 function handleResponse(response) {
-    if(response.status == STATUSASK) {
+    if (response.status == STATUSASK) {
         // notification(response.body);
-        if(response.body == STATUSEND) {
+        if (response.body == STATUSEND) {
             toggleButtonsOn();
         }
-        if(response.body == STATUSSYNC) {
+        if (response.body == STATUSSYNC) {
             toggleButtonsOff();
         }
     }
 }
-function sentMsgToContent(status, body = "") {
+function sentMsgToContent(status, body = "", message = {}) {
     chrome.tabs.query(params, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id,
-            { "status": status, "body": body }, function (response) {
+            { "status": status, "body": body, "message": message }, function (response) {
                 handleResponse(response);
             });
     });
@@ -108,7 +108,7 @@ function handleBeginSessions(e) {
         if (sessionPair != null) {
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent(STATUSSTART, sessionPair.selfID);
+        sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
         notification("session started")
         toggleButtonsOff();
     })
