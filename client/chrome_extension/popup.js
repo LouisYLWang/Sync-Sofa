@@ -10,7 +10,7 @@ const STATUSSTART = "start"
 const STATUSEND = "end"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
-const apihost = "api2.ylwang.me"
+const apihost = "app.ylwang.me"
 
 const params = {
     active: true,

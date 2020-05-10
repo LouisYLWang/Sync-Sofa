@@ -60,7 +60,7 @@ Download from mirror web store:
 
 https://pictureknow.com/extension?id=917ffc6701324f708c148e9249252eec
 
-Install .crx (drag the file into browser):i
+Install .crx (drag the file into browser):
 
 https://github.com/LouisYLWang/Sync-Sofa/releases/download
 
@@ -69,6 +69,20 @@ https://github.com/LouisYLWang/Sync-Sofa/releases/download
 🦊 Firefox: (will be supported in later version)
 
 ## Release History
+
+- 1.0.3 
+
+  - improve stability & UX logic
+  - Added support of following websites:
+    - [iqiyi](https://www.iqiyi.com/) 
+    - [youku](https://www.youku.com/)
+    - [weiyun](https://www.weiyun.com/)
+    - [tencent video](https://v.qq.com/)
+
+  - Fixed the support of [duonao live](https://duonaolive.com/);
+  - Removed the support of [91mjw](https://91mjw.com/) (temporarily);
+  - Refined documentation, will add more detail in next verison; 
+
 
 - 1.0.2
   - support play process bar control sync
@@ -82,6 +96,8 @@ https://github.com/LouisYLWang/Sync-Sofa/releases/download
 ## Meta
 
 Yiliang "Louis" Wang – [@myblog](https://ylwang.codes/) – louis.yl.wang@outlook.com
+
+(special thank for the contributions of @onns & @ZeyuW)
 
 ## Contributing
 
