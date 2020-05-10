@@ -20,6 +20,7 @@
             ],
             "run_at": "document_end",
             "js": [
+                "sweetalert.min.js",
                 "content.js"
             ]
         }

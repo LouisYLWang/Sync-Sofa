@@ -20,11 +20,48 @@ setInterval(function () {
     isOpen(websocket) ? status = STATUSSYNC : status = STATUSEND;
 }, 1000 * 30);
 
+Date.prototype.format = function(formatStr)   
+{   
+    var str = formatStr;   
+    var Week = ['日','一','二','三','四','五','六'];  
+  
+    str=str.replace(/yyyy|YYYY/,this.getFullYear());   
+    str=str.replace(/yy|YY/,(this.getYear() % 100)>9?(this.getYear() % 100).toString():'0' + (this.getYear() % 100));   
+  
+    str=str.replace(/MM/,this.getMonth()>9?this.getMonth().toString():'0' + this.getMonth());   
+    str=str.replace(/M/g,this.getMonth());   
+  
+    str=str.replace(/w|W/g,Week[this.getDay()]);   
+  
+    str=str.replace(/dd|DD/,this.getDate()>9?this.getDate().toString():'0' + this.getDate());   
+    str=str.replace(/d|D/g,this.getDate());   
+  
+    str=str.replace(/hh|HH/,this.getHours()>9?this.getHours().toString():'0' + this.getHours());   
+    str=str.replace(/h|H/g,this.getHours());   
+    str=str.replace(/mm/,this.getMinutes()>9?this.getMinutes().toString():'0' + this.getMinutes());   
+    str=str.replace(/m/g,this.getMinutes());   
+  
+    str=str.replace(/ss|SS/,this.getSeconds()>9?this.getSeconds().toString():'0' + this.getSeconds());   
+    str=str.replace(/s|S/g,this.getSeconds());   
+  
+    return str;   
+}   
+
 class Debugger {
     static log(msg) {
         if(debug) {
+            console.log(new Date().format('yyyy-MM-dd hh:mm:ss'));
             console.log(msg);
         }
+    }
+}
+
+class SyncHelper {
+    static notification(msg) {
+        swal(msg, {
+            buttons: false,
+            timer: 3000,
+          });
     }
 }
 
@@ -42,9 +79,10 @@ chrome.runtime.onMessage.addListener(
             if (request.message && request.message.beginFlag) {
                 timer = setInterval(function () {
                     if (isOpen(websocket)) {
+                        clearInterval(timer);
                         Debugger.log('sent hello code');
                         websocket.send(HELLOCODE);
-                        clearInterval(timer);
+                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                     }
                 }, 500);
             }
@@ -114,14 +152,14 @@ function handleOnSessions(websocket, video) {
         switch (msg.data) {
             case CLOSEDCODE:
                 video.pause();
-                alert("socket connection closed by other partner");
+                SyncHelper.notification("socket connection closed by other partner");
                 Debugger.log("socket connection closed by other partner");
                 websocket.close();
                 status = STATUSEND;
                 return;
             case DISCONNECTCODE:
                 video.pause();
-                alert("not connected to other partner");
+                SyncHelper.notification("not connected to other partner");
                 websocket.close();
                 status = STATUSEND;
                 return;
@@ -138,7 +176,9 @@ function handleOnSessions(websocket, video) {
                 }
                 return;
             case HELLOCODE:
-                alert("connected to other partner successfully, now you both can enjoy yourselves");
+                Debugger.log(`RECEIVED HELLOCODE`);
+                flag = true;
+                SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                 return;
             default:
                 if (msg.data <= video.duration && msg.data >= 0) {

@@ -2,8 +2,9 @@ const requestbutton = document.getElementById("requestbutton");
 const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
-const PAUSECODE = "1";
-const PLAYCODE = "2";
+const PAUSECODE = "-5";
+const PLAYCODE = "-4";
+const HELLOCODE = "-3";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
 const STATUSSTART = "start"
@@ -70,6 +71,9 @@ function handleCreateHostSession(e) {
         notification(`code copied to clipboard \n
                       session started`)
         toggleButtonsOff();
+        setTimeout(function () {
+            window.close();
+        }, 3000);
     })
 }
 
@@ -111,6 +115,9 @@ function handleBeginSessions(e) {
         sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
         notification("session started")
         toggleButtonsOff();
+        setTimeout(function () {
+            window.close();
+        }, 3000);
     })
 }
 
