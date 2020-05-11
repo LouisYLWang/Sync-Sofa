@@ -9,6 +9,7 @@ const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
 const STATUSSTART = "start"
 const STATUSEND = "end"
+const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 const apihost = "app.ylwang.me"
@@ -67,9 +68,6 @@ function handleCreateHostSession(e) {
         sentMsgToContent(STATUSSTART, sessionPair.selfID);
         inputbox.select();
         document.execCommand("copy");
-
-        notification(`code copied to clipboard \n
-                      session started`)
         toggleButtonsOff();
         setTimeout(function () {
             window.close();
@@ -79,11 +77,10 @@ function handleCreateHostSession(e) {
 
 function handleResponse(response) {
     if (response.status == STATUSASK) {
-        // notification(response.body);
         if (response.body == STATUSEND) {
             toggleButtonsOn();
         }
-        if (response.body == STATUSSYNC) {
+        if (response.body == STATUSCONNECT) {
             toggleButtonsOff();
         }
     }
@@ -113,7 +110,6 @@ function handleBeginSessions(e) {
             inputbox.value = sessionPair.selfID;
         }
         sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
-        notification("session started")
         toggleButtonsOff();
         setTimeout(function () {
             window.close();
@@ -134,33 +130,6 @@ function toggleButtonsOn() {
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
     stopbutton.style.display = "none";
-}
-
-function notification(body) {
-    var $form = document.querySelectorAll('#signup-form')[0],
-        $submit = document.querySelectorAll('#signup-form input[type="submit"]')[0],
-        $message;
-
-    $message = document.createElement('a');
-    $message.classList.add('message');
-    $form.appendChild($message);
-
-    $message._show = function (type, text) {
-        $message.innerHTML = text;
-        $message.classList.add(type);
-        $message.classList.add('visible');
-        window.setTimeout(function () {
-            $message._hide();
-        }, 3000);
-        $message._hide = function () {
-            $message.classList.remove('visible');
-        };
-    }
-    $submit.disabled = true;
-    window.setTimeout(function () {
-        $submit.disabled = false;
-        $message._show('success', body);
-    }, 750);
 }
 
 function initialize() {

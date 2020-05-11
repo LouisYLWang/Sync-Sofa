@@ -6,13 +6,15 @@ import (
 )
 
 type Context struct {
-	SocketStore  *socket.Store
-	SessionStore *session.Store
+	SocketStore    *socket.Store
+	SessionStore   *session.Store
+	FeedbackConfig *FeedbackConfig
 }
 
-func NewContext(socketStore *socket.Store, sessionStore *session.Store) *Context {
+func NewContext(socketStore *socket.Store, sessionStore *session.Store, feedbackconfig *FeedbackConfig) *Context {
 	return &Context{
-		SocketStore:  socketStore,
-		SessionStore: sessionStore,
+		SocketStore:    socketStore,
+		SessionStore:   sessionStore,
+		FeedbackConfig: feedbackconfig,
 	}
 }
