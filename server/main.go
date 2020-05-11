@@ -19,13 +19,13 @@ var sessionDuration = time.Hour
 func main() {
 	addr := os.Getenv("ADDR")
 
-	smtpServerHost := "smtp.gmail.com" //os.Getenv("SMTPSERVERHOST")
-	smtpServerPort := "587"            //os.Getenv("SMTPSERVERPORT")
+	smtpServerHost := os.Getenv("SMTPSERVERHOST") //"smtp.gmail.com"
+	smtpServerPort := os.Getenv("SMTPSERVERPORT") //"587"
 	feedbackAccount := os.Getenv("FEEDBACKEMAILADDR")
 	feedbackAccountPswd := os.Getenv("FEEDBACKEMAILPSWD")
 	recipients := []string{"louis.yl.wang@outlook.com"}
 
-	runmode := "dev" //os.Getenv("RUNMODE")
+	runmode := os.Getenv("RUNMODE")
 
 	socketStore := socket.NewStore()
 	sessionStore := session.NewStore(sessionDuration)

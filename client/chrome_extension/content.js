@@ -23,7 +23,7 @@ var status = STATUSEND;
 var websocket = null;
 var flag = true;
 var timer = null;
-var debug = true;
+var debug = false;
 var video = null;
 var operation = null;
 
