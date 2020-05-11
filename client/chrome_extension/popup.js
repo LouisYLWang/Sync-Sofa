@@ -83,6 +83,9 @@ function handleResponse(response) {
         if (response.body == STATUSCONNECT) {
             toggleButtonsOff();
         }
+        if (response.body == STATUSSYNC) {
+            toggleButtonsOff();
+        }
     }
 }
 function sentMsgToContent(status, body = "", message = {}) {
