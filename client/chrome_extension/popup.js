@@ -2,12 +2,14 @@ const requestbutton = document.getElementById("requestbutton");
 const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
-const PAUSECODE = "1";
-const PLAYCODE = "2";
+const PAUSECODE = "-5";
+const PLAYCODE = "-4";
+const HELLOCODE = "-3";
 const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
 const STATUSSTART = "start"
 const STATUSEND = "end"
+const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 const apihost = "app.ylwang.me"
@@ -66,28 +68,30 @@ function handleCreateHostSession(e) {
         sentMsgToContent(STATUSSTART, sessionPair.selfID);
         inputbox.select();
         document.execCommand("copy");
-
-        notification(`code copied to clipboard \n
-                      session started`)
         toggleButtonsOff();
+        setTimeout(function () {
+            window.close();
+        }, 3000);
     })
 }
 
 function handleResponse(response) {
     if (response.status == STATUSASK) {
-        // notification(response.body);
         if (response.body == STATUSEND) {
             toggleButtonsOn();
+        }
+        if (response.body == STATUSCONNECT) {
+            toggleButtonsOff();
         }
         if (response.body == STATUSSYNC) {
             toggleButtonsOff();
         }
     }
 }
-function sentMsgToContent(status, body = "") {
+function sentMsgToContent(status, body = "", message = {}) {
     chrome.tabs.query(params, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id,
-            { "status": status, "body": body }, function (response) {
+            { "status": status, "body": body, "message": message }, function (response) {
                 handleResponse(response);
             });
     });
@@ -108,9 +112,11 @@ function handleBeginSessions(e) {
         if (sessionPair != null) {
             inputbox.value = sessionPair.selfID;
         }
-        sentMsgToContent(STATUSSTART, sessionPair.selfID);
-        notification("session started")
+        sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
         toggleButtonsOff();
+        setTimeout(function () {
+            window.close();
+        }, 3000);
     })
 }
 
@@ -127,33 +133,6 @@ function toggleButtonsOn() {
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
     stopbutton.style.display = "none";
-}
-
-function notification(body) {
-    var $form = document.querySelectorAll('#signup-form')[0],
-        $submit = document.querySelectorAll('#signup-form input[type="submit"]')[0],
-        $message;
-
-    $message = document.createElement('a');
-    $message.classList.add('message');
-    $form.appendChild($message);
-
-    $message._show = function (type, text) {
-        $message.innerHTML = text;
-        $message.classList.add(type);
-        $message.classList.add('visible');
-        window.setTimeout(function () {
-            $message._hide();
-        }, 3000);
-        $message._hide = function () {
-            $message.classList.remove('visible');
-        };
-    }
-    $submit.disabled = true;
-    window.setTimeout(function () {
-        $submit.disabled = false;
-        $message._show('success', body);
-    }, 750);
 }
 
 function initialize() {
