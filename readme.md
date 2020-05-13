@@ -50,6 +50,10 @@ export TLSCERT={your ssl ssl certificate file location}
 
 ### Install extension client:
 
+**Notices**: 
+Before use, please double check the version number of two clients are consistent. If the client are in same version.
+
+
 🌐 Chrome / Chromium:
 
 Download from Chrome web store:
@@ -64,40 +68,59 @@ Install .crx (drag the file into browser):
 
 https://github.com/LouisYLWang/Sync-Sofa/releases/download
 
-🌐 Edge: (will be supported in later version)
+🌐 Edge: 
+
+https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp
 
 🦊 Firefox: (will be supported in later version)
 
 ## Release History
 
-- 1.0.3 
+🛠 update on 12 May 2020 - v 1.0.5
+------------------------------------------------------------------------------------
+Improve stability
+  > Test for a new logic to avoid infinite echo back (each party repeat the last operation of other party) : introduce a queue as a buffer of operation and if the operations is beyond frequency threshold, the client will automatically to halt and cool down for sometime.
 
-  - improve stability & UX logic
-  - Added support of following websites:
-    - [iqiyi](https://www.iqiyi.com/) 
-    - [youku](https://www.youku.com/)
-    - [weiyun](https://www.weiyun.com/)
-    - [tencent video](https://v.qq.com/)
-
-  - Fixed the support of [duonao live](https://duonaolive.com/);
-  - Removed the support of [91mjw](https://91mjw.com/) (temporarily);
-  - Refined documentation, will add more detail in next verison; 
+Add support for edge browser (beta)
 
 
-- 1.0.2
-  - support play process bar control sync
-  - fixed the issue that when syncing playing time, there is the possibility to crash the extension
+🛠 update on 10 May 2020 - v 1.0.4
+------------------------------------------------------------------------------------
+Now user will get notification when they successfully connected to each other
+Improve stability, better sync performance
+Change the notification UI using sweetalert
 
-* 0.0.1 (beta version)
-  - 2 party connection
-  - sync pause and play action
-  - out-of-sync notification
+🛠 update on 8 May 2020 - v 1.0.3
+------------------------------------------------------------------------------------
+improve stability & UX logic
+Added support of following websites:
+  - [iqiyi](https://www.iqiyi.com/) 
+  - [youku](https://www.youku.com/)
+  - [weiyun](https://www.weiyun.com/)
+  - [tencent video](https://v.qq.com/)
+
+Fixed the support of duonao live;
+Removed the support of 91mjw (temporarily);
+Refined documentation, will add more detail in next verison;
+
+🛠 update on 31 Mar 2020 - 1.0.2
+------------------------------------------------------------------------------------
+Add support of play process bar control sync
+Fixed the issue that when syncing playing time, there is the possibility to crash the extension
+
+
+🛠 update on 26 Mar 2020 - 0.0.1 (beta version)
+------------------------------------------------------------------------------------
+Add support of 2 parties connection
+Add support of sync pause and play action
+Add support of out-of-sync notification
+
 
 ## Meta
 
-Yiliang "Louis" Wang – [@myblog](https://ylwang.codes/) – louis.yl.wang@outlook.com
+Yiliang "Louis" Wang – [@blog](https://ylwang.codes/) – [@mail](mailto://louis.yl.wang@outlook.com)
 
-(special thank for the contributions of @onns & @ZeyuW)
+Onns – [@blog](https://onns.xyz/) – [@mail](mailto://onns@onns.xyz)
 
 ## Contributing
 
