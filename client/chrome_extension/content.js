@@ -21,9 +21,9 @@ const STATUSASK = "ask"
 
 var status = STATUSEND;
 var websocket = null;
-var flag = true;
+var operationFlag = 0;
 var timer = null;
-var debug = true;
+var debug = false;
 var video = null;
 var operation = null;
 
@@ -102,6 +102,21 @@ class SyncHelper {
             }, codeCoolingTime);
     }
 
+    static codeMessage(code) {
+        let ALLCODE = {
+            "-1": "CLOSEDCODE",
+            "-2": "DISCONNECTCODE",
+            "-3": "HELLOCODE",
+            "-4": "PLAYCODE",
+            "-5": "PAUSECODE"
+        };
+        if(ALLCODE.hasOwnProperty(code)) {
+            return ALLCODE[code];
+        } else {
+            return "CURRENT TIME";
+        }
+    }
+
     static send(code) {
         if (status != STATUSSYNC) {
             if (status == STATUSCONNECT) {
@@ -111,7 +126,7 @@ class SyncHelper {
             return;
         }
 
-        if (isOpen(websocket) && flag) {
+        if (isOpen(websocket) && operationFlag >= 0) {
             if (this.isFrequent()) {
                 websocket.send(PAUSECODE);
                 video.pause();
@@ -121,9 +136,10 @@ class SyncHelper {
                 return;
             }
             SyncHelper.addCode(code);
+            Debugger.log("send message: " + code + ", " + SyncHelper.codeMessage(code));
             websocket.send(code);
         } else {
-            flag = true;
+            operationFlag++;
         }
     }
 
@@ -195,25 +211,25 @@ function handleOnSessions(websocket, video) {
     video.addEventListener("pause", (e) => {
         e.stopPropagation();
         SyncHelper.send(PAUSECODE);
-        Debugger.log(`SENT PAUSECODE`);
+        // Debugger.log(`SENT PAUSECODE`);
     })
 
     video.addEventListener("play", (e) => {
         e.stopPropagation();
         SyncHelper.send(video.currentTime)
-        Debugger.log(`SENT CURRENT TIME`);
+        // Debugger.log(`SENT CURRENT TIME`);
         SyncHelper.send(PLAYCODE)
-        Debugger.log(`SENT PLAYCODE`);
+        // Debugger.log(`SENT PLAYCODE`);
     })
 
     video.onseeking = function () {
         SyncHelper.send(video.currentTime);
-        Debugger.log(`SENT CURRENT TIME`);
+        // Debugger.log(`SENT CURRENT TIME`);
         video.pause();
     }
 
     websocket.onmessage = (msg) => {
-        Debugger.log("receive message: " + msg.data);
+        Debugger.log("receive message: " + msg.data + ", " + SyncHelper.codeMessage(msg.data));
         switch (msg.data) {
             case CLOSEDCODE:
                 video.pause();
@@ -229,28 +245,28 @@ function handleOnSessions(websocket, video) {
                 status = STATUSEND;
                 return;
             case PAUSECODE:
-                Debugger.log(`RECEIVED PAUSECODE`);
                 if (!video.paused) {
-                    flag = false;
+                    Debugger.log(`RECEIVED PAUSECODE`);
+                    operationFlag -= 1;
                     video.pause();
                 }
                 return;
             case PLAYCODE:
-                Debugger.log(`RECEIVED PLAYCODE`);
                 if (video.paused) {
-                    flag = false;
+                    Debugger.log(`RECEIVED PLAYCODE`);
+                    operationFlag -= 2;
                     video.play();
                 }
                 return;
             case HELLOCODE:
                 Debugger.log(`RECEIVED HELLOCODE`);
-                flag = true;
                 SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                 status = STATUSSYNC;
                 return;
             default:
                 if (msg.data <= video.duration && msg.data >= 0) {
                     if (Math.abs(msg.data - video.currentTime) > 1) {
+                        operationFlag -= 2;
                         video.currentTime = msg.data;
                         Debugger.log(`RECEIVED CURRENT TIME`);
                     }
