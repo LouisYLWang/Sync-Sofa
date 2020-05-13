@@ -16,7 +16,9 @@
                 "https://www.iqiyi.com/*",
                 "https://www.weiyun.com/*",
                 "https://www.youtube.com/*",
-                "https://v.youku.com/*"
+                "https://v.youku.com/*",
+                "http://127.0.0.1/*",
+                "file:///*"
             ],
             "run_at": "document_end",
             "js": [
