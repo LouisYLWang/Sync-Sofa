@@ -1,10 +1,12 @@
-@import url(fontawesome-all.min.css);
 @import url("https://fonts.googleapis.com/css?family=Roboto:400,700");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css");
 /*
 	Eventually by HTML5 UP
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 */
+
+
 html, body, div, span, applet, object,
 iframe, h1, h2, h3, h4, h5, h6, p, blockquote,
 pre, a, abbr, acronym, address, big, cite,
@@ -432,7 +434,8 @@ ul {
 ul.icons {
   cursor: default;
   list-style: none;
-  padding-left: 0; }
+  padding-left: 0; 
+  text-align: center;}
   ul.icons li {
     display: inline-block;
     padding: 0 1em 0 0; }
@@ -844,7 +847,7 @@ button,
   color: rgba(255, 255, 255, 0.5);
   left: 4em;
   opacity: 0.5;
-  position: absolute; }
+  position: inherit; }
   #footer .icons {
     margin: 0 0 0.5em 0; }
   #footer .copyright {
@@ -885,3 +888,21 @@ button,
       left: auto;
       margin: 1em 0 0 0;
       position: relative; } }
+
+  @font-face{
+    font-family:"Font Awesome 5 Brands";
+    font-style:normal;
+    font-weight:normal;
+    font-display:auto;
+    src:url(../webfonts/fa-brands-400.ttf) format("truetype")}.fab{font-family:"Font Awesome 5 Brands"}
+    
+  @font-face{
+    font-family:"Font Awesome 5 Free";
+    font-style:normal;font-weight:400;
+    font-display:auto;
+    src:url(../webfonts/fa-regular-400.ttf) format("truetype")}.far{font-weight:400}
+    
+  @font-face{
+    font-family:"Font Awesome 5 Free";
+    font-style:normal;font-weight:900;
+    src:url(../webfonts/fa-solid-900.ttf) format("truetype")}.fa,.far,.fas{font-family:"Font Awesome 5 Free"}.fa,.fas{font-weight:900}

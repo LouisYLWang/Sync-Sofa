@@ -2,6 +2,7 @@ const requestbutton = document.getElementById("requestbutton");
 const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
+const footerbuttons = document.getElementById("footerbuttons");
 const PAUSECODE = "-5";
 const PLAYCODE = "-4";
 const HELLOCODE = "-3";
@@ -25,11 +26,13 @@ var selfID = ""
 
 requestbutton.addEventListener("click", e => {
     e.preventDefault();
-    handleCreateHostSession(e)
+    UIStatusToLinked(); 
+    handleCreateHostSession(e);
 })
 
 startbutton.addEventListener("click", e => {
     e.preventDefault();
+    UIStatusToLinked();
     handleBeginSessions(e)
 })
 
@@ -43,7 +46,7 @@ inputbox.addEventListener("click", e => {
 stopbutton.addEventListener("click", e => {
     e.preventDefault();
     sentMsgToContent(STATUSEND)
-    toggleButtonsOn();
+    UIStatusToInit();
     if (inputbox.value !== "") {
         inputbox.value = "";
     }
@@ -68,7 +71,7 @@ function handleCreateHostSession(e) {
         sentMsgToContent(STATUSSTART, sessionPair.selfID);
         inputbox.select();
         document.execCommand("copy");
-        toggleButtonsOff();
+        UIStatusToLinked();
         setTimeout(function () {
             window.close();
         }, 3000);
@@ -78,13 +81,13 @@ function handleCreateHostSession(e) {
 function handleResponse(response) {
     if (response.status == STATUSASK) {
         if (response.body == STATUSEND) {
-            toggleButtonsOn();
+            UIStatusToInit();
         }
         if (response.body == STATUSCONNECT) {
-            toggleButtonsOff();
+            UIStatusToLinked();
         }
         if (response.body == STATUSSYNC) {
-            toggleButtonsOff();
+            UIStatusToLinked();
         }
     }
 }
@@ -113,7 +116,7 @@ function handleBeginSessions(e) {
             inputbox.value = sessionPair.selfID;
         }
         sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
-        toggleButtonsOff();
+        UIStatusToLinked();
         setTimeout(function () {
             window.close();
         }, 3000);
@@ -121,18 +124,20 @@ function handleBeginSessions(e) {
 }
 
 
-function toggleButtonsOff() {
+function UIStatusToLinked() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
-    stopbutton.style.display = "block";
+    stopbutton.style.display = "block";   
+    footerbuttons.style.display = "none"; 
 }
 
-function toggleButtonsOn() {
+function UIStatusToInit() {
     selfID = "";
     inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
     stopbutton.style.display = "none";
+    footerbuttons.style.display = "block";
 }
 
 function initialize() {
@@ -141,6 +146,7 @@ function initialize() {
             selfID = result.selfID;
             inputbox.value = selfID;
             requestbutton.value = "REQUEST NEW CODE";
+            stopbutton.style.display = "none";
         }
     });
     sentMsgToContent(STATUSASK);
