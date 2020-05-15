@@ -801,34 +801,33 @@ button,
   #header {
     margin: 0 0 1em 0; } }
 
-/* Signup Form */
-#signup-form {
+#mainform {
   display: -moz-flex;
   display: -webkit-flex;
   display: -ms-flex;
   display: flex;
   position: relative; }
-  #signup-form input[type="text"],
-  #signup-form input[type="password"],
-  #signup-form input[type="email"] {
+  #mainform input[type="text"],
+  #mainform input[type="password"],
+  #mainform input[type="email"] {
     width: 18em; }
-  #signup-form > * {
+  #mainform > * {
     margin: 0 0 0 1em; }
-  #signup-form > :first-child {
+  #mainform > :first-child {
     margin: 0 0 0 0; }
   @media screen and (max-width: 480px) {
-    #signup-form {
+    #mainform {
       -moz-flex-direction: column;
       -webkit-flex-direction: column;
       -ms-flex-direction: column;
       flex-direction: column; }
-      #signup-form input[type="type"],
-      #signup-form input[type="password"],
-      #signup-form input[type="email"] {
+      #mainform input[type="type"],
+      #mainform input[type="password"],
+      #mainform input[type="email"] {
         width: 100%; }
-      #signup-form > * {
+      #mainform > * {
         margin: 1.25em 0 0 0; }
-      #signup-form .message {
+      #mainform .message {
         bottom: -1.5em;
         font-size: 0.9em;
         height: 1em;
@@ -837,57 +836,6 @@ button,
         margin-top: 0;
         position: absolute; } }
 
-/* Footer */
-#footer {
-  -moz-transition: opacity 0.5s ease-in-out;
-  -webkit-transition: opacity 0.5s ease-in-out;
-  -ms-transition: opacity 0.5s ease-in-out;
-  transition: opacity 0.5s ease-in-out;
-  bottom: 4em;
-  color: rgba(255, 255, 255, 0.5);
-  left: 4em;
-  opacity: 0.5;
-  position: inherit; }
-  #footer .icons {
-    margin: 0 0 0.5em 0; }
-  #footer .copyright {
-    font-size: 0.8em;
-    list-style: none;
-    padding: 0; }
-    #footer .copyright li {
-      border-left: solid 1px rgba(255, 255, 255, 0.25);
-      display: inline-block;
-      line-height: 1em;
-      margin: 0 0 0 0.75em;
-      padding: 0 0 0 0.75em; }
-      #footer .copyright li:first-child {
-        border-left: 0;
-        margin-left: 0;
-        padding-left: 0; }
-    #footer .copyright a {
-      color: inherit; }
-  #footer:hover {
-    opacity: 1; }
-  #footer > :last-child {
-    margin-bottom: 0; }
-  @media screen and (max-width: 1680px) {
-    #footer {
-      bottom: 3.5em;
-      left: 3.5em; } }
-  @media screen and (max-width: 736px) {
-    #footer {
-      bottom: 2em;
-      left: 2em; } }
-  @media screen and (max-width: 360px) {
-    #footer {
-      bottom: 1.25em;
-      left: 1.25em; } }
-  @media screen and (max-height: 640px) {
-    #footer {
-      bottom: auto;
-      left: auto;
-      margin: 1em 0 0 0;
-      position: relative; } }
 
   @font-face{
     font-family:"Font Awesome 5 Brands";
@@ -895,13 +843,7 @@ button,
     font-weight:normal;
     font-display:auto;
     src:url(../webfonts/fa-brands-400.ttf) format("truetype")}.fab{font-family:"Font Awesome 5 Brands"}
-    
-  @font-face{
-    font-family:"Font Awesome 5 Free";
-    font-style:normal;font-weight:400;
-    font-display:auto;
-    src:url(../webfonts/fa-regular-400.ttf) format("truetype")}.far{font-weight:400}
-    
+
   @font-face{
     font-family:"Font Awesome 5 Free";
     font-style:normal;font-weight:900;
