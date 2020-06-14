@@ -8,6 +8,7 @@ var urlPattern = [
     "https://www.youtube.com/*",
     "https://v.youku.com/*",
     "http://127.0.0.1/*",
+    "http://music.jsososo.com/*",
     "file:///*"
 ];  
 
