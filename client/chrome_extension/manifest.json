@@ -18,12 +18,14 @@
                 "https://www.youtube.com/watch?*",
                 "https://v.youku.com/*",
                 "http://127.0.0.1/*",
+                "http://music.jsososo.com/*",
                 "file:///*"
             ],
             "run_at": "document_end",
             "js": [
                 "sweetalert.min.js",
-                "content.js"
+                "content-video.js",
+                "content-audio.js"
             ]
         }
     ],
