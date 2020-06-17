@@ -7,6 +7,7 @@ var urlPattern = [
     "https://www.weiyun.com/*",
     "https://www.youtube.com/*",
     "https://v.youku.com/*",
+    "https://www.mgtv.com/*",
     "http://127.0.0.1/*",
     "http://music.jsososo.com/*",
     "file:///*"

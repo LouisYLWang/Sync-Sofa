@@ -75,6 +75,10 @@ if (audio != null) {
 
     class SyncHelper {
 
+        constructor(host) {
+            this.host = host;
+        }
+
         static notification(msg) {
             // this.isFullScreen() && this.exitFullscreen();
             swal(msg, {
@@ -119,7 +123,10 @@ if (audio != null) {
             }
         }
 
-        static send(code) {
+        static send(code, type = "") {
+            if (type == "songId") {
+                code = "SYSMESSAGE-" + type + "-" + code;
+            }
             if (status != STATUSSYNC) {
                 if (status == STATUSCONNECT) {
                     SyncHelper.notification("not connected to other partner, please wait and pause the music");
@@ -161,15 +168,22 @@ if (audio != null) {
             }
         }
 
-        static handlePause() {
-            document.getElementsByClassName('icon-zanting1')[0].click();
+        handlePause() {
+            if (this.host == "music.jsososo.com") {
+                document.getElementsByClassName('icon-zanting1')[0].click();
+            }
         }
 
-        static handlePlay() {
-            document.getElementsByClassName('icon-bofang')[0].click();
+        handlePlay() {
+            if (this.host == "music.jsososo.com") {
+                document.getElementsByClassName('icon-bofang')[0].click();
+            }
         }
     }
 
+
+    var syncHelper = new SyncHelper(window.location.host);
+    Debugger.log(window.location.host);
 
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
@@ -234,11 +248,10 @@ if (audio != null) {
             // Debugger.log(`SENT PLAYCODE`);
         })
 
-        audio.addEventListener("ended", (e) => {
-            e.stopPropagation();
-            console.log('123');
-            console.log(audio.currentSrc);
-        })
+        audio.onabort = function () {
+            // console.log(audio.getAttribute("songid"));
+            SyncHelper.send(audio.getAttribute("songid"), "songId");
+        }
 
         audio.onseeking = function () {
             SyncHelper.send(audio.currentTime);
@@ -267,7 +280,7 @@ if (audio != null) {
                         Debugger.log(`RECEIVED PAUSECODE`);
                         operationFlag -= 1;
                         // audio.pause();
-                        SyncHelper.handlePause();
+                        syncHelper.handlePause();
                     }
                     return;
                 case PLAYCODE:
@@ -275,7 +288,7 @@ if (audio != null) {
                         Debugger.log(`RECEIVED PLAYCODE`);
                         operationFlag -= 2;
                         // audio.play();
-                        SyncHelper.handlePlay();
+                        syncHelper.handlePlay();
                     }
                     return;
                 case HELLOCODE:
@@ -284,6 +297,15 @@ if (audio != null) {
                     status = STATUSSYNC;
                     return;
                 default:
+                    if (msg.data.substr(0, 10) == "SYSMESSAGE") {
+                        let sysmessage = msg.data.substr(11);
+                        if (sysmessage.substr(0, 6) == "songId") {
+                            // VUE_APP.$store.dispatch("updatePlayNow",VUE_APP.$store.state.allSongs[sysmessage.substr(7)]);
+                            audio.setAttribute("songid", sysmessage.substr(7));
+                            Debugger.log(`RECEIVED SONGID`);
+                            operationFlag -= 1;
+                        }
+                    }
                     if (msg.data <= audio.duration && msg.data >= 0) {
                         if (Math.abs(msg.data - audio.currentTime) > 1) {
                             operationFlag -= 2;
