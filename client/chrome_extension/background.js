@@ -1,7 +1,7 @@
 var urlPattern = [
     "https://*.bilibili.com/video/*",
     "https://www.dandanzan.com/*",
-    "https://duonaolive.com/play*",
+    "https://duonaolive.com/*",
     "https://v.qq.com/*",
     "https://www.iqiyi.com/*",
     "https://www.weiyun.com/*",

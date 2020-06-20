@@ -3,6 +3,8 @@ const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
+const mtctbutton = document.getElementById("mtctbutton");
+
 const PAUSECODE = "-5";
 const PLAYCODE = "-4";
 const HELLOCODE = "-3";
@@ -50,6 +52,11 @@ stopbutton.addEventListener("click", e => {
     if (inputbox.value !== "") {
         inputbox.value = "";
     }
+})
+
+mtctbutton.addEventListener("click", e => {
+    e.preventDefault();
+    chrome.windows.create({'url': 'chrome-extension://ocfjeogljngknapodpfhjpdidbddjaik/chatpopup.html', 'type': 'popup'}, function(window) {});
 })
 
 function handleCreateHostSession(e) {
@@ -127,8 +134,10 @@ function handleBeginSessions(e) {
 function UIStatusToLinked() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
+    footerbuttons.style.display = "none";
+    
     stopbutton.style.display = "block";   
-    footerbuttons.style.display = "none"; 
+    mtctbutton.style.display = "block";
 }
 
 function UIStatusToInit() {
@@ -136,8 +145,10 @@ function UIStatusToInit() {
     inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
-    stopbutton.style.display = "none";
     footerbuttons.style.display = "block";
+
+    stopbutton.style.display = "none";
+    mtctbutton.style.display = "none";
 }
 
 function initialize() {
@@ -147,6 +158,7 @@ function initialize() {
             inputbox.value = selfID;
             requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
+            mtctbutton.style.display = "none";
         }
     });
     sentMsgToContent(STATUSASK);
