@@ -567,6 +567,7 @@ function notifyMsg() {
 }
 
 function renderMsg(msg, chatio) {
+    msg = html2Escape(msg);
     var msgList = document.querySelector(".chatlist");
     var curTime = new Date().format('hh:mm');
     if (lastMsgUpdateTime != curTime) {
@@ -582,4 +583,15 @@ function renderMsg(msg, chatio) {
     chatContent.innerHTML = `<span>${msg}</span>`
     msgList.appendChild(chatContent);
     chatContent.scrollIntoView();
+}
+
+function html2Escape(code) {
+    return code.replace(/[<>&"]/g, function(c) {
+        return {
+            '<': '&lt;',
+            '>': '&gt;',
+            '&': '&amp;',
+            '"': '&quot;'
+        }[c];
+    });
 }

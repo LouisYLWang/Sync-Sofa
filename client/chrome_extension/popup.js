@@ -28,7 +28,7 @@ var selfID = ""
 
 requestbutton.addEventListener("click", e => {
     e.preventDefault();
-    UIStatusToLinked(); 
+    UIStatusToLinked();
     handleCreateHostSession(e);
 })
 
@@ -54,10 +54,10 @@ stopbutton.addEventListener("click", e => {
     }
 })
 
-mtctbutton.addEventListener("click", e => {
-    e.preventDefault();
-    chrome.windows.create({'url': 'chrome-extension://ocfjeogljngknapodpfhjpdidbddjaik/chatpopup.html', 'type': 'popup'}, function(window) {});
-})
+// mtctbutton.addEventListener("click", e => {
+//     e.preventDefault();
+//     chrome.windows.create({ 'url': 'chrome-extension://ocfjeogljngknapodpfhjpdidbddjaik/chatpopup.html', 'type': 'popup' }, function (window) { });
+// })
 
 function handleCreateHostSession(e) {
     e.preventDefault();
@@ -134,10 +134,9 @@ function handleBeginSessions(e) {
 function UIStatusToLinked() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
-    footerbuttons.style.display = "none";
-    
-    stopbutton.style.display = "block";   
-    mtctbutton.style.display = "block";
+    // footerbuttons.style.display = "none";
+    stopbutton.style.display = "block";
+    // mtctbutton.style.display = "block";
 }
 
 function UIStatusToInit() {
@@ -145,10 +144,9 @@ function UIStatusToInit() {
     inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
-    footerbuttons.style.display = "block";
-
+    // footerbuttons.style.display = "block";
     stopbutton.style.display = "none";
-    mtctbutton.style.display = "none";
+    // mtctbutton.style.display = "none";
 }
 
 function initialize() {
