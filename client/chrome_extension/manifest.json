@@ -6,7 +6,6 @@
         "storage",
         "tabs"
     ],
-    "web_accessible_resources" : ["test.js"],
     "content_scripts": [
         {
             "matches": [
@@ -25,10 +24,8 @@
             ],
             "run_at": "document_end",
             "js": [
-                "content-script.js",
                 "sweetalert.min.js",
-                "content-video.js",
-                "content-audio.js"
+                "content.js"
             ]
         }
     ],
