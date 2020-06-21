@@ -62,9 +62,10 @@ class chat {
             }
         })
 
+        let that = this;
         this.chatSentInput.onkeydown = function (e) {
-            if (e.keyCode == 13 && this.chatSentInput.value !== "") {
-                this.send(this.chatSentInput.value);
+            if (e.keyCode == 13 && that.chatSentInput.value !== "") {
+                that.send(that.chatSentInput.value);
             }
         }
     }
@@ -287,12 +288,12 @@ class chat {
         <!-- message box -->
     
         <div class="chatlist">
-            <p class="time"><span>还未连接，请稍等</span></p>
+            <p class="time"><span>waiting for the partner</span></p>
         </div>
     
         <div class="putIn">
             <input type="text" class="chatpopup-input">
-            <button type="button" class="chatpopup-sent">SENT</button>
+            <button type="button" class="chatpopup-sent">send</button>
         </div>
         `;
         this.chatSentButton = document.querySelector(".chatpopup-sent");
