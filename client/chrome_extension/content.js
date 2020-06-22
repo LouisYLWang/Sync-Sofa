@@ -1,5 +1,18 @@
+// DEBUG mode or not
+var debug = true;
+var syncTool = null;
+
+const STATUSSTART = "start"
+const STATUSEND = "end"
+const STATUSCONNECT = "connect"
+const STATUSSYNC = "sync"
+const STATUSASK = "ask"
+
+var status = STATUSEND;
+
 var video = null;
 video = document.querySelector('video');
+var websocket = null;
 
 // Date format function
 Date.prototype.format = function (formatStr) {
@@ -333,7 +346,7 @@ class chat {
     }
 
     send(message) {
-        SyncHelper.sendMsg(message);
+        syncTool.send(message, "2");
         this.renderMessage(message, "chatout");
         this.chatSentInput.value = "";
     }
@@ -380,224 +393,319 @@ var chatHandler = new chat();
 
 
 
-    Debugger.log('videojs loaded');
-    const apihost = "app.ylwang.me"
-
-    const CLOSEDCODE = "-1";
-    const DISCONNECTCODE = "-2";
-    const HELLOCODE = "-3";
-    const PLAYCODE = "-4";
-    const PAUSECODE = "-5";
-
-    const STATUSSTART = "start"
-    const STATUSEND = "end"
-
-    const OPPAUSE = "pause"
-    const OPPLAY = "play"
-    const OPSYNC = "synctime"
-
-    //connect to server
-    const STATUSCONNECT = "connect"
-    //connect to partner
-    const STATUSSYNC = "sync"
-    const STATUSASK = "ask"
-
-    var status = STATUSEND;
-    var websocket = null;
-    var operationFlag = 0;
-    var timer = null;
-    var debug = true;
-
-    var operation = null;
-
-    var codelist = [];
-    var codeMaxLength = 10;
-    var codeMinInterval = 5 * 1000;
-    var codeCoolingTime = 3 * 1000;
-
-    // check connection every 30s.
-    setInterval(function () {
-        isOpen(websocket) ? status = STATUSSYNC : status = STATUSEND;
-    }, 1000 * 30);
 
 
-    class SyncHelper {
 
-        static notification(msg) {
-            // this.isFullScreen() && this.exitFullscreen();
-            swal(msg, {
-                buttons: false,
-                timer: 3000,
-            });
+
+
+var operationFlag = 0;
+
+
+var operation = null;
+
+var codelist = [];
+var codeMaxLength = 10;
+var codeMinInterval = 5 * 1000;
+var codeCoolingTime = 3 * 1000;
+
+
+class SyncHelper {
+    apihost = "app.ylwang.me"
+    CLOSEDCODE = "-1";
+    DISCONNECTCODE = "-2";
+    HELLOCODE = "-3";
+    PLAYCODE = "-4";
+    PAUSECODE = "-5";
+    ALLCODE = {
+        "-1": "CLOSEDCODE",
+        "-2": "DISCONNECTCODE",
+        "-3": "HELLOCODE",
+        "-4": "PLAYCODE",
+        "-5": "PAUSECODE"
+    };
+    SYSTEMMESSAGE = "1";
+    CHATMESSAGE = "2";
+    SYNCMESSAGE = "3";
+    MESSAGETYPE = {
+        "1": "SYSTEMMESSAGE",
+        "2": "CHATMESSAGE",
+        "3": "SYNCMESSAGE"
+    }
+    socketLock = false;
+    heartBeatTimer = [null, null, null];
+    heartBeatTimes = [3, 10, 60];
+
+    constructor(serverCode, option) {
+
+        var timer = null;
+        Debugger.log(`RECEIVED sessionID ${serverCode}`);
+        let url = `wss://${this.apihost}/ws/?id=${serverCode}`;
+        if (websocket) {
+            websocket.close();
         }
-
-        static addCode(code) {
-            codelist.push([code, Date.now()]);
-            if (codelist.length > codeMaxLength) {
-                codelist.shift();
-            }
-        }
-
-        static isFrequent() {
-            if (codelist.length == 0) return false;
-            // Debugger.log(codelist.length);
-            // Debugger.log(Date.now() - codelist[0][1] - codeMinInterval);
-            return codelist.length == codeMaxLength && (Date.now() - codelist[0][1]) < codeMinInterval;
-        }
-
-        static coolDown() {
-            setTimeout(
-                function () {
-                    codelist = [];
-                }, codeCoolingTime);
-        }
-
-        static codeMessage(code) {
-            let ALLCODE = {
-                "-1": "CLOSEDCODE",
-                "-2": "DISCONNECTCODE",
-                "-3": "HELLOCODE",
-                "-4": "PLAYCODE",
-                "-5": "PAUSECODE"
-            };
-            if (ALLCODE.hasOwnProperty(code)) {
-                return ALLCODE[code];
-            } else {
-                return "CURRENT TIME";
-            }
-        }
-
-        static send(code) {
-            if (status != STATUSSYNC) {
-                if (status == STATUSCONNECT) {
-                    SyncHelper.notification("not connected to other partner, please wait and pause the video");
-                    Debugger.log(`WAITING FOR THE PARTNER`);
+        websocket = new WebSocket(url);
+        var that = this;
+        if (option && option.beginFlag) {
+            timer = setInterval(function () {
+                if (that.isOpen()) {
+                    clearInterval(timer);
+                    status = STATUSSYNC;
+                    that.send(that.HELLOCODE);
+                    SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                 }
-                return;
-            }
-
-            if (isOpen(websocket) && operationFlag >= 0) {
-                if (this.isFrequent()) {
-                    websocket.send(PAUSECODE);
-                    video.pause();
-                    SyncHelper.notification("the operation is too frequent, please waiting for " + codeCoolingTime / 1000 + "s.");
-                    SyncHelper.coolDown();
-                    Debugger.log(`WAITING FOR COOLING TIME`);
-                    return;
-                }
-                SyncHelper.addCode(code);
-                Debugger.log("send message: " + code + ", " + SyncHelper.codeMessage(code));
-                websocket.send(code);
-            } else {
-                operationFlag++;
-            }
+            }, 500);
+        } else {
+            SyncHelper.notification(`Room created and room code copied to clipboard`);
+            status = STATUSCONNECT;
         }
-
-        static sendMsg(content) {
-            websocket.send("USRMESSAGE-" + content);
-            Debugger.log("send message: " + "USRMESSAGE:" + content);
-        }
-
-        static isFullScreen() {
-            return document.isFullScreen || document.mozIsFullScreen || document.webkitIsFullScreen
-        }
-
-        static exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
+        that.handleSessions();
+        // check connection every 30s.
+        setInterval(function () {
+            that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
+        }, 1000 * 30);
     }
 
-
-
-
-
-    function isOpen(websocket) {
-        return websocket !== null && websocket.readyState === websocket.OPEN;
+    close() {
+        this.send(this.CLOSEDCODE);
+        websocket.close();
+        status = STATUSEND;
     }
 
-    function handleOnSessions(websocket, video) {
+    handleSessions() {
+        var that = this;
+
         video.addEventListener("pause", (e) => {
             e.stopPropagation();
-            SyncHelper.send(PAUSECODE);
-            // Debugger.log(`SENT PAUSECODE`);
+            that.sync();
         })
 
         video.addEventListener("play", (e) => {
             e.stopPropagation();
-            SyncHelper.send(video.currentTime)
-            // Debugger.log(`SENT CURRENT TIME`);
-            SyncHelper.send(PLAYCODE)
-            // Debugger.log(`SENT PLAYCODE`);
+            that.sync();
         })
 
         video.onseeking = function () {
-            SyncHelper.send(video.currentTime);
-            // Debugger.log(`SENT CURRENT TIME`);
             video.pause();
+            that.sync();
         }
 
-        websocket.onmessage = (msg) => {
-            Debugger.log("receive message: " + msg.data + ", " + SyncHelper.codeMessage(msg.data));
-            switch (msg.data) {
-                case CLOSEDCODE:
-                    video.pause();
-                    SyncHelper.notification("socket connection closed by other partner");
-                    Debugger.log("socket connection closed by other partner");
-                    websocket.close();
-                    status = STATUSEND;
-                    return;
-                case DISCONNECTCODE:
-                    video.pause();
-                    SyncHelper.notification("not connected to other partner");
-                    websocket.close();
-                    status = STATUSEND;
-                    return;
-                case PAUSECODE:
-                    if (!video.paused) {
-                        Debugger.log(`RECEIVED PAUSECODE`);
-                        operationFlag -= 1;
-                        video.pause();
-                    }
-                    return;
-                case PLAYCODE:
-                    if (video.paused) {
-                        Debugger.log(`RECEIVED PLAYCODE`);
-                        operationFlag -= 2;
-                        video.play();
-                    }
-                    return;
-                case HELLOCODE:
-                    Debugger.log(`RECEIVED HELLOCODE`);
-                    SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
-                    status = STATUSSYNC;
-                    return;
-                default:
-                    if (msg.data.substr(0, 10) == "USRMESSAGE") {
-                        let usrmessage = msg.data.substr(11);
-                        chatHandler.receive(usrmessage);
-                        Debugger.log(`RECEIVED MSG ${usrmessage}`);
-                        return;
-                    } else {
-                        if (msg.data <= video.duration && msg.data >= 0) {
-                            if (Math.abs(msg.data - video.currentTime) > 1) {
-                                operationFlag -= 2;
-                                video.currentTime = msg.data;
-                                Debugger.log(`RECEIVED CURRENT TIME`);
-                            }
-                        }
-                        return;
-                    }
-            }
+        websocket.onmessage = function (message) {
+            that.receive(message.data);
         }
     }
+
+    receive(message) {
+        // var that = this;
+        message = JSON.parse(message);
+
+        // compatible with older versions.
+        if (message.type == undefined) {
+            message = {
+                "type": this.SYSTEMMESSAGE,
+                "content": message + ""
+            }
+        }
+        // end.
+
+        Debugger.log(`RECEIVED MESSAGE: ${JSON.stringify(message.content)}, TYPE: ${this.MESSAGETYPE[message.type]}`);
+        switch (message.type) {
+            case this.SYSTEMMESSAGE:
+                Debugger.log(`RECEIVED ${this.ALLCODE[message.content]}`);
+                switch (message.content) {
+                    case this.CLOSEDCODE:
+                        video.pause();
+                        SyncHelper.notification("socket connection closed by other partner");
+                        websocket.close();
+                        status = STATUSEND;
+                        break;
+                    case this.DISCONNECTCODE:
+                        video.pause();
+                        SyncHelper.notification("not connected to other partner");
+                        websocket.close();
+                        status = STATUSEND;
+                        break;
+                    case this.HELLOCODE:
+                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                        status = STATUSSYNC;
+                        chatHandler.receive("Hi");
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case this.CHATMESSAGE:
+                chatHandler.receive(message.content);
+                break;
+            case this.SYNCMESSAGE:
+                this.socketLock = true;
+                
+                var changeFlag = false;
+                if (message.content.currentTime <= video.duration && message.content.currentTime >= 0 && Math.abs(message.content.currentTime - video.currentTime) > 1) {
+                    video.currentTime = message.content.currentTime;
+                    changeFlag = true;
+                }
+                if (video.paused == message.content.isPlay) {
+                    changeFlag = true;
+                    if (message.content.isPlay) {
+                        var playPromise = video.play();
+
+                        if (playPromise !== undefined) {
+                            playPromise.then(_ => {
+                                // Automatic playback started!
+                                // Show playing UI.
+                            }).catch(error => {
+                                // Auto-play was prevented
+                                // Show paused UI.
+                                // that.sync();
+                            });
+                        }
+                    } else {
+                        video.pause();
+                    }
+                }
+                if(changeFlag) {
+                    this.clearHeartBeats();
+                    this.heartBeats();
+                } else {
+                    this.socketLock = false;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    send(message, type = "1") {
+        var data = {
+            "type": type,
+            "content": message
+        };
+        if (status != STATUSSYNC) {
+            if (status == STATUSCONNECT) {
+                SyncHelper.notification("not connected to other partner, please wait and pause the video");
+                Debugger.log(`WAITING FOR THE PARTNER`);
+            }
+            return;
+        }
+        if (this.socketLock && type == this.SYNCMESSAGE) {
+            Debugger.log(`BLOCKED BECAUSE OF THE LOCK`);
+            return;
+        }
+        if (this.isOpen()) {
+            // if (this.isFrequent()) {
+            //     websocket.send(PAUSECODE);
+            //     video.pause();
+            //     SyncHelper.notification("the operation is too frequent, please waiting for " + codeCoolingTime / 1000 + "s.");
+            //     SyncHelper.coolDown();
+            //     Debugger.log(`WAITING FOR COOLING TIME`);
+            //     return;
+            // }
+            // SyncHelper.addCode(code);
+            // Debugger.log("send message: " + code + ", " + SyncHelper.codeMessage(code));
+            websocket.send(JSON.stringify(data));
+            Debugger.log(`SENT MESSAGE: ${JSON.stringify(message)}, TYPE: ${this.MESSAGETYPE[type]}`);
+        }
+    }
+
+    sync() {
+        this.send({
+            "isPlay": !video.paused,
+            "currentTime": video.currentTime,
+            "speed": 1
+        }, this.SYNCMESSAGE);
+    }
+
+    heartBeats() {
+        var that = this;
+        for (var i = 0; i < this.heartBeatTimes.length; i++) {
+            this.heartBeatTimer[i] = setTimeout(
+                function () {
+                    that.socketLock = false;
+                    Debugger.log(`HEARTBEATS`);
+                    that.sync();
+                }, 1000 * this.heartBeatTimes[i]);
+        }
+    }
+    clearHeartBeats() {
+        for (var i = 0; i < this.heartBeatTimer.length; i++) {
+            clearTimeout(this.heartBeatTimer[i]);
+        }
+    }
+    static notification(msg) {
+        // this.isFullScreen() && this.exitFullscreen();
+        swal(msg, {
+            buttons: false,
+            timer: 3000,
+        });
+    }
+
+    static addCode(code) {
+        codelist.push([code, Date.now()]);
+        if (codelist.length > codeMaxLength) {
+            codelist.shift();
+        }
+    }
+
+    static isFrequent() {
+        if (codelist.length == 0) return false;
+        // Debugger.log(codelist.length);
+        // Debugger.log(Date.now() - codelist[0][1] - codeMinInterval);
+        return codelist.length == codeMaxLength && (Date.now() - codelist[0][1]) < codeMinInterval;
+    }
+
+    static coolDown() {
+        setTimeout(
+            function () {
+                codelist = [];
+            }, codeCoolingTime);
+    }
+
+    static codeMessage(code) {
+        let ALLCODE = {
+            "-1": "CLOSEDCODE",
+            "-2": "DISCONNECTCODE",
+            "-3": "HELLOCODE",
+            "-4": "PLAYCODE",
+            "-5": "PAUSECODE"
+        };
+        if (ALLCODE.hasOwnProperty(code)) {
+            return ALLCODE[code];
+        } else {
+            return "CURRENT TIME";
+        }
+    }
+
+
+
+    static sendMsg(content) {
+        websocket.send("USRMESSAGE-" + content);
+        Debugger.log("send message: " + "USRMESSAGE:" + content);
+    }
+
+    static isFullScreen() {
+        return document.isFullScreen || document.mozIsFullScreen || document.webkitIsFullScreen
+    }
+
+    static exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+    }
+
+    isOpen() {
+        return websocket !== null && websocket.readyState === websocket.OPEN;
+    }
+}
+
+
+
+
 
 
 
@@ -608,34 +716,11 @@ chrome.runtime.onMessage.addListener(
             "from a content script:" + sender.tab.url :
             "from the extension");
         if (request.status === STATUSSTART) {
-            Debugger.log(`RECEIVED sessionID ${request.body}`);
-            let url = `wss://${apihost}/ws/?id=${request.body}`;
-            if (websocket) { websocket.close(); }
-            websocket = new WebSocket(url);
-            if (request.message && request.message.beginFlag) {
-                timer = setInterval(function () {
-                    if (isOpen(websocket)) {
-                        clearInterval(timer);
-                        Debugger.log('sent hello code');
-                        websocket.send(HELLOCODE);
-                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
-                        status = STATUSSYNC;
-                    }
-                }, 500);
-            } else {
-                SyncHelper.notification(`Room created and room code copied to clipboard`);
-                status = STATUSCONNECT;
-            }
-            video = document.querySelector('video');
-            handleOnSessions(websocket, video);
+            syncTool = new SyncHelper(request.body, request.message);
         }
 
         if (request.status === STATUSEND) {
-            websocket.send(CLOSEDCODE);
-            Debugger.log(`SENT CLOSEDCODE`);
-            Debugger.log("socket connection closed");
-            websocket.close();
-            status = STATUSEND;
+            syncTool.close();
         }
 
         if (request.status == STATUSASK) {
