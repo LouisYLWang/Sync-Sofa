@@ -42,9 +42,9 @@ Date.prototype.format = function (formatStr) {
 }
 
 class Debugger {
-    static log(msg) {
+    static log(msg,color='') {
         if (debug) {
-            console.log(new Date().format('yyyy-MM-dd hh:mm:ss') + ' ' + msg);
+            console.log('%c '+new Date().format('yyyy-MM-dd hh:mm:ss') + ' ' + msg, color);
         }
     }
 }
@@ -432,8 +432,9 @@ class SyncHelper {
         "3": "SYNCMESSAGE"
     }
     socketLock = false;
+    ackFlag = false;
     heartBeatTimer = [null, null, null];
-    heartBeatTimes = [3, 10, 60];
+    heartBeatTimes = [2, 7, 20];
 
     constructor(serverCode, option) {
 
@@ -485,7 +486,7 @@ class SyncHelper {
         })
 
         video.onseeking = function () {
-            video.pause();
+            // video.pause();
             that.sync();
         }
 
@@ -507,7 +508,7 @@ class SyncHelper {
         }
         // end.
 
-        Debugger.log(`RECEIVED MESSAGE: ${JSON.stringify(message.content)}, TYPE: ${this.MESSAGETYPE[message.type]}`);
+        Debugger.log(`RECEIVED MESSAGE: ${JSON.stringify(message.content)}, TYPE: ${this.MESSAGETYPE[message.type]}`, 'color: red;');
         switch (message.type) {
             case this.SYSTEMMESSAGE:
                 Debugger.log(`RECEIVED ${this.ALLCODE[message.content]}`);
@@ -538,32 +539,44 @@ class SyncHelper {
                 break;
             case this.SYNCMESSAGE:
                 this.socketLock = true;
-                
-                var changeFlag = false;
-                if (message.content.currentTime <= video.duration && message.content.currentTime >= 0 && Math.abs(message.content.currentTime - video.currentTime) > 1) {
-                    video.currentTime = message.content.currentTime;
-                    changeFlag = true;
-                }
-                if (video.paused == message.content.isPlay) {
-                    changeFlag = true;
-                    if (message.content.isPlay) {
-                        var playPromise = video.play();
 
-                        if (playPromise !== undefined) {
-                            playPromise.then(_ => {
-                                // Automatic playback started!
-                                // Show playing UI.
-                            }).catch(error => {
-                                // Auto-play was prevented
-                                // Show paused UI.
-                                // that.sync();
-                            });
-                        }
+                var changeFlag = false;
+                if (message.content.currentTime <= video.duration && message.content.currentTime >= 0 && Math.abs(message.content.currentTime - video.currentTime) > 5) {
+                    if (message.content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
                     } else {
-                        video.pause();
+                        video.currentTime = message.content.currentTime;
+                        changeFlag = true;
                     }
                 }
-                if(changeFlag) {
+                if (video.paused == message.content.isPlay) {
+                    if (message.content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        changeFlag = true;
+                        if (message.content.isPlay) {
+                            var playPromise = video.play();
+
+                            if (playPromise !== undefined) {
+                                playPromise.then(_ => {
+                                    // Automatic playback started!
+                                    // Show playing UI.
+                                }).catch(error => {
+                                    // Auto-play was prevented
+                                    // Show paused UI.
+                                    // that.sync();
+                                });
+                            }
+                        } else {
+                            video.pause();
+                        }
+                    }
+                }
+                if (changeFlag) {
                     this.clearHeartBeats();
                     this.heartBeats();
                 } else {
@@ -603,7 +616,7 @@ class SyncHelper {
             // SyncHelper.addCode(code);
             // Debugger.log("send message: " + code + ", " + SyncHelper.codeMessage(code));
             websocket.send(JSON.stringify(data));
-            Debugger.log(`SENT MESSAGE: ${JSON.stringify(message)}, TYPE: ${this.MESSAGETYPE[type]}`);
+            Debugger.log(`SENT MESSAGE: ${JSON.stringify(message)}, TYPE: ${this.MESSAGETYPE[type]}`, 'color: green;');
         }
     }
 
@@ -611,7 +624,7 @@ class SyncHelper {
         this.send({
             "isPlay": !video.paused,
             "currentTime": video.currentTime,
-            "speed": 1
+            "ack": this.ackFlag
         }, this.SYNCMESSAGE);
     }
 
@@ -622,7 +635,9 @@ class SyncHelper {
                 function () {
                     that.socketLock = false;
                     Debugger.log(`HEARTBEATS`);
+                    that.ackFlag = true;
                     that.sync();
+                    that.ackFlag = false;
                 }, 1000 * this.heartBeatTimes[i]);
         }
     }
