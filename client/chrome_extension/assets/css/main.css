@@ -30,7 +30,8 @@ footer, header, hgroup, menu, nav, section {
   display: block; }
 
 body {
-  line-height: 1; }
+  line-height: 1; 
+}
 
 ol, ul {
   list-style: none; }
@@ -85,8 +86,11 @@ html, body {
   width: 100%; }
   @media screen and (max-height: 640px) {
     html, body {
-      height: auto;
-      min-height: 100%; } }
+      height: 492px;
+      min-height: 100%; 
+      overflow-y: hidden;
+    } 
+  }
 
 body {
   display: -moz-flex;

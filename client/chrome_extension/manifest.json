@@ -10,8 +10,8 @@
         {
             "matches": [
                 "https://*.bilibili.com/video/*",
-                "https://www.dandanzan.com/dianying/*",
-                "https://duonaolive.com/detail?*",
+                "https://www.dandanzan.com/*",
+                "https://duonaolive.com/*",
                 "https://v.qq.com/*",
                 "https://www.iqiyi.com/*",
                 "https://www.weiyun.com/*",

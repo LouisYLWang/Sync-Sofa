@@ -5,7 +5,7 @@ var urlPattern = [
     "https://v.qq.com/*",
     "https://www.iqiyi.com/*",
     "https://www.weiyun.com/*",
-    "https://www.youtube.com/*",
+    "https://www.youtube.com/watch?*",
     "https://v.youku.com/*",
     "https://www.mgtv.com/*",
     "http://127.0.0.1/*",

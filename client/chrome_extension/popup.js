@@ -3,6 +3,7 @@ const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
+const cancelbutton = document.getElementById("cancelbutton");
 const mtctbutton = document.getElementById("mtctbutton");
 
 const PAUSECODE = "-5";
@@ -42,12 +43,21 @@ inputbox.addEventListener("click", e => {
     e.preventDefault();
     if (requestbutton.style.display === "block") {
         requestbutton.style.display = "none";
+        cancelbutton.style.display = "block";
     }
 })
 
 stopbutton.addEventListener("click", e => {
     e.preventDefault();
     sentMsgToContent(STATUSEND)
+    UIStatusToInit();
+    if (inputbox.value !== "") {
+        inputbox.value = "";
+    }
+})
+
+cancelbutton.addEventListener("click", e => {
+    e.preventDefault();
     UIStatusToInit();
     if (inputbox.value !== "") {
         inputbox.value = "";
@@ -134,7 +144,6 @@ function handleBeginSessions(e) {
 function UIStatusToLinked() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
-    // footerbuttons.style.display = "none";
     stopbutton.style.display = "block";
     // mtctbutton.style.display = "block";
 }
@@ -144,8 +153,8 @@ function UIStatusToInit() {
     inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
-    // footerbuttons.style.display = "block";
     stopbutton.style.display = "none";
+    cancelbutton.style.display = "none";
     // mtctbutton.style.display = "none";
 }
 
@@ -157,6 +166,7 @@ function initialize() {
             requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
             mtctbutton.style.display = "none";
+            cancelbutton.style.display = "none";
         }
     });
     sentMsgToContent(STATUSASK);

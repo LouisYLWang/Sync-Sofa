@@ -42,9 +42,9 @@ Date.prototype.format = function (formatStr) {
 }
 
 class Debugger {
-    static log(msg,color='') {
+    static log(msg, color = '') {
         if (debug) {
-            console.log('%c '+new Date().format('yyyy-MM-dd hh:mm:ss') + ' ' + msg, color);
+            console.log('%c ' + new Date().format('yyyy-MM-dd hh:mm:ss') + ' ' + msg, color);
         }
     }
 }
@@ -100,6 +100,8 @@ class chat {
             top: 90%;
             left: 90%;
             transition: all 0.2s;
+            outline:none;
+            cursor: pointer;
         }
         
         #chatbutton:hover {
@@ -163,7 +165,7 @@ class chat {
           }
     
           .chatpopup-sent {
-            width: 55px;
+            width: 54px;
             margin: 6px;
             transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
             background-color: #1cb495;
@@ -177,6 +179,7 @@ class chat {
             text-align: center;
             text-decoration: none;
             white-space: nowrap;
+            outline:none;
           }
     
           .chatpopup-input:hover {
@@ -416,12 +419,14 @@ class SyncHelper {
     HELLOCODE = "-3";
     PLAYCODE = "-4";
     PAUSECODE = "-5";
+    WAITINGCODE = "-6";
     ALLCODE = {
         "-1": "CLOSEDCODE",
         "-2": "DISCONNECTCODE",
         "-3": "HELLOCODE",
         "-4": "PLAYCODE",
-        "-5": "PAUSECODE"
+        "-5": "PAUSECODE",
+        "-6": "WAITINGCODE"
     };
     SYSTEMMESSAGE = "1";
     CHATMESSAGE = "2";
@@ -485,6 +490,23 @@ class SyncHelper {
             that.sync();
         })
 
+        video.addEventListener("waiting", (e) =>{
+            e.stopPropagation();
+            let buffered = false;
+            let BufferedInvLen = video.buffered.length;
+            var i;
+            for (i = 0; i < BufferedInvLen; i++){
+                buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
+            }
+            if (!buffered) {
+                that.send(this.WAITINGCODE);
+                video.addEventListener('canplay', (e) => {
+                    e.stopPropagation();
+                    video.play();
+                });
+            }
+        })
+        
         video.onseeking = function () {
             // video.pause();
             that.sync();
@@ -530,6 +552,10 @@ class SyncHelper {
                         status = STATUSSYNC;
                         chatHandler.receive("Hi");
                         break;
+                    case this.WAITINGCODE:
+                        video.pause();
+                        SyncHelper.notification("Other partner is buffering, please wait");
+                        break;
                     default:
                         break;
                 }
@@ -571,6 +597,7 @@ class SyncHelper {
                                     // that.sync();
                                 });
                             }
+
                         } else {
                             video.pause();
                         }
@@ -681,7 +708,8 @@ class SyncHelper {
             "-2": "DISCONNECTCODE",
             "-3": "HELLOCODE",
             "-4": "PLAYCODE",
-            "-5": "PAUSECODE"
+            "-5": "PAUSECODE",
+            "-6": "WAITINGCODE"
         };
         if (ALLCODE.hasOwnProperty(code)) {
             return ALLCODE[code];
