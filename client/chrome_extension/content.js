@@ -479,7 +479,7 @@ class SyncHelper {
 
     handleSessions() {
         var that = this;
-
+        video = document.querySelector('video');
         video.addEventListener("pause", (e) => {
             e.stopPropagation();
             that.sync();
@@ -490,12 +490,12 @@ class SyncHelper {
             that.sync();
         })
 
-        video.addEventListener("waiting", (e) =>{
+        video.addEventListener("waiting", (e) => {
             e.stopPropagation();
             let buffered = false;
             let BufferedInvLen = video.buffered.length;
             var i;
-            for (i = 0; i < BufferedInvLen; i++){
+            for (i = 0; i < BufferedInvLen; i++) {
                 buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
             }
             if (!buffered) {
@@ -506,7 +506,7 @@ class SyncHelper {
                 });
             }
         })
-        
+
         video.onseeking = function () {
             // video.pause();
             that.sync();
@@ -554,7 +554,7 @@ class SyncHelper {
                         break;
                     case this.WAITINGCODE:
                         video.pause();
-                        SyncHelper.notification("Other partner is buffering, please wait");
+                        // SyncHelper.notification("Other partner is buffering, please wait", 1000);
                         break;
                     default:
                         break;
@@ -567,7 +567,7 @@ class SyncHelper {
                 this.socketLock = true;
 
                 var changeFlag = false;
-                if (message.content.currentTime <= video.duration && message.content.currentTime >= 0 && Math.abs(message.content.currentTime - video.currentTime) > 5) {
+                if (message.content.currentTime <= video.duration && message.content.currentTime >= 0 && Math.abs(message.content.currentTime - video.currentTime) > 3) {
                     if (message.content.ack) {
                         this.socketLock = false;
                         this.clearHeartBeats();
@@ -673,11 +673,11 @@ class SyncHelper {
             clearTimeout(this.heartBeatTimer[i]);
         }
     }
-    static notification(msg) {
+    static notification(msg, duration = 3000) {
         // this.isFullScreen() && this.exitFullscreen();
         swal(msg, {
             buttons: false,
-            timer: 3000,
+            timer: duration,
         });
     }
 
