@@ -481,6 +481,15 @@ class SyncHelper {
         this.send(this.CLOSEDCODE);
         websocket.close();
         status = STATUSEND;
+        switch (this.type) {
+            case "video":
+                break;
+            case "vlc":
+                clearInterval(this.VLCTimer);
+                break;
+            default:
+                break;
+        }
     }
 
     handleSessions() {
@@ -552,14 +561,12 @@ class SyncHelper {
                     case this.CLOSEDCODE:
                         this.handleVideoPause();
                         SyncHelper.notification("socket connection closed by other partner");
-                        websocket.close();
-                        status = STATUSEND;
+                        this.close();
                         break;
                     case this.DISCONNECTCODE:
                         this.handleVideoPause();
                         SyncHelper.notification("not connected to other partner");
-                        websocket.close();
-                        status = STATUSEND;
+                        this.close();
                         break;
                     case this.HELLOCODE:
                         SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
