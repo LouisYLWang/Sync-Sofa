@@ -4,7 +4,7 @@ const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
 const cancelbutton = document.getElementById("cancelbutton");
-const mtctbutton = document.getElementById("mtctbutton");
+//const mtctbutton = document.getElementById("mtctbutton");
 
 const PAUSECODE = "-5";
 const PLAYCODE = "-4";
@@ -165,7 +165,7 @@ function initialize() {
             inputbox.value = selfID;
             requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
-            mtctbutton.style.display = "none";
+            //mtctbutton.style.display = "none";
             cancelbutton.style.display = "none";
         }
     });

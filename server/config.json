@@ -1,0 +1,18 @@
+{
+    "addr": ":443",
+    "runmode": "prod",
+    "tlsdir": {
+        "tlskey": "/etc/letsencrypt/live/your.host.url/privkey.pem",
+        "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
+    },
+    "feedbackservice":{
+        "smtpserverhost": "smtp.gmail.com",
+        "smtpserverport": "578",
+        "feedbackemailaddr": "sender_mail_name",
+        "feedbackemailpswd": "password",     
+        "recipients":[
+            "receiver1_mail_name@mail.host",
+            "receiver2_mail_name@mail.host"
+        ]
+    }
+  }
