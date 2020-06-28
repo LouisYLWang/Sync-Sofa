@@ -38,6 +38,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Request new code](#request-new-code-1)
     - [Start connection](#start-connection-1)
     - [Enjoy yourselves](#enjoy-yourselves-1)
+    - [Close Controller webpage](#close-controller-webpage)
   - [Installation](#installation-1)
     - [Self-hosting server](#self-hosting-server)
       - [🐳 With Docker :](#with-docker)
@@ -188,6 +189,10 @@ Now you can play the video, your operations will be synced to your partner. Enjo
 
 **Notice**:
 ⚠️ Keep your browser open and [http://127.0.0.1:8080/](http://127.0.0.1:8080/) itself.
+
+### Close Controller webpage
+
+After your video is finished, please click `STOP` button on `Sync Sofa` extension manually or just close [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
 ## Installation
 
