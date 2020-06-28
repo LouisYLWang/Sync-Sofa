@@ -658,6 +658,8 @@ class SyncHelper {
                     if (Math.abs(VLCTime - that.VLCTime) > 2) {
                         that.VLCTime = VLCTime;
                         changeFlag = true;
+                    } else {
+                        that.VLCTime = VLCTime;
                     }
                     if (VLCStatus != that.VLCStatus) {
                         that.VLCStatus = VLCStatus;
