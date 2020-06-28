@@ -1,35 +1,3 @@
-
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
-
-<!-- code_chunk_output -->
-
-- [Sync Sofa - streaming video playback synchronizer extension](#sync-sofa-streaming-video-playback-synchronizer-extension)
-  - [Installation](#installation)
-    - [Chrome / Chromium](#chrome-chromium)
-      - [Install from Chrome Web Store](#install-from-chrome-web-store)
-      - [Install from local .crx file](#install-from-local-crx-file)
-      - [Install from unpackaged folder](#install-from-unpackaged-folder)
-    - [Microsoft Edge:](#microsoft-edge)
-      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
-    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
-  - [Usage](#usage)
-    - [Open a video page](#open-a-video-page)
-    - [Request new code](#request-new-code)
-    - [Start connection](#start-connection)
-    - [Enjoy yourselves](#enjoy-yourselves)
-  - [Installation](#installation-1)
-    - [Self-hosting server](#self-hosting-server)
-      - [🐳 With Docker :](#with-docker)
-        - [web host](#web-host)
-        - [local host (dev env)](#local-host-dev-env)
-      - [Without Docker:](#without-docker)
-    - [Install extension client:](#install-extension-client)
-  - [Release History](#release-history)
-  - [Meta](#meta)
-  - [Contributing](#contributing)
-
-<!-- /code_chunk_output -->
-
 # Sync Sofa - streaming video playback synchronizer extension
 
 > This chrome extension allows multi-user sync streaming video in a fast, simple and stable way.
@@ -43,9 +11,62 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 - sync play process bar control: the playing time change will also affect other side user
 - out-of-sync notification: if any party disconnected/left the room, the other user will be notified.
 
+---
+
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+
+<!-- code_chunk_output -->
+
+- [Sync Sofa - streaming video playback synchronizer extension](#sync-sofa-streaming-video-playback-synchronizer-extension)
+  - [Supported list](#supported-list)
+  - [Installation](#installation)
+    - [Google Chrome](#google-chrome)
+      - [Install from Chrome Web Store](#install-from-chrome-web-store)
+      - [Install from local .crx file](#install-from-local-crx-file)
+      - [Install from unpackaged folder](#install-from-unpackaged-folder)
+    - [Microsoft Edge:](#microsoft-edge)
+      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
+    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
+  - [Usage](#usage)
+    - [Notices](#notices)
+    - [Open a video page](#open-a-video-page)
+    - [Request new code](#request-new-code)
+    - [Start connection](#start-connection)
+    - [Enjoy yourselves](#enjoy-yourselves)
+  - [VLC support](#vlc-support)
+    - [Start VLC on the server with the Web Interface](#start-vlc-on-the-server-with-the-web-interface)
+    - [Request new code](#request-new-code-1)
+    - [Start connection](#start-connection-1)
+    - [Enjoy yourselves](#enjoy-yourselves-1)
+  - [Installation](#installation-1)
+    - [Self-hosting server](#self-hosting-server)
+      - [🐳 With Docker :](#with-docker)
+        - [web host](#web-host)
+        - [local host (dev env)](#local-host-dev-env)
+      - [Without Docker:](#without-docker)
+    - [Install extension client:](#install-extension-client)
+  - [Release History](#release-history)
+  - [Meta](#meta)
+  - [Contributing](#contributing)
+
+<!-- /code_chunk_output -->
+
+## Supported list
+
+* [Iqiyi](https://www.iqiyi.com/) 
+* [Youku](https://www.youku.com/)
+* [Tencent Cloud](https://www.weiyun.com/)
+* [Tencent Video](https://v.qq.com/)
+* [YouTube](https://www.youtube.com/)
+* [Mango TV](https://www.mgtv.com/)
+* Local mp4 file via Browser
+* [Local video file via VLC media player](https://www.videolan.org/vlc/index.html)
+
+[Click here to tell us more](https://github.com/LouisYLWang/Sync-Sofa/issues/22)
+
 ## Installation
 
-### Chrome / Chromium
+### Google Chrome
 
 #### Install from Chrome Web Store
 
@@ -87,11 +108,11 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 ## Usage
 
-**Notices⚠️⚠️⚠️**: 
+### Notices
 
-1. Before use, please make sure the version number of two clients are consistent. 
-2. If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page, for example, `chrome://extensions/?id=djhbgkadejdmihbngglpnogjookpadjl` in Chrome.
-3. If there are multiple versions of extensions in your browser, please enable one and disable others.
+⚠️ Before use, please make sure the version number of two clients are consistent. 
+⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page, for example, `chrome://extensions/?id=djhbgkadejdmihbngglpnogjookpadjl` in Chrome.
+⚠️ If there are multiple versions of extensions in your browser, please enable one and disable others.
 
 ### Open a video page
 
@@ -126,7 +147,47 @@ Your partner receive the `room code`, click the `Sync Sofa` extension, paste it 
 ![User A](https://onns.xyz/blog/image/20200627-5.png)
 ![User B](https://onns.xyz/blog/image/20200627-6.png)
 
-Now you can play the video, your operation will be synced to your partner. Enjoy yourselves!
+Now you can play the video, your operations will be synced to your partner. Enjoy yourselves!
+
+## VLC support
+
+If you and your partner play video via `VLC media player`, `Sync Sofa` can also synchronize your operations.
+
+### Start VLC on the server with the Web Interface
+
+Fisrt we need to enable controlling VLC via our browser, here is the official documentation:
+
+* [Control VLC via a browser](https://wiki.videolan.org/Control_VLC_via_a_browser/)
+* [Start VLC on the server with the Web Interface](https://wiki.videolan.org/Documentation:Modules/http_intf/#VLC_2.0.0_and_later)
+
+1. Open VLC media player
+2. go `Tools → Preferences (select "All" radio-button) → Interface → Main interfaces`, check "Web"
+  ![Step 2](https://onns.xyz/blog/image/20200628-1.png)
+3. go `Tools → Preferences (select "All" radio-button) → Interface → Main interfaces → Lua`, set `Lua HTTP - Password`
+  ![Step 3](https://onns.xyz/blog/image/20200628-2.png)
+4. `Save` and `reopen` VLC media player
+5. Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) in your browser
+
+Your webpage should be like this:
+
+![VLC media player - Web Interface](https://onns.xyz/blog/image/20200628-3.png)
+
+### Request new code
+
+Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), click the `Sync Sofa` extension and then click `REQUEST NEW CODE` button.
+
+If nothing goes wrong you will receive a message like `Room created and room code copied to clipboard`, and the `room code` has been copied to your clipboard, send it to your partner.
+
+### Start connection
+
+Your partner receive the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
+
+### Enjoy yourselves
+
+Now you can play the video, your operations will be synced to your partner. Enjoy yourselves!
+
+**Notice**:
+⚠️ Keep your browser open and [http://127.0.0.1:8080/](http://127.0.0.1:8080/) itself.
 
 ## Installation
 
