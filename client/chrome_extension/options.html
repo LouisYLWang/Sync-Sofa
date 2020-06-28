@@ -13,43 +13,112 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="assets/css/main.css" />
     <style>
-        img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: 10%;
-            margin-bottom: 5%;
-        }
-
         body {
             background-image: linear-gradient(to top, #1cb495, rgba(46, 49, 65, 0.8));
             padding: 20px;
         }
 
-        .icon {
-            text-decoration: none;
-            border-bottom: none;
+        #mainform select {
+            width: 10%;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
             position: absolute;
-            top: 5%;
-        }
-
-        svg|a:link,
-        svg|a:visited {
             cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
         }
 
-        .alipay {
-            top: 7%;
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
         }
 
-        .wechat {
-            top: 5%;
+        input:checked+.slider {
+            background-color: #1fcaa7;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #1fcaa7;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
         }
     </style>
 </head>
 
 <body>
+    <div>
+        <h3>Change server host:</h3>
+        <p>If you choose to alter or deploy the backend side on your own server, you can type in the host + port and
+            change protocol below:
+        </p>
     </div>
+
+
+    <form id="mainform">
+        <select id="protocol">
+            <option value="https" selected="selected">HTTPS</option>
+            <option value="http">HTTP</option>
+
+        </select>
+
+        <input type="text" id="inputbox" />
+        <input type="submit" value="CONFIRM" id="confirmbutton" style="display:block" />
+        <input type="submit" value="RESET" id="resetbutton" style="display:block" />
+    </form>
+
+
+
+    <h3>Debug mode:</h3>
+    <p><b>Notices:</b> If you are not in trouble or you are not helping us proving bug information, you may not need to
+        change this option.
+    </p>
+    <label class="switch">
+        <input type="checkbox" id="debugtoggle">
+        <span class="slider round"></span>
+    </label>
+
+    <script src="options.js"></script>
+    <script src="sweetalert.min.js"></script>
+
 </body>
 
 </html>

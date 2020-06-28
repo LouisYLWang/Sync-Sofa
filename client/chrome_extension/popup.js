@@ -17,15 +17,19 @@ const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 var apihost = "app.ylwang.me"
+var protocol = "https"
 
-console.log(apihost);
-chrome.storage.local.get(['apihost'], function(result) {
-    if(result.key != null && result.key != "app.ylwang.me"){
-        apihost = result.key;
-        console.log(2, apihost);
+chrome.storage.local.get(['apihost'], function (result) {
+    if (result.apihost != undefined && result.apihost != "app.ylwang.me") {
+        apihost = result.apihost;
     };
-  });
-console.log(apihost);
+});
+
+chrome.storage.local.get(['protocol'], function (result) {
+    if (result.protocol != undefined && result.protocol != "https") {
+        protocol = result.protocol;
+    };
+});
 
 const params = {
     active: true,
@@ -80,7 +84,7 @@ cancelbutton.addEventListener("click", e => {
 
 function handleCreateHostSession(e) {
     e.preventDefault();
-    let url = `https://${apihost}/v1/session`
+    let url = `${protocol}://${apihost}/v1/session`
     fetch(url, {
         method: 'GET',
     }).then(res => {
@@ -128,7 +132,7 @@ function sentMsgToContent(status, body = "", message = {}) {
 
 function handleBeginSessions(e) {
     e.preventDefault();
-    let url = `https://${apihost}/v1/session/?id=${inputbox.value}`
+    let url = `${protocol}://${apihost}/v1/session/?id=${inputbox.value}`
     fetch(url, {
         method: 'GET',
     }).then(res => {

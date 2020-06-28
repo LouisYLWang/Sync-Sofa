@@ -1,5 +1,12 @@
 // DEBUG mode or not
-var debug = true;
+var debug = false;
+
+chrome.storage.local.get("debug", result => {
+    debug = result.debug;
+    console.log(debug);
+})
+console.log(debug);
+
 var syncTool = null;
 
 const STATUSSTART = "start"
@@ -9,19 +16,10 @@ const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 
 var status = STATUSEND;
-var apihost = "app.ylwang.me"
 var video = null;
 video = document.querySelector('video');
 var websocket = null;
 
-console.log(apihost);
-chrome.storage.local.get(['apihost'], function(result) {
-    if(result.key != null && result.key != "app.ylwang.me"){
-        apihost = result.key;
-        console.log(2, apihost);
-    };
-});
-console.log(apihost);
 
 // Date format function
 Date.prototype.format = function (formatStr) {
@@ -427,7 +425,6 @@ var codeCoolingTime = 3 * 1000;
 
 
 class SyncHelper {
-    apihost = apihost;
     CLOSEDCODE = "-1";
     DISCONNECTCODE = "-2";
     HELLOCODE = "-3";
@@ -454,35 +451,55 @@ class SyncHelper {
     ackFlag = false;
     heartBeatTimer = [null, null, null];
     heartBeatTimes = [1, 7, 20];
-
     constructor(serverCode, option) {
 
-        var timer = null;
-        Debugger.log(`RECEIVED sessionID ${serverCode}`);
-        let url = `wss://${this.apihost}/ws/?id=${serverCode}`;
-        if (websocket) {
-            websocket.close();
-        }
-        websocket = new WebSocket(url);
-        var that = this;
-        if (option && option.beginFlag) {
-            timer = setInterval(function () {
-                if (that.isOpen()) {
-                    clearInterval(timer);
-                    status = STATUSSYNC;
-                    that.send(that.HELLOCODE);
-                    SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
-                }
-            }, 500);
-        } else {
-            SyncHelper.notification(`Room created and room code copied to clipboard`);
-            status = STATUSCONNECT;
-        }
-        that.handleSessions();
-        // check connection every 30s.
-        setInterval(function () {
-            that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
-        }, 1000 * 30);
+        var getURLPromise = new Promise(
+            (resolve) => {
+                chrome.storage.local.get(['apihost', 'protocol'], result => {
+                    var apihost = result.apihost;
+                    console.log(apihost);
+
+                    console.log(result.protocol);
+                    var protocol = result.protocol;
+                    var socketprotocol = (protocol == "http") ? "ws" : "wss";
+                    console.log(socketprotocol);
+
+                    if (apihost != undefined && socketprotocol != undefined) {
+                        var url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
+                        resolve(url);
+                    }
+                });
+            });
+
+        getURLPromise.then((url) => {
+            var timer = null;
+            Debugger.log(`RECEIVED sessionID ${serverCode}`);
+            console.log(url);
+
+            if (websocket) {
+                websocket.close();
+            }
+            websocket = new WebSocket(url);
+            var that = this;
+            if (option && option.beginFlag) {
+                timer = setInterval(function () {
+                    if (that.isOpen()) {
+                        clearInterval(timer);
+                        status = STATUSSYNC;
+                        that.send(that.HELLOCODE);
+                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                    }
+                }, 500);
+            } else {
+                SyncHelper.notification(`Room created and room code copied to clipboard`);
+                status = STATUSCONNECT;
+            }
+            that.handleSessions();
+            // check connection every 30s.
+            setInterval(function () {
+                that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
+            }, 1000 * 30);
+        })
     }
 
     close() {
@@ -504,12 +521,12 @@ class SyncHelper {
             that.sync();
         })
 
-        video.addEventListener("waiting", (e) =>{
+        video.addEventListener("waiting", (e) => {
             e.stopPropagation();
             let buffered = false;
             let BufferedInvLen = video.buffered.length;
             var i;
-            for (i = 0; i < BufferedInvLen; i++){
+            for (i = 0; i < BufferedInvLen; i++) {
                 buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
             }
             if (!buffered) {
@@ -520,7 +537,7 @@ class SyncHelper {
                 });
             }
         })
-        
+
         video.onseeking = function () {
             // video.pause();
             that.sync();
@@ -568,7 +585,7 @@ class SyncHelper {
                         break;
                     case this.WAITINGCODE:
                         video.pause();
-                        SyncHelper.notification("Other partner is buffering, the video will restart automatically after buffering");
+                        SyncHelper.notification("Other partner is buffering, please wait!");
                         break;
                     default:
                         break;
@@ -588,7 +605,7 @@ class SyncHelper {
                         this.sync();
                     } else {
                         video.currentTime = message.content.currentTime;
-                        SyncHelper.notification(`partner change time to ${video.currentTime}`);
+                        //SyncHelper.notification(`partner change time to ${video.currentTime}`);
                         changeFlag = true;
                     }
                 }
