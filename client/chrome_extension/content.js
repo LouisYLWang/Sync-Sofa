@@ -9,10 +9,19 @@ const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 
 var status = STATUSEND;
-
+var apihost = "app.ylwang.me"
 var video = null;
 video = document.querySelector('video');
 var websocket = null;
+
+console.log(apihost);
+chrome.storage.local.get(['apihost'], function(result) {
+    if(result.key != null && result.key != "app.ylwang.me"){
+        apihost = result.key;
+        console.log(2, apihost);
+    };
+});
+console.log(apihost);
 
 // Date format function
 Date.prototype.format = function (formatStr) {
@@ -418,7 +427,7 @@ var codeCoolingTime = 3 * 1000;
 
 
 class SyncHelper {
-    apihost = "app.ylwang.me"
+    apihost = apihost;
     CLOSEDCODE = "-1";
     DISCONNECTCODE = "-2";
     HELLOCODE = "-3";

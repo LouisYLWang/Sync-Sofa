@@ -16,7 +16,16 @@ const STATUSEND = "end"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
-const apihost = "app.ylwang.me"
+var apihost = "app.ylwang.me"
+
+console.log(apihost);
+chrome.storage.local.get(['apihost'], function(result) {
+    if(result.key != null && result.key != "app.ylwang.me"){
+        apihost = result.key;
+        console.log(2, apihost);
+    };
+  });
+console.log(apihost);
 
 const params = {
     active: true,
