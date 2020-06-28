@@ -392,7 +392,7 @@ class chat {
     }
 }
 
-var chatHandler = new chat();
+// var chatHandler = new chat();
 
 
 
@@ -564,7 +564,7 @@ class SyncHelper {
                     case this.HELLOCODE:
                         SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                         status = STATUSSYNC;
-                        chatHandler.receive("Hi");
+                        // chatHandler.receive("Hi");
                         break;
                     case this.WAITINGCODE:
                         this.handleVideoPause();
@@ -575,7 +575,7 @@ class SyncHelper {
                 }
                 break;
             case this.CHATMESSAGE:
-                chatHandler.receive(message.content);
+                // chatHandler.receive(message.content);
                 break;
             case this.SYNCMESSAGE:
                 this.handleSyncMessage(message.content);
