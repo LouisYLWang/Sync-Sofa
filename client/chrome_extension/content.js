@@ -17,7 +17,7 @@ const STATUSASK = "ask"
 
 var status = STATUSEND;
 var video = null;
-video = document.querySelector('video');
+// video = document.querySelector('video');
 var websocket = null;
 
 
@@ -404,7 +404,7 @@ class chat {
     }
 }
 
-var chatHandler = new chat();
+// var chatHandler = new chat();
 
 
 
@@ -425,6 +425,7 @@ var codeCoolingTime = 3 * 1000;
 
 
 class SyncHelper {
+    type = "video"
     CLOSEDCODE = "-1";
     DISCONNECTCODE = "-2";
     HELLOCODE = "-3";
@@ -451,36 +452,42 @@ class SyncHelper {
     ackFlag = false;
     heartBeatTimer = [null, null, null];
     heartBeatTimes = [1, 7, 20];
-    constructor(serverCode, option) {
 
+    VLCTimer = null;
+    VLCStatus = "paused";
+    VLCTime = 0;
+    VLCLength = 0;
+
+    constructor(serverCode, option, type = "video") {
+        this.type = type;
+        var that = this;
         var getURLPromise = new Promise(
             (resolve) => {
                 chrome.storage.local.get(['apihost', 'protocol'], result => {
                     var apihost = result.apihost;
                     console.log(apihost);
-
+        
                     console.log(result.protocol);
                     var protocol = result.protocol;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
                     console.log(socketprotocol);
-
+        
                     if (apihost != undefined && socketprotocol != undefined) {
                         var url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
                         resolve(url);
                     }
                 });
             });
-
+        
         getURLPromise.then((url) => {
             var timer = null;
             Debugger.log(`RECEIVED sessionID ${serverCode}`);
             console.log(url);
-
+        
             if (websocket) {
                 websocket.close();
             }
             websocket = new WebSocket(url);
-            var that = this;
             if (option && option.beginFlag) {
                 timer = setInterval(function () {
                     if (that.isOpen()) {
@@ -506,41 +513,58 @@ class SyncHelper {
         this.send(this.CLOSEDCODE);
         websocket.close();
         status = STATUSEND;
+        switch (this.type) {
+            case "video":
+                break;
+            case "vlc":
+                clearInterval(this.VLCTimer);
+                break;
+            default:
+                break;
+        }
     }
 
     handleSessions() {
         var that = this;
-
-        video.addEventListener("pause", (e) => {
-            e.stopPropagation();
-            that.sync();
-        })
-
-        video.addEventListener("play", (e) => {
-            e.stopPropagation();
-            that.sync();
-        })
-
-        video.addEventListener("waiting", (e) => {
-            e.stopPropagation();
-            let buffered = false;
-            let BufferedInvLen = video.buffered.length;
-            var i;
-            for (i = 0; i < BufferedInvLen; i++) {
-                buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
-            }
-            if (!buffered) {
-                that.send(this.WAITINGCODE);
-                video.addEventListener('canplay', (e) => {
+        switch (this.type) {
+            case "video":
+                video = document.querySelector('video');
+                video.addEventListener("pause", (e) => {
                     e.stopPropagation();
-                    video.play();
-                });
-            }
-        })
+                    that.sync();
+                })
 
-        video.onseeking = function () {
-            // video.pause();
-            that.sync();
+                video.addEventListener("play", (e) => {
+                    e.stopPropagation();
+                    that.sync();
+                })
+
+                video.addEventListener("waiting", (e) => {
+                    e.stopPropagation();
+                    let buffered = false;
+                    let BufferedInvLen = video.buffered.length;
+                    var i;
+                    for (i = 0; i < BufferedInvLen; i++) {
+                        buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
+                    }
+                    if (!buffered) {
+                        that.send(this.WAITINGCODE);
+                        video.addEventListener('canplay', (e) => {
+                            e.stopPropagation();
+                            video.play();
+                        });
+                    }
+                })
+                video.onseeking = function () {
+                    // video.pause();
+                    that.sync();
+                }
+                break;
+            case "vlc":
+                this.handleVLC();
+                break;
+            default:
+                break;
         }
 
         websocket.onmessage = function (message) {
@@ -567,80 +591,33 @@ class SyncHelper {
                 Debugger.log(`RECEIVED ${this.ALLCODE[message.content]}`);
                 switch (message.content) {
                     case this.CLOSEDCODE:
-                        video.pause();
-                        SyncHelper.notification("connection closed by partner");
-                        websocket.close();
-                        status = STATUSEND;
+                        this.handleVideoPause();
+                        SyncHelper.notification("socket connection closed by other partner");
+                        this.close();
                         break;
                     case this.DISCONNECTCODE:
-                        video.pause();
-                        SyncHelper.notification("not connected to partner");
-                        websocket.close();
-                        status = STATUSEND;
+                        this.handleVideoPause();
+                        SyncHelper.notification("not connected to other partner");
+                        this.close();
                         break;
                     case this.HELLOCODE:
                         SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
                         status = STATUSSYNC;
-                        chatHandler.receive("Hi");
+                        // chatHandler.receive("Hi");
                         break;
                     case this.WAITINGCODE:
-                        video.pause();
-                        SyncHelper.notification("Other partner is buffering, please wait!");
+                        this.handleVideoPause();
+                        // SyncHelper.notification("Other partner is buffering, please wait", 1000);
                         break;
                     default:
                         break;
                 }
                 break;
             case this.CHATMESSAGE:
-                chatHandler.receive(message.content);
+                // chatHandler.receive(message.content);
                 break;
             case this.SYNCMESSAGE:
-                this.socketLock = true;
-
-                var changeFlag = false;
-                if (message.content.currentTime <= video.duration && message.content.currentTime >= 0 && Math.abs(message.content.currentTime - video.currentTime) > 5) {
-                    if (message.content.ack) {
-                        this.socketLock = false;
-                        this.clearHeartBeats();
-                        this.sync();
-                    } else {
-                        video.currentTime = message.content.currentTime;
-                        //SyncHelper.notification(`partner change time to ${video.currentTime}`);
-                        changeFlag = true;
-                    }
-                }
-                if (video.paused == message.content.isPlay) {
-                    if (message.content.ack) {
-                        this.socketLock = false;
-                        this.clearHeartBeats();
-                        this.sync();
-                    } else {
-                        changeFlag = true;
-                        if (message.content.isPlay) {
-                            var playPromise = video.play();
-
-                            if (playPromise !== undefined) {
-                                playPromise.then(_ => {
-                                    // Automatic playback started!
-                                    // Show playing UI.
-                                }).catch(error => {
-                                    // Auto-play was prevented
-                                    // Show paused UI.
-                                    // that.sync();
-                                });
-                            }
-
-                        } else {
-                            video.pause();
-                        }
-                    }
-                }
-                if (changeFlag) {
-                    this.clearHeartBeats();
-                    this.heartBeats();
-                } else {
-                    this.socketLock = false;
-                }
+                this.handleSyncMessage(message.content);
                 break;
             default:
                 break;
@@ -680,11 +657,199 @@ class SyncHelper {
     }
 
     sync() {
+        var isplay = false;
+        var currentTime = 0;
+        switch (this.type) {
+            case "video":
+                isplay = !video.paused;
+                currentTime = video.currentTime
+                break;
+            case "vlc":
+                isplay = (this.VLCStatus == "playing");
+                currentTime = this.VLCTime;
+                break;
+            default:
+                break;
+        }
         this.send({
-            "isPlay": !video.paused,
-            "currentTime": video.currentTime,
+            "isPlay": isplay,
+            "currentTime": currentTime,
             "ack": this.ackFlag
         }, this.SYNCMESSAGE);
+    }
+
+    handleVLC() {
+        var that = this;
+        this.VLCTimer = setInterval(function () {
+            SyncHelper.ajax({
+                url: "requests/status.xml", //请求地址
+                type: "GET", //请求方式
+                data: {
+                    //   location: "art"
+                }, //请求参数
+                dataType: "xml", // 返回值类型的设定
+                async: true, //是否异步
+                success: function (response, xml) {
+                    let VLCTime = parseInt(xml.getElementsByTagName('time')[0].childNodes[0].nodeValue);
+                    that.VLCLength = parseInt(xml.getElementsByTagName('length')[0].childNodes[0].nodeValue);
+                    let VLCStatus = xml.getElementsByTagName('state')[0].childNodes[0].nodeValue;
+                    let changeFlag = false;
+                    if (Math.abs(VLCTime - that.VLCTime) > 2) {
+                        that.VLCTime = VLCTime;
+                        changeFlag = true;
+                    } else {
+                        that.VLCTime = VLCTime;
+                    }
+                    if (VLCStatus != that.VLCStatus) {
+                        that.VLCStatus = VLCStatus;
+                        changeFlag = true;
+                    }
+                    if (changeFlag) {
+                        that.sync();
+                    }
+                },
+                fail: function (status) {
+                    alert("状态码为" + status); // 此处为执行成功后的代码
+                }
+            });
+        }, 1000);
+    }
+
+    handleVideoPause() {
+        switch (this.type) {
+            case "video":
+                video.pause();
+                break;
+            case "vlc":
+                if (this.VLCStatus == "playing") {
+                    SyncHelper.ajax({
+                        url: "requests/status.xml", //请求地址
+                        type: "GET", //请求方式
+                        data: {
+                            "command": "pl_pause"
+                        }, //请求参数
+                        dataType: "xml", // 返回值类型的设定
+                        async: true, //是否异步
+                        success: function (response, xml) {
+                            // pass
+                        },
+                        fail: function (status) {
+                            alert("状态码为" + status); // 此处为执行成功后的代码
+                        }
+                    });
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    handleSyncMessage(content) {
+        var that = this;
+        this.socketLock = true;
+
+        var changeFlag = false;
+
+        switch (this.type) {
+            case "video":
+                if (content.currentTime <= video.duration && content.currentTime >= 0 && Math.abs(content.currentTime - video.currentTime) > 3) {
+                    if (content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        video.currentTime = content.currentTime;
+                        changeFlag = true;
+                    }
+                }
+                if (video.paused == content.isPlay) {
+                    if (content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        changeFlag = true;
+                        if (content.isPlay) {
+                            var playPromise = video.play();
+
+                            if (playPromise !== undefined) {
+                                playPromise.then(_ => {
+                                    // Automatic playback started!
+                                    // Show playing UI.
+                                }).catch(error => {
+                                    // Auto-play was prevented
+                                    // Show paused UI.
+                                    // that.sync();
+                                });
+                            }
+
+                        } else {
+                            video.pause();
+                        }
+                    }
+                }
+                break;
+            case "vlc":
+                if (content.currentTime <= this.VLCLength && content.currentTime >= 0 && Math.abs(content.currentTime - this.VLCTime) > 3) {
+                    if (content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        SyncHelper.ajax({
+                            url: "requests/status.xml", //请求地址
+                            type: "GET", //请求方式
+                            data: {
+                                "command": "seek",
+                                "val": content.currentTime / that.VLCLength * 100 + '%'
+                            }, //请求参数
+                            dataType: "xml", // 返回值类型的设定
+                            async: true, //是否异步
+                            success: function (response, xml) {
+                                // pass
+                            },
+                            fail: function (status) {
+                                alert("状态码为" + status); // 此处为执行成功后的代码
+                            }
+                        });
+                        changeFlag = true;
+                    }
+                }
+                if ((this.VLCStatus == "playing") != content.isPlay) {
+                    if (content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        changeFlag = true;
+                        SyncHelper.ajax({
+                            url: "requests/status.xml", //请求地址
+                            type: "GET", //请求方式
+                            data: {
+                                "command": "pl_pause"
+                            }, //请求参数
+                            dataType: "xml", // 返回值类型的设定
+                            async: true, //是否异步
+                            success: function (response, xml) {
+                                // pass
+                            },
+                            fail: function (status) {
+                                alert("状态码为" + status); // 此处为执行成功后的代码
+                            }
+                        });
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        if (changeFlag) {
+            this.clearHeartBeats();
+            this.heartBeats();
+        } else {
+            this.socketLock = false;
+        }
     }
 
     heartBeats() {
@@ -705,11 +870,11 @@ class SyncHelper {
             clearTimeout(this.heartBeatTimer[i]);
         }
     }
-    static notification(msg) {
+    static notification(msg, duration = 3000) {
         // this.isFullScreen() && this.exitFullscreen();
         swal(msg, {
             buttons: false,
-            timer: 3000,
+            timer: duration,
         });
     }
 
@@ -773,6 +938,96 @@ class SyncHelper {
         }
     }
 
+    static ajax(options) {
+        /**
+         * 传入方式默认为对象
+         * 作者：eternalshallow
+         * 链接：https://juejin.im/post/5a3229da5188257a3e4eadcf
+         * 来源：掘金
+         * 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+         * */
+        options = options || {};
+        /**
+         * 默认为GET请求
+         * */
+        options.type = (options.type || "GET").toUpperCase();
+        /**
+         * 返回值类型默认为json
+         * */
+        options.dataType = options.dataType || "json";
+        /**
+         * 默认为异步请求
+         * */
+        options.async = options.async || true;
+        /**
+         * 对需要传入的参数的处理
+         * */
+        var params = this.getParams(options.data);
+        var xhr;
+        /**
+         * 创建一个 ajax请求
+         * W3C标准和IE标准
+         */
+        if (window.XMLHttpRequest) {
+            /**
+             * W3C标准
+             * */
+            xhr = new XMLHttpRequest();
+        } else {
+            /**
+             * IE标准
+             * @type {ActiveXObject}
+             */
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                var status = xhr.status;
+                if (status >= 200 && status < 300) {
+                    options.success && options.success(xhr.responseText, xhr.responseXML);
+                } else {
+                    options.fail && options.fail(status);
+                }
+            }
+        };
+        if (options.type == "GET") {
+            xhr.open("GET", options.url + "?" + params, options.async);
+            xhr.send(null);
+        } else if (options.type == "POST") {
+            /**
+             *打开请求
+             * */
+            xhr.open("POST", options.url, options.async);
+            /**
+             * POST请求设置请求头
+             * */
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            /**
+             * 发送请求参数
+             */
+            xhr.send(params);
+        }
+    }
+
+
+    static getParams(data) {
+        /**
+         * 对象参数的处理
+         * @param data
+         * @returns {string}
+         */
+        var arr = [];
+        for (var param in data) {
+            arr.push(
+                encodeURIComponent(param) + "=" + encodeURIComponent(data[param])
+            );
+        }
+        // console.log(arr);
+        arr.push(("randomNumber=" + Math.random()).replace("."));
+        // console.log(arr);
+        return arr.join("&");
+    }
+
     isOpen() {
         return websocket !== null && websocket.readyState === websocket.OPEN;
     }
@@ -791,7 +1046,11 @@ chrome.runtime.onMessage.addListener(
             "from a content script:" + sender.tab.url :
             "from the extension");
         if (request.status === STATUSSTART) {
-            syncTool = new SyncHelper(request.body, request.message);
+            if (window.location.port == "8080") {
+                syncTool = new SyncHelper(request.body, request.message, "vlc");
+            } else {
+                syncTool = new SyncHelper(request.body, request.message);
+            }
         }
 
         if (request.status === STATUSEND) {
