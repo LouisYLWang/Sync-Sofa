@@ -27,6 +27,8 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Microsoft Edge:](#microsoft-edge)
       - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
     - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
+  - [Setting](#setting)
+    - [Options page](#options-page)
   - [Usage](#usage)
     - [Notices](#notices)
     - [Open a video page](#open-a-video-page)
@@ -39,14 +41,18 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Start connection](#start-connection-1)
     - [Enjoy yourselves](#enjoy-yourselves-1)
     - [Close Controller webpage](#close-controller-webpage)
-  - [Installation](#installation-1)
-    - [Self-hosting server](#self-hosting-server)
-      - [🐳 With Docker :](#with-docker)
-        - [web host](#web-host)
-        - [local host (dev env)](#local-host-dev-env)
-      - [Without Docker:](#without-docker)
-    - [Install extension client:](#install-extension-client)
+  - [Self-hosting Guide](#self-hosting-guide)
+    - [Without Docker:](#without-docker)
+      - [Deploy script:](#deploy-script)
+        - [1. Get binary exectuable file](#1-get-binary-exectuable-file)
+        - [2. In the directory of binary file, adjust config file base on your need:](#2-in-the-directory-of-binary-file-adjust-config-file-base-on-your-need)
+    - [With Docker:](#with-docker)
   - [Release History](#release-history)
+    - [🛠 update on 12 May 2020 - v 1.0.5](#update-on-12-may-2020-v-105)
+    - [🛠 update on 10 May 2020 - v 1.0.4](#update-on-10-may-2020-v-104)
+    - [🛠 update on 8 May 2020 - v 1.0.3](#update-on-8-may-2020-v-103)
+    - [🛠 update on 31 Mar 2020 - 1.0.2](#update-on-31-mar-2020-102)
+    - [🛠 update on 26 Mar 2020 - 0.0.1 (beta version)](#update-on-26-mar-2020-001-beta-version)
   - [Meta](#meta)
   - [Contributing](#contributing)
 
@@ -106,6 +112,21 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 2. Click `Get` button
 
 ### Firefox (will be supported in later version)
+
+## Setting
+
+😊 This part is optional, we have already set default options for you, if you are not interested, please skip to [next part](usage).
+
+### Options page
+
+there are two ways to visit options page.
+
+1. right click `Sync Sofa` extension, choose `Options`.
+2. left click `Sync Sofa` exntension, choose `Setting` icon in popup page.
+
+Your webpage should be like this:
+
+![Sync Sofa - Options](https://onns.xyz/blog/image/20200629-3.png)
 
 ## Usage
 
