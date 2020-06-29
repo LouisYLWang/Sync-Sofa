@@ -455,6 +455,7 @@ class SyncHelper {
     VLCStatus = "paused";
     VLCTime = 0;
     VLCLength = 0;
+    VLCCount = 0;
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
@@ -689,6 +690,7 @@ class SyncHelper {
                 dataType: "xml", // 返回值类型的设定
                 async: true, //是否异步
                 success: function (response, xml) {
+                    that.VLCCount = 0;
                     let VLCTime = parseInt(xml.getElementsByTagName('time')[0].childNodes[0].nodeValue);
                     that.VLCLength = parseInt(xml.getElementsByTagName('length')[0].childNodes[0].nodeValue);
                     let VLCStatus = xml.getElementsByTagName('state')[0].childNodes[0].nodeValue;
@@ -708,6 +710,10 @@ class SyncHelper {
                     }
                 },
                 fail: function (status) {
+                    that.VLCCount += 1;
+                    if(that.VLCCount >= 5) {
+                        that.close();
+                    }
                     // alert("Error Code: " + status); // 此处为执行成功后的代码
                 }
             });

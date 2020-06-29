@@ -132,6 +132,7 @@ Your webpage should be like this:
 
 ### Notices
 
+
 ⚠️ Before use, please make sure the version number of two clients are consistent. 
 
 
@@ -213,6 +214,8 @@ Your partner receive the `room code`, click the `Sync Sofa` extension, paste it 
 Now you can play the video, your operations will be synced to your partner. Enjoy yourselves!
 
 **Notice**:
+
+
 ⚠️ Keep your browser open and [http://127.0.0.1:8080/](http://127.0.0.1:8080/) itself.
 
 ### Close Controller webpage
