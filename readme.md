@@ -194,71 +194,105 @@ Now you can play the video, your operations will be synced to your partner. Enjo
 
 After your video is finished, please click `STOP` button on `Sync Sofa` extension manually or just close [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
-## Installation
 
-### Self-hosting server
-
-#### 🐳 With Docker :
-
-##### web host
-
-Before hosting, make sure your server can communicate securely with HTTPS and link to an domian name. The deploy script only support Let's Encrypt certificates, you can customized with your own SSL certificate providers.
-
-```sh
-./server/deploy.sh {your host name}
-```
-
-##### local host (dev env)
-
-checkout to branch localdev and refer to this doc:
-
-https://github.com/LouisYLWang/Sync-Sofa/blob/localdev/README.md
-
-#### Without Docker:
-
-```sh
-go get github.com/LouisYLWang/Sync-Sofa/server
-
-cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
-go install
-cd $GOPATH/bin
-
-# set environment variables
-export ADDR={your port}
-export TLSKEY={your ssl certificate key file location}
-export TLSCERT={your ssl ssl certificate file location}
-./server(.exe if you are using windows)
-```
-
-### Install extension client:
-
+## Self-hosting Guide
 **Notices**: 
-Before use, please double check the version number of two clients are consistent. If the client are in same version.
+Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customized with your own SSL certificate providers.
+
+### Without Docker:
+
+#### Deploy script:
+ 
+##### 1. Get binary exectuable file
+
+- If you want to alter the source code and build yourself, make sure you have golang environment in your server, then run script below to get and build binary file:
+    ```shell=
+    go get github.com/LouisYLWang/Sync-Sofa/server
+    cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
+    go install
+    cd $GOPATH/bin
+    ```
+    
+- If you want to only deploy the binary file:
+    1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
+    2. Download `server` binary file for linux server
+    3. Download `config.json` file to the same directory of binary file
+    
+##### 2. In the directory of binary file, adjust config file base on your need:
+
+- Config file variables:
+
+    - `addr`: port of server
+    - `runmode`:
+        - dev: developing mode
+        - prod: producting mode
+    - `tlsdir`: TLS certificate paths 
+      - `tlskey`: TLS certificate privatekey path 
+      - `tlscert`: TLS certification path
+    - `feedbackservice`: an add-on for feeedback notification
+      - `smtpserverhost`: feedback mail server host
+      - `smtpserverport`: feedback mail server port 
+      - `feedbackemailaddr`: feedback mail sender address (without @your-mail.host)
+      - `feedbackemailpswd`: feedback mail sender password 
+      - `recipients`: a list of feedback receivers mail address (with @your-mail.host)
+
+    **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
 
 
-🌐 Chrome / Chromium:
+- example config file:
 
-Download from Chrome web store:
+```json=
+{
+    "addr": ":443",
+    "runmode": "prod",
+    "tlsdir": {
+        "tlskey": "/etc/letsencrypt/live/your.host.url/privkey.pem",
+        "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
+    },
+    "feedbackservice":{
+        "smtpserverhost": "smtp.gmail.com",
+        "smtpserverport": "578",
+        "feedbackemailaddr": "sender_mail_name",
+        "feedbackemailpswd": "password",     
+        "recipients":[
+            "receiver1_mail_name@mail.host",
+            "receiver2_mail_name@mail.host"
+        ]
+    }
+  }
+```
+3. Run `./server` to delopy the server, deployment is successful if you see:
 
-https://chrome.google.com/webstore/detail/sync-sofa-beta-online-vid/kgpnhgmpijhpkefpddoehhminpfiddmg
+```
+found config file, read parameters from config file...
+server is listening at {your_port_number}...
+```
+### With Docker:
+Make sure docker service is runing on your server, make change to the script blow and run:
 
-Download from mirror web store:
+```sh
+docker pull louisylwang/watchtogether
 
-https://pictureknow.com/extension?id=917ffc6701324f708c148e9249252eec
+docker run -d \
+-p {your docker internal port}:{your external port} \
+-v /etc/letsencrypt:/etc/letsencrypt:ro \ #if you use letsencrypt
+-e ADDR=:{your port} \
+-e TLSKEY={your tlskey name} \
+-e TLSCERT={your tlscert name} \
+-e SMTPSERVERHOST= {feedback mail server host} \
+-e SMTPSERVERPORT= {feedback mail server port} \
+-e FEEDBACKEMAILADDR= {feedback mail sender address} \
+-e FEEDBACKEMAILPSWD= {feedback mail sender password} \
+-e RUNMODE={"prod"/"dev"} \
+-e RECIPIENTS= {a string with all targeted email address, separate by ",". exp: "rec1@mail.addr, rec2@mail.addr"}
+--name {your docker image name} louisylwang/watchtogether
+--restart=always
+```
 
-Install .crx (drag the file into browser):
-
-https://github.com/LouisYLWang/Sync-Sofa/releases/download
-
-🌐 Edge: 
-
-https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp
-
-🦊 Firefox: (will be supported in later version)
 
 ## Release History
 
-🛠 update on 12 May 2020 - v 1.0.5
+### 🛠 update on 12 May 2020 - v 1.0.5
 ------------------------------------------------------------------------------------
 Improve stability
   > Test for a new logic to avoid infinite echo back (each party repeat the last operation of other party) : introduce a queue as a buffer of operation and if the operations is beyond frequency threshold, the client will automatically to halt and cool down for sometime.
@@ -266,13 +300,13 @@ Improve stability
 Add support for edge browser (beta)
 
 
-🛠 update on 10 May 2020 - v 1.0.4
+### 🛠 update on 10 May 2020 - v 1.0.4
 ------------------------------------------------------------------------------------
 Now user will get notification when they successfully connected to each other
 Improve stability, better sync performance
 Change the notification UI using sweetalert
 
-🛠 update on 8 May 2020 - v 1.0.3
+### 🛠 update on 8 May 2020 - v 1.0.3
 ------------------------------------------------------------------------------------
 improve stability & UX logic
 Added support of following websites:
@@ -285,13 +319,13 @@ Fixed the support of duonao live;
 Removed the support of 91mjw (temporarily);
 Refined documentation, will add more detail in next verison;
 
-🛠 update on 31 Mar 2020 - 1.0.2
+### 🛠 update on 31 Mar 2020 - 1.0.2
 ------------------------------------------------------------------------------------
 Add support of play process bar control sync
 Fixed the issue that when syncing playing time, there is the possibility to crash the extension
 
 
-🛠 update on 26 Mar 2020 - 0.0.1 (beta version)
+### 🛠 update on 26 Mar 2020 - 0.0.1 (beta version)
 ------------------------------------------------------------------------------------
 Add support of 2 parties connection
 Add support of sync pause and play action
