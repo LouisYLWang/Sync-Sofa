@@ -41,7 +41,7 @@ function toggleDebugging() {
 }
 
 function initialize() {
-    chrome.storage.local.get(['apihost', 'protocol'], result => {
+    chrome.storage.local.get(['apihost', 'protocol', 'debug'], result => {
         if (result.apihost != undefined && result.apihost != "") {
             inputbox.value = result.apihost;
         } else {
@@ -57,6 +57,14 @@ function initialize() {
             protocol.value = "https";
             chrome.storage.local.set({
                 'protocol': "https"
+            }, () => { })
+        }
+
+        if (result.debug != undefined) {
+            debugtoggle.checked = result.debug
+        } else {
+            chrome.storage.local.set({
+                'debug': "false"
             }, () => { })
         }
     });

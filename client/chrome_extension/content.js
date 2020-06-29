@@ -3,9 +3,7 @@ var debug = false;
 
 chrome.storage.local.get("debug", result => {
     debug = result.debug;
-    console.log(debug);
 })
-console.log(debug);
 
 var syncTool = null;
 
