@@ -44,7 +44,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
   - [Self-hosting Guide](#self-hosting-guide)
     - [Without Docker:](#without-docker)
       - [Deploy script:](#deploy-script)
-        - [1. Get binary exectuable file](#1-get-binary-exectuable-file)
+        - [1. Get binary executable file](#1-get-binary-executable-file)
         - [2. In the directory of binary file, adjust config file base on your need:](#2-in-the-directory-of-binary-file-adjust-config-file-base-on-your-need)
     - [With Docker:](#with-docker)
   - [Release History](#release-history)
@@ -84,7 +84,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 #### Install from local .crx file
 
 1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
-2. Download `sync_sofa.[version].crx`, *[version]* is the number of latest version 
+2. Download `sync_sofa.[version].crx`, *[version]* is the number of the latest version 
 3. Open `chrome://extensions/` in your Chrome
 4. Turn on `Developer mode` (in the top right corner)
 5. Drag `sync_sofa.[version].crx` into the `chrome://extensions/` page
@@ -119,10 +119,10 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 ### Options page
 
-there are two ways to visit options page.
+There are two ways to visit options page.
 
-1. right click `Sync Sofa` extension, choose `Options`.
-2. left click `Sync Sofa` exntension, choose `Setting` icon in popup page.
+1. Right click `Sync Sofa` extension, choose `Options`.
+2. Left click `Sync Sofa` extension, choose `Setting` icon in popup page.
 
 Your webpage should be like this:
 
@@ -132,18 +132,15 @@ Your webpage should be like this:
 
 ### Notices
 
-
 ⚠️ Before use, please make sure the version number of two clients are consistent. 
 
-
 ⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page, for example, `chrome://extensions/?id=djhbgkadejdmihbngglpnogjookpadjl` in Chrome.
-
 
 ⚠️ If there are multiple versions of extensions in your browser, please enable one and disable others.
 
 ### Open a video page
 
-you two don't have to open the same webpage, you play the video via local `.mp4` file and your partner watch it one some video websites, is ok as long as you both watch the same video actually (source providers are different). 
+You two don't have to open the same webpage, you play the video via local `.mp4` file and your partner watch it one some video websites, is ok as long as you both watch the same video actually (source providers are different). 
 
 In this doc, for example, `User A` will watch the video on Bilibili and `User B` will do it on Youtube. Here is the webpage:
 
@@ -165,7 +162,7 @@ If nothing goes wrong you will receive a message like `Room created and room cod
 
 ### Start connection
 
-Your partner receive the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
+Your partner receives the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
 
 ![User B](https://onns.xyz/blog/image/20200627-4.png)
 
@@ -182,15 +179,15 @@ If you and your partner play video via `VLC media player`, `Sync Sofa` can also 
 
 ### Start VLC on the server with the Web Interface
 
-Fisrt we need to enable controlling VLC via our browser, here is the official documentation:
+First we need to enable controlling VLC via our browser, here is the official documentation:
 
 * [Control VLC via a browser](https://wiki.videolan.org/Control_VLC_via_a_browser/)
 * [Start VLC on the server with the Web Interface](https://wiki.videolan.org/Documentation:Modules/http_intf/#VLC_2.0.0_and_later)
 
 1. Open VLC media player
-2. go `Tools → Preferences (select "All" radio-button) → Interface → Main interfaces`, check "Web"
+2. Go `Tools → Preferences (select "All" radio-button) → Interface → Main interfaces`, check "Web"
   ![Step 2](https://onns.xyz/blog/image/20200628-1.png)
-3. go `Tools → Preferences (select "All" radio-button) → Interface → Main interfaces → Lua`, set `Lua HTTP - Password`
+3. Go `Tools → Preferences (select "All" radio-button) → Interface → Main interfaces → Lua`, set `Lua HTTP - Password`
   ![Step 3](https://onns.xyz/blog/image/20200628-2.png)
 4. `Save` and `reopen` VLC media player
 5. Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/) in your browser
@@ -207,7 +204,7 @@ If nothing goes wrong you will receive a message like `Room created and room cod
 
 ### Start connection
 
-Your partner receive the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
+Your partner receives the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
 
 ### Enjoy yourselves
 
@@ -224,14 +221,16 @@ After your video is finished, please click `STOP` button on `Sync Sofa` extensio
 
 
 ## Self-hosting Guide
+
 **Notices**: 
-Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customized with your own SSL certificate providers.
+
+Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customize with your own SSL certificate providers.
 
 ### Without Docker:
 
 #### Deploy script:
  
-##### 1. Get binary exectuable file
+##### 1. Get binary executable file
 
 - If you want to alter the source code and build yourself, make sure you have golang environment in your server, then run script below to get and build binary file:
     ```shell=
@@ -257,7 +256,7 @@ Before hosting, make sure your server can communicate securely with HTTPS and li
     - `tlsdir`: TLS certificate paths 
       - `tlskey`: TLS certificate privatekey path 
       - `tlscert`: TLS certification path
-    - `feedbackservice`: an add-on for feeedback notification
+    - `feedbackservice`: an add-on for feedback notification
       - `smtpserverhost`: feedback mail server host
       - `smtpserverport`: feedback mail server port 
       - `feedbackemailaddr`: feedback mail sender address (without @your-mail.host)
