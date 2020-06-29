@@ -12,7 +12,7 @@ function saveOptions() {
         'apihost': apihostVal,
         'protocol': protocolVal
     }, () => {
-        alert(`server set to ${protocolVal}://${apihostVal}`);
+        notification(`server set to ${protocolVal}://${apihostVal}`);
     });
 }
 
@@ -21,7 +21,7 @@ function restoreOptions() {
         'apihost': "app.ylwang.me",
         'protocol': "https"
     }, () => {
-        alert("restore to default setting!")
+        notification("restore to default setting!")
     });
 }
 
@@ -31,18 +31,19 @@ function toggleDebugging() {
         'debug': debugFlag
     }, () => {
         if (debugFlag == true) {
-            alert("Switch to debugging mode!")
+            notification("Switch to debugging mode!")
         } else {
-            alert("Close debugging mode!")
+            notification("Close debugging mode!")
         }
     });
 }
 
 function initialize() {
     chrome.storage.local.get(['apihost', 'protocol'], result => {
-        if (result.apihost != undefined) {
+        if (result.apihost != undefined && result.apihost != "") {
             inputbox.value = result.apihost;
         } else {
+            inputbox.value = "app.ylwang.me";
             chrome.storage.local.set({
                 'apihost': "app.ylwang.me"
             }, () => { })
@@ -51,6 +52,7 @@ function initialize() {
         if (result.protocol != undefined) {
             protocol.value = result.protocol;
         } else {
+            protocol.value = "https";
             chrome.storage.local.set({
                 'protocol': "https"
             }, () => { })

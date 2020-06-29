@@ -466,24 +466,24 @@ class SyncHelper {
                 chrome.storage.local.get(['apihost', 'protocol'], result => {
                     var apihost = result.apihost;
                     console.log(apihost);
-        
+
                     console.log(result.protocol);
                     var protocol = result.protocol;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
                     console.log(socketprotocol);
-        
+
                     if (apihost != undefined && socketprotocol != undefined) {
                         var url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
                         resolve(url);
                     }
                 });
             });
-        
+
         getURLPromise.then((url) => {
             var timer = null;
             Debugger.log(`RECEIVED sessionID ${serverCode}`);
             console.log(url);
-        
+
             if (websocket) {
                 websocket.close();
             }
