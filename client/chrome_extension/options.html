@@ -22,6 +22,10 @@
             width: 10%;
         }
 
+        div#debug {
+            margin-top: 35px;
+        }
+
         .switch {
             position: relative;
             display: inline-block;
@@ -93,7 +97,7 @@
     </div>
 
 
-    <div id="mainform">
+    <div id="mainform" class="option">
         <select id="protocol">
             <option value="https" selected="selected">HTTPS</option>
             <option value="http">HTTP</option>
@@ -106,15 +110,19 @@
     </div>
 
 
+    <div id="debug">
+        <h3>Debug mode:</h3>
+        <p><b>Notices:</b> If you are not in trouble or you are not helping us proving bug information, you may not need
+            to
+            change this option.
+        </p>
+        <label class="switch">
+            <input type="checkbox" id="debugtoggle">
+            <span class="slider round"></span>
+        </label>
+    </div>
 
-    <h3>Debug mode:</h3>
-    <p><b>Notices:</b> If you are not in trouble or you are not helping us proving bug information, you may not need to
-        change this option.
-    </p>
-    <label class="switch">
-        <input type="checkbox" id="debugtoggle">
-        <span class="slider round"></span>
-    </label>
+
 
     <script src="options.js"></script>
     <script src="sweetalert.min.js"></script>
