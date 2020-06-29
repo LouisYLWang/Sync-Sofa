@@ -1,5 +1,12 @@
 // DEBUG mode or not
-var debug = true;
+var debug = false;
+
+chrome.storage.local.get("debug", result => {
+    debug = result.debug;
+    console.log(debug);
+})
+console.log(debug);
+
 var syncTool = null;
 
 const STATUSSTART = "start"
@@ -9,10 +16,10 @@ const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 
 var status = STATUSEND;
-
 var video = null;
 // video = document.querySelector('video');
 var websocket = null;
+
 
 // Date format function
 Date.prototype.format = function (formatStr) {
@@ -102,6 +109,7 @@ class chat {
             transition: all 0.2s;
             outline:none;
             cursor: pointer;
+            text-align: center;
         }
         
         #chatbutton:hover {
@@ -110,7 +118,9 @@ class chat {
         }
     
         #chatbutton > svg{
-            padding-top: 10%;
+            position: absolute;
+            top: 11px;
+            left: 11px;
         }
     
         .bg-primary{
@@ -205,11 +215,13 @@ class chat {
             color: #fff;
             border-radius: 10px;
             background-color: #dcdcdc;
+            margin-bottom: 10px;
           }
           .chatlist .chatout,
           .chatlist .chatin {
             margin: 10px 0;
           }
+
           .chatlist .chatout {
             text-align: right;
           }
@@ -323,7 +335,7 @@ class chat {
 
         if (!this.isChatPopup()) {
             chatButton.setAttribute("class", "chatbutton show");
-            chatButton.innerHTML = `<svg t="1592209153350" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2139" width="25" height="25"><path d="M925.468404 822.294069 622.19831 512.00614l303.311027-310.331931c34.682917-27.842115 38.299281-75.80243 8.121981-107.216907-30.135344-31.369452-82.733283-34.259268-117.408013-6.463202L512.000512 399.25724 207.776695 87.993077c-34.675754-27.796066-87.272669-24.90625-117.408013 6.463202-30.178323 31.414477-26.560936 79.375815 8.121981 107.216907l303.311027 310.331931L98.531596 822.294069c-34.724873 27.820626-38.341237 75.846432-8.117888 107.195418 30.135344 31.43699 82.72919 34.326806 117.408013 6.485715l304.178791-311.219137 304.177767 311.219137c34.678824 27.841092 87.271646 24.951275 117.408013-6.485715C963.808618 898.140501 960.146205 850.113671 925.468404 822.294069z" p-id="2140" fill="#cac8c7"></path></svg>`
+            chatButton.innerHTML = `<svg t="1593111631184" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27674" width="30" height="30"><path d="M378.965333 512l-272.213333-272.213333a85.333333 85.333333 0 0 1 0-120.746667l12.288-12.373333a85.333333 85.333333 0 0 1 120.746667 0L512 378.965333l272.213333-272.213333a85.333333 85.333333 0 0 1 120.746667 0l12.373333 12.288a85.333333 85.333333 0 0 1 0 120.746667L645.034667 512l272.213333 272.213333a85.333333 85.333333 0 0 1 0 120.746667l-12.288 12.373333a85.333333 85.333333 0 0 1-120.746667 0L512 645.034667l-272.213333 272.213333a85.333333 85.333333 0 0 1-120.746667 0l-12.373333-12.288a85.333333 85.333333 0 0 1 0-120.746667L378.965333 512z" p-id="27675" fill="#cac8c7"></path></svg>`;
             chatButton.style.backgroundColor = "#1cb495";
             chatPopup.style.display = "block";
             this.chatList.lastElementChild.scrollIntoView();
@@ -414,7 +426,6 @@ var codeCoolingTime = 3 * 1000;
 
 class SyncHelper {
     type = "video"
-    apihost = "app.ylwang.me"
     CLOSEDCODE = "-1";
     DISCONNECTCODE = "-2";
     HELLOCODE = "-3";
@@ -440,7 +451,7 @@ class SyncHelper {
     socketLock = false;
     ackFlag = false;
     heartBeatTimer = [null, null, null];
-    heartBeatTimes = [2, 7, 20];
+    heartBeatTimes = [1, 7, 20];
 
     VLCTimer = null;
     VLCStatus = "paused";
@@ -449,32 +460,53 @@ class SyncHelper {
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
-        var timer = null;
-        Debugger.log(`RECEIVED sessionID ${serverCode}`);
-        let url = `wss://${this.apihost}/ws/?id=${serverCode}`;
-        if (websocket) {
-            websocket.close();
-        }
-        websocket = new WebSocket(url);
         var that = this;
-        if (option && option.beginFlag) {
-            timer = setInterval(function () {
-                if (that.isOpen()) {
-                    clearInterval(timer);
-                    status = STATUSSYNC;
-                    that.send(that.HELLOCODE);
-                    SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
-                }
-            }, 500);
-        } else {
-            SyncHelper.notification(`Room created and room code copied to clipboard`);
-            status = STATUSCONNECT;
-        }
-        that.handleSessions();
-        // check connection every 30s.
-        setInterval(function () {
-            that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
-        }, 1000 * 30);
+        var getURLPromise = new Promise(
+            (resolve) => {
+                chrome.storage.local.get(['apihost', 'protocol'], result => {
+                    var apihost = result.apihost;
+                    console.log(apihost);
+        
+                    console.log(result.protocol);
+                    var protocol = result.protocol;
+                    var socketprotocol = (protocol == "http") ? "ws" : "wss";
+                    console.log(socketprotocol);
+        
+                    if (apihost != undefined && socketprotocol != undefined) {
+                        var url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
+                        resolve(url);
+                    }
+                });
+            });
+        
+        getURLPromise.then((url) => {
+            var timer = null;
+            Debugger.log(`RECEIVED sessionID ${serverCode}`);
+            console.log(url);
+        
+            if (websocket) {
+                websocket.close();
+            }
+            websocket = new WebSocket(url);
+            if (option && option.beginFlag) {
+                timer = setInterval(function () {
+                    if (that.isOpen()) {
+                        clearInterval(timer);
+                        status = STATUSSYNC;
+                        that.send(that.HELLOCODE);
+                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                    }
+                }, 500);
+            } else {
+                SyncHelper.notification(`Room created and room code copied to clipboard`);
+                status = STATUSCONNECT;
+            }
+            that.handleSessions();
+            // check connection every 30s.
+            setInterval(function () {
+                that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
+            }, 1000 * 30);
+        })
     }
 
     close() {
@@ -569,7 +601,7 @@ class SyncHelper {
                         this.close();
                         break;
                     case this.HELLOCODE:
-                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                        SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
                         status = STATUSSYNC;
                         // chatHandler.receive("Hi");
                         break;

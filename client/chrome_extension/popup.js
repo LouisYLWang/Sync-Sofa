@@ -4,7 +4,7 @@ const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
 const cancelbutton = document.getElementById("cancelbutton");
-const mtctbutton = document.getElementById("mtctbutton");
+//const mtctbutton = document.getElementById("mtctbutton");
 
 const PAUSECODE = "-5";
 const PLAYCODE = "-4";
@@ -16,7 +16,20 @@ const STATUSEND = "end"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
-const apihost = "app.ylwang.me"
+var apihost = "app.ylwang.me"
+var protocol = "https"
+
+chrome.storage.local.get(['apihost'], function (result) {
+    if (result.apihost != undefined && result.apihost != "app.ylwang.me") {
+        apihost = result.apihost;
+    };
+});
+
+chrome.storage.local.get(['protocol'], function (result) {
+    if (result.protocol != undefined && result.protocol != "https") {
+        protocol = result.protocol;
+    };
+});
 
 const params = {
     active: true,
@@ -71,7 +84,7 @@ cancelbutton.addEventListener("click", e => {
 
 function handleCreateHostSession(e) {
     e.preventDefault();
-    let url = `https://${apihost}/v1/session`
+    let url = `${protocol}://${apihost}/v1/session`
     fetch(url, {
         method: 'GET',
     }).then(res => {
@@ -119,7 +132,7 @@ function sentMsgToContent(status, body = "", message = {}) {
 
 function handleBeginSessions(e) {
     e.preventDefault();
-    let url = `https://${apihost}/v1/session/?id=${inputbox.value}`
+    let url = `${protocol}://${apihost}/v1/session/?id=${inputbox.value}`
     fetch(url, {
         method: 'GET',
     }).then(res => {
@@ -165,7 +178,7 @@ function initialize() {
             inputbox.value = selfID;
             requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
-            mtctbutton.style.display = "none";
+            //mtctbutton.style.display = "none";
             cancelbutton.style.display = "none";
         }
     });
