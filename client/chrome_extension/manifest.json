@@ -3,21 +3,23 @@
     "version": "1.0.5",
     "description": "This extension allows multi-user sync streaming video in a fast, simple and stable way.",
     "permissions": [
-        "storage"
+        "storage",
+        "tabs"
     ],
     "content_scripts": [
         {
             "matches": [
-                "https://*.bilibili.com/*",
+                "https://*.bilibili.com/video/*",
                 "https://www.dandanzan.com/*",
-                "https://91mjw.com/*",
                 "https://duonaolive.com/*",
                 "https://v.qq.com/*",
                 "https://www.iqiyi.com/*",
                 "https://www.weiyun.com/*",
-                "https://www.youtube.com/*",
+                "https://www.youtube.com/watch?*",
                 "https://v.youku.com/*",
+                "https://www.mgtv.com/*",
                 "http://127.0.0.1/*",
+                "http://music.jsososo.com/*",
                 "file:///*"
             ],
             "run_at": "document_end",
@@ -27,13 +29,20 @@
             ]
         }
     ],
-    "browser_action": {
-        "default_popup": "popup.html"
-    },
     "manifest_version": 2,
     "icons": {
         "16": "/icons/icon16_on.png",
         "48": "/icons/icon48_on.png",
         "128": "/icons/icon128_on.png"
-    }
+    },
+    "page_action":{
+        "default_icon": "/icons/icon128_on.png",
+        "default_title": "Only support youtube, bilibili, iqiyi, tencent video, \nyouku, dandanzan, duonaolive, weiyun and local \nmp4 file.Please click when you on sites above.",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "scripts" : ["background.js"],  
+        "persistent" : false  
+    },
+    "options_page": "options.html"
 }

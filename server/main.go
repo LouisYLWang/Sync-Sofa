@@ -1,10 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/LouisYLWang/Sync-Sofa/server/handlers"
@@ -16,16 +19,67 @@ import (
 
 var sessionDuration = time.Hour
 
+type Config struct {
+	Addr    string `json:"addr"`
+	Runmode string `json:"runmode"`
+	TLSconn struct {
+		TLSkey  string `json:"tlskey"`
+		TLScert string `json:"tlscert"`
+	} `json:"tlsdir"`
+	Feedbackservice struct {
+		Smtpserverhost    string   `json:"smtpserverhost"`
+		Smtpserverport    string   `json:"smtpserverport"`
+		Feedbackemailaddr string   `json:"feedbackemailaddr"`
+		Feedbackemailpswd string   `json:"feedbackemailpswd"`
+		Recipients        []string `json:"recipients"`
+	} `json:"feedbackservice"`
+}
+
 func main() {
-	addr := os.Getenv("ADDR")
+	var (
+		cfg                 Config
+		addr                string
+		runmode             string
+		smtpServerHost      string
+		smtpServerPort      string
+		feedbackAccount     string
+		feedbackAccountPswd string
+		recipients          []string
+		tlsCertPath         string
+		tlsKeyPath          string
+	)
 
-	smtpServerHost := os.Getenv("SMTPSERVERHOST") //"smtp.gmail.com"
-	smtpServerPort := os.Getenv("SMTPSERVERPORT") //"587"
-	feedbackAccount := os.Getenv("FEEDBACKEMAILADDR")
-	feedbackAccountPswd := os.Getenv("FEEDBACKEMAILPSWD")
-	recipients := []string{"louis.yl.wang@outlook.com"}
+	if fileExists("config.json") {
+		fmt.Println("found config file, read parameters from config file...")
+		fileData, err := ioutil.ReadFile("./config.json")
+		if err != nil {
+			fmt.Println("incorrect config file")
+		} else {
+			err = json.Unmarshal(fileData, &cfg)
+		}
 
-	runmode := os.Getenv("RUNMODE")
+		if err != nil {
+			fmt.Println("unable to unmarshal file format correctly")
+		}
+
+		addr = cfg.Addr
+		runmode = cfg.Runmode
+		smtpServerHost = cfg.Feedbackservice.Smtpserverhost
+		smtpServerPort = cfg.Feedbackservice.Smtpserverport
+		feedbackAccount = cfg.Feedbackservice.Feedbackemailaddr
+		feedbackAccountPswd = cfg.Feedbackservice.Feedbackemailpswd
+		recipients = cfg.Feedbackservice.Recipients
+
+	} else {
+		fmt.Println("not found config file, read parameters from system variables...")
+		addr = os.Getenv("ADDR")
+		runmode = os.Getenv("RUNMODE")
+		smtpServerHost = os.Getenv("SMTPSERVERHOST") //"smtp.gmail.com"
+		smtpServerPort = os.Getenv("SMTPSERVERPORT") //"587"
+		feedbackAccount = os.Getenv("FEEDBACKEMAILADDR")
+		feedbackAccountPswd = os.Getenv("FEEDBACKEMAILPSWD")
+		recipients = strings.Split(os.Getenv("RECIPIENTS"), ",")
+	}
 
 	socketStore := socket.NewStore()
 	sessionStore := session.NewStore(sessionDuration)
@@ -36,7 +90,9 @@ func main() {
 	r.HandleFunc("/v1/session", ctx.SessionHandler)
 	r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
 	r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
-	r.HandleFunc("/v1/feedback", ctx.FeedbackHandler)
+	if smtpServerHost != "" {
+		r.HandleFunc("/v1/feedback", ctx.FeedbackHandler)
+	}
 
 	switch runmode {
 	case "dev":
@@ -50,11 +106,16 @@ func main() {
 
 	case "prod":
 
-		tlsCertPath := os.Getenv("TLSCERT")
-		tlsKeyPath := os.Getenv("TLSKEY")
-		googleHostVerifyURI := os.Getenv("VERIFYURI")
+		if fileExists("config.json") {
+			tlsCertPath = cfg.TLSconn.TLScert
+			tlsKeyPath = cfg.TLSconn.TLSkey
+		} else {
+			tlsCertPath = os.Getenv("TLSCERT")
+			tlsKeyPath = os.Getenv("TLSKEY")
+		}
+		googleHostVerifyURI := "google8e646393df72ecae.html"
 
-		if len(addr) == 0 {
+		if addr == "" {
 			addr = ":443"
 		}
 		if tlsCertPath == "" {
@@ -68,14 +129,22 @@ func main() {
 
 		r.HandleFunc(googleHostVerifyURI, file)
 		corsMux := handlers.NewCORSHandler(r)
-		log.Printf("server is listening at %s...", addr)
 		log.Fatal(http.ListenAndServeTLS(addr, tlsCertPath, tlsKeyPath, corsMux))
+		log.Printf("server is listening at %s...", addr)
 
 	}
 }
 
 func file(w http.ResponseWriter, r *http.Request) {
-	googleHostVerifyContent := os.Getenv("VERIFYCONTENT")
+	googleHostVerifyContent := "google-site-verification: google8e646393df72ecae.html"
 	w.Header().Set("Content-type", "text/html")
 	w.Write([]byte(googleHostVerifyContent))
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
