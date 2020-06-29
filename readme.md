@@ -4,7 +4,7 @@
 
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url]
 
-Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently the feartures include:
+Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently, the feartures include:
 
 - 2 party connection: either party can be the host of a sync room and the other can join with connection code.
 - sync pause/play: each user pause/play the video, the other side will do the same
@@ -42,17 +42,14 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Enjoy yourselves](#enjoy-yourselves-1)
     - [Close Controller webpage](#close-controller-webpage)
   - [Self-hosting Guide](#self-hosting-guide)
-    - [Without Docker:](#without-docker)
-      - [Deploy script:](#deploy-script)
-        - [1. Get binary executable file](#1-get-binary-executable-file)
-        - [2. In the directory of binary file, adjust config file base on your need:](#2-in-the-directory-of-binary-file-adjust-config-file-base-on-your-need)
-    - [With Docker:](#with-docker)
+    - [Without Docker](#without-docker)
+    - [With Docker](#with-docker)
   - [Release History](#release-history)
-    - [v1.0.5](#v105)
-    - [v1.0.4](#v104)
-    - [v1.0.3](#v103)
-    - [v1.0.2](#v102)
-    - [v0.0.1](#v001)
+    - [v1.0.5 🛠 update on 12 May 2020](#v105-update-on-12-may-2020)
+    - [v1.0.4 🛠 update on 10 May 2020](#v104-update-on-10-may-2020)
+    - [v1.0.3 🛠 update on 08 May 2020](#v103-update-on-08-may-2020)
+    - [v1.0.2 🛠 update on 31 Mar 2020](#v102-update-on-31-mar-2020)
+    - [v0.0.1 🛠 update on 26 Mar 2020](#v001-update-on-26-mar-2020)
   - [Meta](#meta)
   - [Contributing](#contributing)
 
@@ -224,13 +221,11 @@ After your video is finished, please click `STOP` button on `Sync Sofa` extensio
 
 **Notices**: 
 
-Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customize with your own SSL certificate providers.
+⚠️ Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customize with your own SSL certificate providers.
 
-### Without Docker:
-
-#### Deploy script:
+### Without Docker
  
-##### 1. Get binary executable file
+ **1. Get binary executable file**
 
 - If you want to alter the source code and build yourself, make sure you have golang environment in your server, then run script below to get and build binary file:
     ```shell=
@@ -245,7 +240,7 @@ Before hosting, make sure your server can communicate securely with HTTPS and li
     2. Download `server` binary file for linux server
     3. Download `config.json` file to the same directory of binary file
     
-##### 2. In the directory of binary file, adjust config file base on your need:
+ **2. In the directory of binary file, adjust config file base on your need:**
 
 - Config file variables:
 
@@ -288,13 +283,13 @@ Before hosting, make sure your server can communicate securely with HTTPS and li
     }
   }
 ```
-3. Run `./server` to delopy the server, deployment is successful if you see:
+**3. Run `./server` to delopy the server, deployment is successful if you see:**
 
 ```
 found config file, read parameters from config file...
 server is listening at {your_port_number}...
 ```
-### With Docker:
+### With Docker
 Make sure docker service is runing on your server, make change to the script blow and run:
 
 ```sh
@@ -319,8 +314,7 @@ docker run -d \
 
 ## Release History
 
-### v1.0.5
-🛠 update on 12 May 2020
+### v1.0.5 🛠 update on 12 May 2020
 ---
 Improve stability
   > Test for a new logic to avoid infinite echo back (each party repeat the last operation of other party) : introduce a queue as a buffer of operation and if the operations is beyond frequency threshold, the client will automatically to halt and cool down for sometime.
@@ -328,15 +322,13 @@ Improve stability
 Add support for edge browser (beta)
 
 
-### v1.0.4
-🛠 update on 10 May 2020
+### v1.0.4 🛠 update on 10 May 2020
 ---
 Now user will get notification when they successfully connected to each other
 Improve stability, better sync performance
 Change the notification UI using sweetalert
 
-### v1.0.3
-🛠 update on 8 May 2020
+### v1.0.3 🛠 update on 08 May 2020
 ---
 improve stability & UX logic
 Added support of following websites:
@@ -349,16 +341,15 @@ Fixed the support of duonao live;
 Removed the support of 91mjw (temporarily);
 Refined documentation, will add more detail in next verison;
 
-### v1.0.2
-🛠 update on 31 Mar 2020
+### v1.0.2 🛠 update on 31 Mar 2020
 ---
 Add support of play process bar control sync
 Fixed the issue that when syncing playing time, there is the possibility to crash the extension
 
 
-### v0.0.1
-🛠 update on 26 Mar 2020 (beta version)
+### v0.0.1 🛠 update on 26 Mar 2020 
 ---
+(beta version)
 Add support of 2 parties connection
 Add support of sync pause and play action
 Add support of out-of-sync notification
