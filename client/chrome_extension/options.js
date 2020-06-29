@@ -17,6 +17,8 @@ function saveOptions() {
 }
 
 function restoreOptions() {
+    inputbox.value = "app.ylwang.me";
+    protocol.value = "https";
     chrome.storage.local.set({
         'apihost': "app.ylwang.me",
         'protocol': "https"

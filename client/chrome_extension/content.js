@@ -465,24 +465,25 @@ class SyncHelper {
             (resolve) => {
                 chrome.storage.local.get(['apihost', 'protocol'], result => {
                     var apihost = result.apihost;
-                    console.log(apihost);
+                    Debugger.log(apihost);
 
-                    console.log(result.protocol);
+                    Debugger.log(result.protocol);
                     var protocol = result.protocol;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
-                    console.log(socketprotocol);
+                    Debugger.log(socketprotocol);
 
+                    var url = `wss://app.ylwang.me/ws/?id=${serverCode}`;
                     if (apihost != undefined && socketprotocol != undefined) {
-                        var url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
-                        resolve(url);
+                        url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
                     }
+                    resolve(url);
                 });
             });
 
         getURLPromise.then((url) => {
             var timer = null;
             Debugger.log(`RECEIVED sessionID ${serverCode}`);
-            console.log(url);
+            Debugger.log(url);
 
             if (websocket) {
                 websocket.close();
@@ -709,7 +710,7 @@ class SyncHelper {
                     }
                 },
                 fail: function (status) {
-                    alert("状态码为" + status); // 此处为执行成功后的代码
+                    // alert("Error Code: " + status); // 此处为执行成功后的代码
                 }
             });
         }, 1000);
@@ -734,7 +735,7 @@ class SyncHelper {
                             // pass
                         },
                         fail: function (status) {
-                            alert("状态码为" + status); // 此处为执行成功后的代码
+                            // alert("Error Code: " + status); // 此处为执行成功后的代码
                         }
                     });
                 }
@@ -809,7 +810,7 @@ class SyncHelper {
                                 // pass
                             },
                             fail: function (status) {
-                                alert("状态码为" + status); // 此处为执行成功后的代码
+                                // alert("Error Code: " + status); // 此处为执行成功后的代码
                             }
                         });
                         changeFlag = true;
@@ -834,7 +835,7 @@ class SyncHelper {
                                 // pass
                             },
                             fail: function (status) {
-                                alert("状态码为" + status); // 此处为执行成功后的代码
+                                // alert("Error Code: " + status); // 此处为执行成功后的代码
                             }
                         });
                     }
