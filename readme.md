@@ -45,11 +45,11 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Without Docker](#without-docker)
     - [With Docker](#with-docker)
   - [Release History](#release-history)
-    - [v1.0.5 🛠 update on 12 May 2020](#v105-update-on-12-may-2020)
-    - [v1.0.4 🛠 update on 10 May 2020](#v104-update-on-10-may-2020)
-    - [v1.0.3 🛠 update on 08 May 2020](#v103-update-on-08-may-2020)
-    - [v1.0.2 🛠 update on 31 Mar 2020](#v102-update-on-31-mar-2020)
-    - [v0.0.1 🛠 update on 26 Mar 2020](#v001-update-on-26-mar-2020)
+    - [v1.0.5](#v105)
+    - [v1.0.4](#v104)
+    - [v1.0.3](#v103)
+    - [v1.0.2](#v102)
+    - [v0.0.1](#v001)
   - [Meta](#meta)
   - [Contributing](#contributing)
 
@@ -314,21 +314,23 @@ docker run -d \
 
 ## Release History
 
-### v1.0.5 🛠 update on 12 May 2020
+### v1.0.5
+🛠 update on 12 May 2020
 ---
 Improve stability
   > Test for a new logic to avoid infinite echo back (each party repeat the last operation of other party) : introduce a queue as a buffer of operation and if the operations is beyond frequency threshold, the client will automatically to halt and cool down for sometime.
 
 Add support for edge browser (beta)
 
-
-### v1.0.4 🛠 update on 10 May 2020
+### v1.0.4
+🛠 update on 10 May 2020
 ---
 Now user will get notification when they successfully connected to each other
 Improve stability, better sync performance
 Change the notification UI using sweetalert
 
-### v1.0.3 🛠 update on 08 May 2020
+### v1.0.3
+🛠 update on 8 May 2020
 ---
 improve stability & UX logic
 Added support of following websites:
@@ -341,19 +343,18 @@ Fixed the support of duonao live;
 Removed the support of 91mjw (temporarily);
 Refined documentation, will add more detail in next verison;
 
-### v1.0.2 🛠 update on 31 Mar 2020
+### v1.0.2
+🛠 update on 31 Mar 2020
 ---
 Add support of play process bar control sync
 Fixed the issue that when syncing playing time, there is the possibility to crash the extension
 
-
-### v0.0.1 🛠 update on 26 Mar 2020 
+### v0.0.1
+🛠 update on 26 Mar 2020 (beta version)
 ---
-(beta version)
 Add support of 2 parties connection
 Add support of sync pause and play action
 Add support of out-of-sync notification
-
 
 ## Meta
 
