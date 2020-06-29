@@ -48,11 +48,11 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
         - [2. In the directory of binary file, adjust config file base on your need:](#2-in-the-directory-of-binary-file-adjust-config-file-base-on-your-need)
     - [With Docker:](#with-docker)
   - [Release History](#release-history)
-    - [🛠 update on 12 May 2020 - v 1.0.5](#update-on-12-may-2020-v-105)
-    - [🛠 update on 10 May 2020 - v 1.0.4](#update-on-10-may-2020-v-104)
-    - [🛠 update on 8 May 2020 - v 1.0.3](#update-on-8-may-2020-v-103)
-    - [🛠 update on 31 Mar 2020 - 1.0.2](#update-on-31-mar-2020-102)
-    - [🛠 update on 26 Mar 2020 - 0.0.1 (beta version)](#update-on-26-mar-2020-001-beta-version)
+    - [v1.0.5](#v105)
+    - [v1.0.4](#v104)
+    - [v1.0.3](#v103)
+    - [v1.0.2](#v102)
+    - [v0.0.1](#v001)
   - [Meta](#meta)
   - [Contributing](#contributing)
 
@@ -115,7 +115,7 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 ## Setting
 
-😊 This part is optional, we have already set default options for you, if you are not interested, please skip to [next part](usage).
+😊 This part is optional, we have already set default options for you, if you are not interested, please skip to [next part](#usage).
 
 ### Options page
 
@@ -133,7 +133,11 @@ Your webpage should be like this:
 ### Notices
 
 ⚠️ Before use, please make sure the version number of two clients are consistent. 
+
+
 ⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page, for example, `chrome://extensions/?id=djhbgkadejdmihbngglpnogjookpadjl` in Chrome.
+
+
 ⚠️ If there are multiple versions of extensions in your browser, please enable one and disable others.
 
 ### Open a video page
@@ -313,22 +317,25 @@ docker run -d \
 
 ## Release History
 
-### 🛠 update on 12 May 2020 - v 1.0.5
-------------------------------------------------------------------------------------
+### v1.0.5
+🛠 update on 12 May 2020
+---
 Improve stability
   > Test for a new logic to avoid infinite echo back (each party repeat the last operation of other party) : introduce a queue as a buffer of operation and if the operations is beyond frequency threshold, the client will automatically to halt and cool down for sometime.
 
 Add support for edge browser (beta)
 
 
-### 🛠 update on 10 May 2020 - v 1.0.4
-------------------------------------------------------------------------------------
+### v1.0.4
+🛠 update on 10 May 2020
+---
 Now user will get notification when they successfully connected to each other
 Improve stability, better sync performance
 Change the notification UI using sweetalert
 
-### 🛠 update on 8 May 2020 - v 1.0.3
-------------------------------------------------------------------------------------
+### v1.0.3
+🛠 update on 8 May 2020
+---
 improve stability & UX logic
 Added support of following websites:
   - [iqiyi](https://www.iqiyi.com/) 
@@ -340,14 +347,16 @@ Fixed the support of duonao live;
 Removed the support of 91mjw (temporarily);
 Refined documentation, will add more detail in next verison;
 
-### 🛠 update on 31 Mar 2020 - 1.0.2
-------------------------------------------------------------------------------------
+### v1.0.2
+🛠 update on 31 Mar 2020
+---
 Add support of play process bar control sync
 Fixed the issue that when syncing playing time, there is the possibility to crash the extension
 
 
-### 🛠 update on 26 Mar 2020 - 0.0.1 (beta version)
-------------------------------------------------------------------------------------
+### v0.0.1
+🛠 update on 26 Mar 2020 (beta version)
+---
 Add support of 2 parties connection
 Add support of sync pause and play action
 Add support of out-of-sync notification
