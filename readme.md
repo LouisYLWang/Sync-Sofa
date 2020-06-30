@@ -45,6 +45,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Without Docker](#without-docker)
     - [With Docker](#with-docker)
   - [Release History](#release-history)
+    - [v1.0.6](#v106) 
     - [v1.0.5](#v105)
     - [v1.0.4](#v104)
     - [v1.0.3](#v103)
@@ -314,6 +315,22 @@ docker run -d \
 
 
 ## Release History
+
+### v1.0.6
+🛠 update on 28 June 2020
+---
+⚠⚠⚠ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
+
+Add:
+    add support for Mango TV (happy Sistering 🤣)
+    add support for local video file syncing with VLC player #20
+    add options page - debugging mode & self-hosting option #21
+    add donating page
+    add new wiki page #11
+Fix:
+    improve sync performance & stability:
+        new sync logic, not compatible with any version before
+        improve buffer detection
 
 ### v1.0.5
 🛠 update on 12 May 2020
