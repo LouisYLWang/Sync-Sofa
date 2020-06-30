@@ -19,14 +19,6 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 - [Sync Sofa - streaming video playback synchronizer extension](#sync-sofa-streaming-video-playback-synchronizer-extension)
   - [Supported list](#supported-list)
-  - [Installation](#installation)
-    - [Google Chrome](#google-chrome)
-      - [Install from Chrome Web Store](#install-from-chrome-web-store)
-      - [Install from local .crx file](#install-from-local-crx-file)
-      - [Install from unpackaged folder](#install-from-unpackaged-folder)
-    - [Microsoft Edge:](#microsoft-edge)
-      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
-    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
   - [Setting](#setting)
     - [Options page](#options-page)
   - [Usage](#usage)
@@ -41,6 +33,14 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Start connection](#start-connection-1)
     - [Enjoy yourselves](#enjoy-yourselves-1)
     - [Close Controller webpage](#close-controller-webpage)
+  - [Installation](#installation)
+    - [Google Chrome](#google-chrome)
+      - [Install from Chrome Web Store](#install-from-chrome-web-store)
+      - [Install from local .crx file](#install-from-local-crx-file)
+      - [Install from unpackaged folder](#install-from-unpackaged-folder)
+    - [Microsoft Edge:](#microsoft-edge)
+      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
+    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
   - [Self-hosting Guide](#self-hosting-guide)
     - [Without Docker](#without-docker)
     - [With Docker](#with-docker)
@@ -68,48 +68,6 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 [Click here to tell us more](https://github.com/LouisYLWang/Sync-Sofa/issues/22)
 
-## Installation
-
-### Google Chrome
-
-#### Install from Chrome Web Store
-
-1. Open [Sync Sofa - Online Video Synchronizer - Chrome Web Store](https://chrome.google.com/webstore/detail/sync-sofa-online-video-sy/kgpnhgmpijhpkefpddoehhminpfiddmg) in your Chrome
-2. Click `Add to Chrome` button
-3. Choose `Add extension`
-
-#### Install from local .crx file
-
-1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
-2. Download `sync_sofa.[version].crx`, *[version]* is the number of the latest version 
-3. Open `chrome://extensions/` in your Chrome
-4. Turn on `Developer mode` (in the top right corner)
-5. Drag `sync_sofa.[version].crx` into the `chrome://extensions/` page
-6. Choose `Add extension`
-
-**Notices**: 
-If the extension is disabled by Chrome, try [Install from chrome web store](#install-from-chrome-web-store) or [Install from unpackaged folder](#install-from-unpackaged-folder).
-> This extension is not listed in the Chrome Web Store and may have been added without your knowledge.
-
-#### Install from unpackaged folder
-
-1. Download [stable version](https://github.com/LouisYLWang/Sync-Sofa/archive/master.zip) or [development version](https://github.com/LouisYLWang/Sync-Sofa/archive/dev.zip) (with new features and some bugs maybe)
-2. Unzip the `.zip` file you downloaded
-3. Open `chrome://extensions/` in your Chrome
-4. Turn on `Developer mode` (in the top right corner)
-5. Click `Load unpacked` (in the top left corner)
-6. Choose `[download_path]/[unzip folder]/client/chrome_extension`
-7. Click `select`
-
-### Microsoft Edge:
-
-#### Install from Microsoft Edge Addons
-
-1. Open [Sync Sofa - Online Video Synchronizer - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp) in your Microsoft Edge
-2. Click `Get` button
-
-### Firefox (will be supported in later version)
-
 ## Setting
 
 😊 This part is optional, we have already set default options for you, if you are not interested, please skip to [next part](#usage).
@@ -131,7 +89,9 @@ Your webpage should be like this:
 
 ⚠️ Before use, please make sure the version number of two clients are consistent. 
 
-⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page, for example, `chrome://extensions/?id=djhbgkadejdmihbngglpnogjookpadjl` in Chrome.
+⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page. 
+1. Open `chrome://extensions/`, find `Sync Sofa`, click `Detaild` button, enable `Allow access to file URLs`.
+2. Right click `Sync Sofa` extension, choose `Manage Extensions`, enable `Allow access to file URLs`.
 
 ⚠️ If there are multiple versions of extensions in your browser, please enable one and disable others.
 
@@ -216,6 +176,47 @@ Now you can play the video, your operations will be synced to your partner. Enjo
 
 After your video is finished, please click `STOP` button on `Sync Sofa` extension manually or just close [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
+## Installation
+
+### Google Chrome
+
+#### Install from Chrome Web Store
+
+1. Open [Sync Sofa - Online Video Synchronizer - Chrome Web Store](https://chrome.google.com/webstore/detail/sync-sofa-online-video-sy/kgpnhgmpijhpkefpddoehhminpfiddmg) in your Chrome
+2. Click `Add to Chrome` button
+3. Choose `Add extension`
+
+#### Install from local .crx file
+
+1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
+2. Download `sync_sofa.[version].crx`, *[version]* is the number of the latest version 
+3. Open `chrome://extensions/` in your Chrome
+4. Turn on `Developer mode` (in the top right corner)
+5. Drag `sync_sofa.[version].crx` into the `chrome://extensions/` page
+6. Choose `Add extension`
+
+**Notices**: 
+If the extension is disabled by Chrome, try [Install from chrome web store](#install-from-chrome-web-store) or [Install from unpackaged folder](#install-from-unpackaged-folder).
+> This extension is not listed in the Chrome Web Store and may have been added without your knowledge.
+
+#### Install from unpackaged folder
+
+1. Download [stable version](https://github.com/LouisYLWang/Sync-Sofa/archive/master.zip) or [development version](https://github.com/LouisYLWang/Sync-Sofa/archive/dev.zip) (with new features and some bugs maybe)
+2. Unzip the `.zip` file you downloaded
+3. Open `chrome://extensions/` in your Chrome
+4. Turn on `Developer mode` (in the top right corner)
+5. Click `Load unpacked` (in the top left corner)
+6. Choose `[download_path]/[unzip folder]/client/chrome_extension`
+7. Click `select`
+
+### Microsoft Edge:
+
+#### Install from Microsoft Edge Addons
+
+1. Open [Sync Sofa - Online Video Synchronizer - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp) in your Microsoft Edge
+2. Click `Get` button
+
+### Firefox (will be supported in later version)
 
 ## Self-hosting Guide
 
