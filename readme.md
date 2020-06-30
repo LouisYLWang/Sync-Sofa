@@ -321,16 +321,16 @@ docker run -d \
 ---
 ⚠⚠⚠ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
 
-Add:
-    add support for Mango TV (happy Sistering 🤣)
-    add support for local video file syncing with VLC player #20
-    add options page - debugging mode & self-hosting option #21
-    add donating page
-    add new wiki page #11
-Fix:
-    improve sync performance & stability:
-        new sync logic, not compatible with any version before
-        improve buffer detection
+- Add:
+    - add support for Mango TV (happy Sistering 🤣)
+    - add support for local video file syncing with VLC player #20
+    - add options page - debugging mode & self-hosting option #21
+    - add donating page
+    - add new wiki page #11
+- Fix:
+    - improve sync performance & stability:
+      - new sync logic, not compatible with any version before
+      - improve buffer detection
 
 ### v1.0.5
 🛠 update on 12 May 2020
@@ -376,9 +376,9 @@ Add support of out-of-sync notification
 
 ## Meta
 
-Yiliang "Louis" Wang – [@blog](https://ylwang.codes/) – [@mail](mailto://louis.yl.wang@outlook.com)
+Yiliang "Louis" Wang – [@blog](https://ylwang.codes/) – [@mail](mailto:louis.yl.wang@outlook.com)
 
-Onns – [@blog](https://onns.xyz/) – [@mail](mailto://onns@onns.xyz)
+Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 
 ## Contributing
 
