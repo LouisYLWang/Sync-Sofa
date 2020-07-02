@@ -19,16 +19,9 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 - [Sync Sofa - streaming video playback synchronizer extension](#sync-sofa-streaming-video-playback-synchronizer-extension)
   - [Supported list](#supported-list)
-  - [Installation](#installation)
-    - [Google Chrome](#google-chrome)
-      - [Install from Chrome Web Store](#install-from-chrome-web-store)
-      - [Install from local .crx file](#install-from-local-crx-file)
-      - [Install from unpackaged folder](#install-from-unpackaged-folder)
-    - [Microsoft Edge:](#microsoft-edge)
-      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
-    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
   - [Setting](#setting)
     - [Options page](#options-page)
+    - [Refresh video page](#refresh-video-page)
   - [Usage](#usage)
     - [Notices](#notices)
     - [Open a video page](#open-a-video-page)
@@ -41,10 +34,19 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Start connection](#start-connection-1)
     - [Enjoy yourselves](#enjoy-yourselves-1)
     - [Close Controller webpage](#close-controller-webpage)
+  - [Installation](#installation)
+    - [Google Chrome](#google-chrome)
+      - [Install from Chrome Web Store](#install-from-chrome-web-store)
+      - [Install from local .crx file](#install-from-local-crx-file)
+      - [Install from unpackaged folder](#install-from-unpackaged-folder)
+    - [Microsoft Edge:](#microsoft-edge)
+      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
+    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
   - [Self-hosting Guide](#self-hosting-guide)
     - [Without Docker](#without-docker)
     - [With Docker](#with-docker)
   - [Release History](#release-history)
+    - [v1.0.6](#v106)
     - [v1.0.5](#v105)
     - [v1.0.4](#v104)
     - [v1.0.3](#v103)
@@ -68,48 +70,6 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 [Click here to tell us more](https://github.com/LouisYLWang/Sync-Sofa/issues/22)
 
-## Installation
-
-### Google Chrome
-
-#### Install from Chrome Web Store
-
-1. Open [Sync Sofa - Online Video Synchronizer - Chrome Web Store](https://chrome.google.com/webstore/detail/sync-sofa-online-video-sy/kgpnhgmpijhpkefpddoehhminpfiddmg) in your Chrome
-2. Click `Add to Chrome` button
-3. Choose `Add extension`
-
-#### Install from local .crx file
-
-1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
-2. Download `sync_sofa.[version].crx`, *[version]* is the number of the latest version 
-3. Open `chrome://extensions/` in your Chrome
-4. Turn on `Developer mode` (in the top right corner)
-5. Drag `sync_sofa.[version].crx` into the `chrome://extensions/` page
-6. Choose `Add extension`
-
-**Notices**: 
-If the extension is disabled by Chrome, try [Install from chrome web store](#install-from-chrome-web-store) or [Install from unpackaged folder](#install-from-unpackaged-folder).
-> This extension is not listed in the Chrome Web Store and may have been added without your knowledge.
-
-#### Install from unpackaged folder
-
-1. Download [stable version](https://github.com/LouisYLWang/Sync-Sofa/archive/master.zip) or [development version](https://github.com/LouisYLWang/Sync-Sofa/archive/dev.zip) (with new features and some bugs maybe)
-2. Unzip the `.zip` file you downloaded
-3. Open `chrome://extensions/` in your Chrome
-4. Turn on `Developer mode` (in the top right corner)
-5. Click `Load unpacked` (in the top left corner)
-6. Choose `[download_path]/[unzip folder]/client/chrome_extension`
-7. Click `select`
-
-### Microsoft Edge:
-
-#### Install from Microsoft Edge Addons
-
-1. Open [Sync Sofa - Online Video Synchronizer - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp) in your Microsoft Edge
-2. Click `Get` button
-
-### Firefox (will be supported in later version)
-
 ## Setting
 
 😊 This part is optional, we have already set default options for you, if you are not interested, please skip to [next part](#usage).
@@ -125,13 +85,19 @@ Your webpage should be like this:
 
 ![Sync Sofa - Options](https://onns.xyz/blog/image/20200629-3.png)
 
+### Refresh video page
+
+After saving options, please also refresh the video page or local mp4 page or [http://127.0.0.1:8080/](http://127.0.0.1:8080/) to make changes work.
+
 ## Usage
 
 ### Notices
 
 ⚠️ Before use, please make sure the version number of two clients are consistent. 
 
-⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page, for example, `chrome://extensions/?id=djhbgkadejdmihbngglpnogjookpadjl` in Chrome.
+⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page. 
+1. Open `chrome://extensions/`, find `Sync Sofa`, click `Detaild` button, enable `Allow access to file URLs`.
+2. Right click `Sync Sofa` extension, choose `Manage Extensions`, enable `Allow access to file URLs`.
 
 ⚠️ If there are multiple versions of extensions in your browser, please enable one and disable others.
 
@@ -216,6 +182,47 @@ Now you can play the video, your operations will be synced to your partner. Enjo
 
 After your video is finished, please click `STOP` button on `Sync Sofa` extension manually or just close [http://127.0.0.1:8080/](http://127.0.0.1:8080/).
 
+## Installation
+
+### Google Chrome
+
+#### Install from Chrome Web Store
+
+1. Open [Sync Sofa - Online Video Synchronizer - Chrome Web Store](https://chrome.google.com/webstore/detail/sync-sofa-online-video-sy/kgpnhgmpijhpkefpddoehhminpfiddmg) in your Chrome
+2. Click `Add to Chrome` button
+3. Choose `Add extension`
+
+#### Install from local .crx file
+
+1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
+2. Download `sync_sofa.[version].crx`, *[version]* is the number of the latest version 
+3. Open `chrome://extensions/` in your Chrome
+4. Turn on `Developer mode` (in the top right corner)
+5. Drag `sync_sofa.[version].crx` into the `chrome://extensions/` page
+6. Choose `Add extension`
+
+**Notices**: 
+If the extension is disabled by Chrome, try [Install from chrome web store](#install-from-chrome-web-store) or [Install from unpackaged folder](#install-from-unpackaged-folder).
+> This extension is not listed in the Chrome Web Store and may have been added without your knowledge.
+
+#### Install from unpackaged folder
+
+1. Download [stable version](https://github.com/LouisYLWang/Sync-Sofa/archive/master.zip) or [development version](https://github.com/LouisYLWang/Sync-Sofa/archive/dev.zip) (with new features and some bugs maybe)
+2. Unzip the `.zip` file you downloaded
+3. Open `chrome://extensions/` in your Chrome
+4. Turn on `Developer mode` (in the top right corner)
+5. Click `Load unpacked` (in the top left corner)
+6. Choose `[download_path]/[unzip folder]/client/chrome_extension`
+7. Click `select`
+
+### Microsoft Edge:
+
+#### Install from Microsoft Edge Addons
+
+1. Open [Sync Sofa - Online Video Synchronizer - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp) in your Microsoft Edge
+2. Click `Get` button
+
+### Firefox (will be supported in later version)
 
 ## Self-hosting Guide
 
@@ -225,25 +232,33 @@ After your video is finished, please click `STOP` button on `Sync Sofa` extensio
 
 ### Without Docker
  
- **1. Get binary executable file**
+**1. Get binary executable file**
 
-- If you want to alter the source code and build yourself, make sure you have golang environment in your server, then run script below to get and build binary file:
-    ```shell=
-    go get github.com/LouisYLWang/Sync-Sofa/server
-    cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
-    go install
-    cd $GOPATH/bin
-    ```
+- If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run script below to get and build binary file:
+  ```shell
+  go get github.com/LouisYLWang/Sync-Sofa/server
+  # If you don't know $GOPATH
+  # try "go env GOPATH"
+  cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
+  
+  # Next step is optional
+  # If you have any error message like:
+  # "dial tcp 216.58.200.49:443: i/o timeout"
+  # then try
+  export GOPROXY=https://goproxy.io
+  
+  go install
+  cd $GOPATH/bin
+  ```
     
 - If you want to only deploy the binary file:
-    1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
-    2. Download `server` binary file for linux server
-    3. Download `config.json` file to the same directory of binary file
+  1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
+  2. Download `server` binary file for linux server
+  3. Download `config.json` file to the same directory of binary file
     
- **2. In the directory of binary file, adjust config file base on your need:**
+**2. In the directory of binary file, adjust config file base on your need:**
 
 - Config file variables:
-
     - `addr`: port of server
     - `runmode`:
         - dev: developing mode
@@ -258,13 +273,19 @@ After your video is finished, please click `STOP` button on `Sync Sofa` extensio
       - `feedbackemailpswd`: feedback mail sender password 
       - `recipients`: a list of feedback receivers mail address (with @your-mail.host)
 
-    **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
+  **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
 
+- minimal config file:
+  ```json
+  {
+    "addr": ":80",
+    "runmode": "dev"
+  }
+  ```
 
 - example config file:
-
-```json=
-{
+  ```json
+  {
     "addr": ":443",
     "runmode": "prod",
     "tlsdir": {
@@ -282,13 +303,14 @@ After your video is finished, please click `STOP` button on `Sync Sofa` extensio
         ]
     }
   }
-```
-**3. Run `./server` to delopy the server, deployment is successful if you see:**
+  ```
 
-```
-found config file, read parameters from config file...
-server is listening at {your_port_number}...
-```
+**3. Run `./server` to delopy the server, deployment is successful if you see:**
+  ```
+  found config file, read parameters from config file...
+  server is listening at {your_port_number}...
+  ```
+
 ### With Docker
 Make sure docker service is runing on your server, make change to the script blow and run:
 
@@ -313,6 +335,22 @@ docker run -d \
 
 
 ## Release History
+
+### v1.0.6
+🛠 update on 28 June 2020
+---
+⚠⚠⚠ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
+
+- Add:
+    - add support for Mango TV (happy Sistering 🤣)
+    - add support for local video file syncing with VLC player #20
+    - add options page - debugging mode & self-hosting option #21
+    - add donating page
+    - add new wiki page #11
+- Fix:
+    - improve sync performance & stability:
+      - new sync logic, not compatible with any version before
+      - improve buffer detection
 
 ### v1.0.5
 🛠 update on 12 May 2020
@@ -358,9 +396,9 @@ Add support of out-of-sync notification
 
 ## Meta
 
-Yiliang "Louis" Wang – [@blog](https://ylwang.codes/) – [@mail](mailto://louis.yl.wang@outlook.com)
+Yiliang "Louis" Wang – [@blog](https://ylwang.codes/) – [@mail](mailto:louis.yl.wang@outlook.com)
 
-Onns – [@blog](https://onns.xyz/) – [@mail](mailto://onns@onns.xyz)
+Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 
 ## Contributing
 
