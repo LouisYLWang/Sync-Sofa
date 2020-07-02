@@ -457,16 +457,16 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 [chrome-url]: https://chrome.google.com/webstore/detail/sync-sofa-beta-online-vid/kgpnhgmpijhpkefpddoehhminpfiddmg
 
 ## FAQ 
-1. **Q:** When I installed, Chrome popup reminds me Sync Sofa requires permissions of `read and change your data on a number of websites` and `read your browsing history`, sounds so horrible, is that safe?
-**A:** We does not collect your browsering data, the only thing we do is to get your current tab information and make sure you are visiting a site we support ([support list](#supported-list)). All information is collected and processed locally. We do not mess up the data on the websites you are watching, just inject a sync script to get your pause, play and seek operation. **All source code can be reviewed at [our github page](https://github.com/LouisYLWang/Sync-Sofa), we promise everything we did is necessary and not harmful.**
+1. **Q:** When I installed, Chrome popup says that Sync Sofa requires the permissions of `read and change your data on a number of websites` and `read your browsing history`, sounds so horrible, is that safe?
+**A:** We do not collect your browsing data, the only thing we do is to get your current tab information and make sure you are visiting a site we support ([support list](#supported-list)). All information is collected and processed locally. We do not mess up the data on the websites you are watching, just inject a sync script to get your pause, play and seek operation. **All source code can be reviewed at [our github page](https://github.com/LouisYLWang/Sync-Sofa), we promise everything we did is necessary and not harmful.**
 
-2. If your find your extension **button is darken**, please first get in to a video playing page.
+2. If your find your extension **button is darken**, please first make sure you are in a video playing page.
 
 3. If you find your extension **can not request room code**, please first check the  [option page](#options-page) and click `RESET` button. If it still not work, please close your web browser, wait for a while and try again. Currently our server is hosting abroad, it may cause connecting issue.
 
-4. If you find your extension can not link to your peer, check following:
-    1. please make sure the **version number** of two clients are consistent. To check the version number, you need to open [chrome extension page](chrome://extensions/) (if this link is not work, please type `chrome://extensions/` into the address bar and visit). You will find a card with title of `Sync Sofa - Online Video Synchronizer 1.0.6`. The `1.0.6` is your current version.
-    2. please check step 2 again.
+4. If you find your extension cannot connect to your peer, please check following:
+    1. please make sure the **version number** of two clients are consistent. To check the version number, you need to open [chrome extension page](chrome://extensions/) (if this link is not work, please type `chrome://extensions/` into the address bar and visit). You will find a extension with the title of `Sync Sofa - Online Video Synchronizer 1.0.6`. `1.0.6` is your current version number of Sync Sofa.
+    2. If 4.1 does not solve your problem, please try step 2 again.
 
 
 
