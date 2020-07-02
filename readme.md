@@ -54,6 +54,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [v0.0.1](#v001)
   - [Meta](#meta)
   - [Contributing](#contributing)
+  - [FAQ](#faq)
 
 <!-- /code_chunk_output -->
 
@@ -275,7 +276,7 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
   **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
 
-- minimal config file:
+- minimal (non-https) config file:
   ```json
   {
     "addr": ":80",
@@ -283,7 +284,18 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
   }
   ```
 
-- example config file:
+- production environment (https) config file:
+  ```json
+    {
+      "addr": ":443",
+      "runmode": "prod",
+      "tlsdir": {
+          "tlskey": "/etc/letsencrypt/live/your.host.url/privkey.pem",
+          "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
+      }
+    }
+    ```
+- if you want to add feedback feature (not necessary and reqired):
   ```json
   {
     "addr": ":443",
@@ -314,26 +326,57 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 ### With Docker
 Make sure docker service is runing on your server, make change to the script blow and run:
 
-```sh
-docker pull louisylwang/watchtogether
+- minimal (non-https) hosting script:
+  ```sh
+  docker pull louisylwang/watchtogether
 
-docker run -d \
--p {your docker internal port}:{your external port} \
--v /etc/letsencrypt:/etc/letsencrypt:ro \ #if you use letsencrypt
--e ADDR=:{your port} \
--e TLSKEY={your tlskey name} \
--e TLSCERT={your tlscert name} \
--e SMTPSERVERHOST= {feedback mail server host} \
--e SMTPSERVERPORT= {feedback mail server port} \
--e FEEDBACKEMAILADDR= {feedback mail sender address} \
--e FEEDBACKEMAILPSWD= {feedback mail sender password} \
--e RUNMODE={"prod"/"dev"} \
--e RECIPIENTS= {a string with all targeted email address, separate by ",". exp: "rec1@mail.addr, rec2@mail.addr"}
---name {your docker image name} louisylwang/watchtogether
---restart=always
-```
+  docker run -d \
+  -e ADDR=:4000 \
+  -e RUNMODE="dev" \
+  -p 4000:4000 \
+  --name wtgt louisylwang/watchtogether
+  ```
+- production environment (https) hosting script:
+  ```sh
+  docker pull louisylwang/watchtogether
 
+  docker run -d \
+  -p {your docker internal port}:{your external port} \
+  -v /etc/letsencrypt:/etc/letsencrypt:ro \ #if you use letsencrypt
+  -e ADDR=:{your port} \
+  -e TLSKEY={your tlskey name} \
+  -e TLSCERT={your tlscert name} \
+  -e RUNMODE={"prod"or"dev"} \
+  --name {your docker image name} louisylwang/watchtogether
+  --restart=always
+  ```
 
+- if you want to add feedback feature (not necessary and reqired):
+
+  ```sh
+  docker pull louisylwang/watchtogether
+
+  docker run -d \
+  -p {your docker internal port}:{your external port} \
+  -v /etc/letsencrypt:/etc/letsencrypt:ro \ #if you use letsencrypt
+  -e ADDR=:{your port} \
+  -e TLSKEY={your tlskey name} \
+  -e TLSCERT={your tlscert name} \
+  -e SMTPSERVERHOST= {feedback mail server host} \  
+  -e SMTPSERVERPORT= {feedback mail server port} \
+  -e FEEDBACKEMAILADDR= {feedback mail sender address} \
+  -e FEEDBACKEMAILPSWD= {feedback mail sender password} \
+  -e RUNMODE={"prod"or"dev"} \
+  -e RECIPIENTS= {a string with all targeted email address, separate by ",". exp: "rec1@mail.addr, rec2@mail.addr"}
+  --name {your docker image name} louisylwang/watchtogether
+  --restart=always
+  ```
+
+- deployment is successful if you see in `docker logs {your docker image name}`:
+  ```
+  not found config file, read parameters from system variables...
+  YYYY/MM/DD HH:MM:SS server is listening at :ADDR...
+  ```
 ## Release History
 
 ### v1.0.6
@@ -412,3 +455,18 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 
 [chrome-image]: https://img.shields.io/chrome-web-store/users/kgpnhgmpijhpkefpddoehhminpfiddmg?style=flat-square
 [chrome-url]: https://chrome.google.com/webstore/detail/sync-sofa-beta-online-vid/kgpnhgmpijhpkefpddoehhminpfiddmg
+
+## FAQ 
+1. **Q:** When I installed, Chrome popup reminds me Sync Sofa requires permissions of `read and change your data on a number of websites` and `read your browsing history`, sounds so horrible, is that safe?
+**A:** We does not collect your browsering data, the only thing we do is to get your current tab information and make sure you are visiting a site we support ([support list](#supported-list)). All information is collected and processed locally. We do not mess up the data on the websites you are watching, just inject a sync script to get your pause, play and seek operation. **All source code can be reviewed at [our github page](https://github.com/LouisYLWang/Sync-Sofa), we promise everything we did is necessary and not harmful.**
+
+2. If your find your extension **button is darken**, please first get in to a video playing page.
+
+3. If you find your extension **can not request room code**, please first check the  [option page](#options-page) and click `RESET` button. If it still not work, please close your web browser, wait for a while and try again. Currently our server is hosting abroad, it may cause connecting issue.
+
+4. If you find your extension can not link to your peer, check following:
+    1. please make sure the **version number** of two clients are consistent. To check the version number, you need to open [chrome extension page](chrome://extensions/) (if this link is not work, please type `chrome://extensions/` into the address bar and visit). You will find a card with title of `Sync Sofa - Online Video Synchronizer 1.0.6`. The `1.0.6` is your current version.
+    2. please check step 2 again.
+
+
+
