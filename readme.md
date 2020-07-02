@@ -21,6 +21,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
   - [Supported list](#supported-list)
   - [Setting](#setting)
     - [Options page](#options-page)
+    - [Refresh video page](#refresh-video-page)
   - [Usage](#usage)
     - [Notices](#notices)
     - [Open a video page](#open-a-video-page)
@@ -45,7 +46,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
     - [Without Docker](#without-docker)
     - [With Docker](#with-docker)
   - [Release History](#release-history)
-    - [v1.0.6](#v106) 
+    - [v1.0.6](#v106)
     - [v1.0.5](#v105)
     - [v1.0.4](#v104)
     - [v1.0.3](#v103)
@@ -83,6 +84,10 @@ There are two ways to visit options page.
 Your webpage should be like this:
 
 ![Sync Sofa - Options](https://onns.xyz/blog/image/20200629-3.png)
+
+### Refresh video page
+
+After saving options, please also refresh the video page or local mp4 page or [http://127.0.0.1:8080/](http://127.0.0.1:8080/) to make changes work.
 
 ## Usage
 
@@ -227,25 +232,33 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 ### Without Docker
  
- **1. Get binary executable file**
+**1. Get binary executable file**
 
-- If you want to alter the source code and build yourself, make sure you have golang environment in your server, then run script below to get and build binary file:
-    ```shell=
-    go get github.com/LouisYLWang/Sync-Sofa/server
-    cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
-    go install
-    cd $GOPATH/bin
-    ```
+- If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run script below to get and build binary file:
+  ```shell
+  go get github.com/LouisYLWang/Sync-Sofa/server
+  # If you don't know $GOPATH
+  # try "go env GOPATH"
+  cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
+  
+  # Next step is optional
+  # If you have any error message like:
+  # "dial tcp 216.58.200.49:443: i/o timeout"
+  # then try
+  export GOPROXY=https://goproxy.io
+  
+  go install
+  cd $GOPATH/bin
+  ```
     
 - If you want to only deploy the binary file:
-    1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
-    2. Download `server` binary file for linux server
-    3. Download `config.json` file to the same directory of binary file
+  1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
+  2. Download `server` binary file for linux server
+  3. Download `config.json` file to the same directory of binary file
     
- **2. In the directory of binary file, adjust config file base on your need:**
+**2. In the directory of binary file, adjust config file base on your need:**
 
 - Config file variables:
-
     - `addr`: port of server
     - `runmode`:
         - dev: developing mode
@@ -260,13 +273,19 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
       - `feedbackemailpswd`: feedback mail sender password 
       - `recipients`: a list of feedback receivers mail address (with @your-mail.host)
 
-    **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
+  **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
 
+- minimal config file:
+  ```json
+  {
+    "addr": ":80",
+    "runmode": "dev"
+  }
+  ```
 
 - example config file:
-
-```json=
-{
+  ```json
+  {
     "addr": ":443",
     "runmode": "prod",
     "tlsdir": {
@@ -284,13 +303,14 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
         ]
     }
   }
-```
-**3. Run `./server` to delopy the server, deployment is successful if you see:**
+  ```
 
-```
-found config file, read parameters from config file...
-server is listening at {your_port_number}...
-```
+**3. Run `./server` to delopy the server, deployment is successful if you see:**
+  ```
+  found config file, read parameters from config file...
+  server is listening at {your_port_number}...
+  ```
+
 ### With Docker
 Make sure docker service is runing on your server, make change to the script blow and run:
 
