@@ -20,6 +20,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 - [Sync Sofa - streaming video playback synchronizer extension](#sync-sofa-streaming-video-playback-synchronizer-extension)
   - [Supported list](#supported-list)
   - [Setting](#setting)
+    - [Server list](#server-list)
     - [Options page](#options-page)
     - [Refresh video page](#refresh-video-page)
   - [Usage](#usage)
@@ -74,6 +75,19 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 ## Setting
 
 😊 This part is optional, we have already set default options for you, if you are not interested, please skip to [next part](#usage).
+
+### Server list
+
+Recently, Many Chinese users said our service is unstable, that is because our default server is located at us, so here is the server list, you can pick the nearest one.
+
+* https://app.ylwang.me
+* https://sync-cn.onns.xyz
+
+Before setting, check server status here: [https://sync-status.onns.xyz/](https://sync-status.onns.xyz/).
+
+We will be grateful for supporting us to build more server, if it is convenient (Cause this project is unprofitable).
+
+If you have already built your own server, and wanna share, please tell us! 
 
 ### Options page
 
