@@ -510,7 +510,8 @@ class SyncHelper {
     }
 
     close() {
-        this.send(this.CLOSEDCODE);
+		this.send(this.CLOSEDCODE);
+		this.clearHeartBeats();
         websocket.close();
         status = STATUSEND;
         switch (this.type) {
