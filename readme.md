@@ -87,6 +87,13 @@ Before setting, check server status here: [https://sync-status.onns.xyz/](https:
 
 We will be grateful for supporting us to build more server, if it is convenient (Cause this project is unprofitable).
 
+<div>
+<h5> Alipay, Wechat pay, Paypal</h5>
+<img src="client/chrome_extension/images/alipay.png" alt="alipay" width="20.5%">
+<img src="client/chrome_extension/images/wechat.png" alt="wechat" width="20%">
+<img src="client/chrome_extension/images/paypal.jpg" alt="paypal" width="20%">
+</div>
+
 If you have already built your own server, and wanna share, please tell us! 
 
 ### Options page
@@ -241,56 +248,53 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 ## Self-hosting Guide
 
-**Notices**: 
-
+**Notices**:
 ⚠️ Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customize with your own SSL certificate providers.
+⚠️ dev mode intends for http transmission, prod mode intends for https transmission.
 
 ### Without Docker
- 
+
 **1. Get binary executable file**
 
 - If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run script below to get and build binary file:
+
   ```shell
   go get github.com/LouisYLWang/Sync-Sofa/server
   # If you don't know $GOPATH
   # try "go env GOPATH"
   cd $GOPATH/src/github.com/LouisYLWang/Sync-Sofa/server
-  
+
   # Next step is optional
   # If you have any error message like:
   # "dial tcp 216.58.200.49:443: i/o timeout"
   # then try
   export GOPROXY=https://goproxy.io
-  
+
   go install
   cd $GOPATH/bin
   ```
-    
+
 - If you want to only deploy the binary file:
   1. Open [Github release page](https://github.com/LouisYLWang/Sync-Sofa/releases/latest)
   2. Download `server` binary file for linux server
   3. Download `config.json` file to the same directory of binary file
-    
+
 **2. In the directory of binary file, adjust config file base on your need:**
 
 - Config file variables:
-    - `addr`: port of server
-    - `runmode`:
-        - dev: developing mode
-        - prod: producting mode
-    - `tlsdir`: TLS certificate paths 
-      - `tlskey`: TLS certificate privatekey path 
-      - `tlscert`: TLS certification path
-    - `feedbackservice`: an add-on for feedback notification
-      - `smtpserverhost`: feedback mail server host
-      - `smtpserverport`: feedback mail server port 
-      - `feedbackemailaddr`: feedback mail sender address (without @your-mail.host)
-      - `feedbackemailpswd`: feedback mail sender password 
-      - `recipients`: a list of feedback receivers mail address (with @your-mail.host)
+
+  - `addr`: port of server
+  - `runmode`:
+    - dev: developing mode
+    - prod: producting mode
+  - `tlsdir`: TLS certificate paths
+    - `tlskey`: TLS certificate privatekey path
+    - `tlscert`: TLS certification path
 
   **Notices**: `addr`, `runmode` are mandatory, `tlskey`, `tlscert` are required for TLS connection
 
 - minimal (non-https) config file:
+
   ```json
   {
     "addr": ":80",
@@ -300,97 +304,85 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 - production environment (https) config file:
   ```json
-    {
-      "addr": ":443",
-      "runmode": "prod",
-      "tlsdir": {
-          "tlskey": "/etc/letsencrypt/live/your.host.url/privkey.pem",
-          "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
-      }
-    }
-    ```
-- if you want to add feedback feature (not necessary and reqired):
-  ```json
   {
     "addr": ":443",
     "runmode": "prod",
     "tlsdir": {
-        "tlskey": "/etc/letsencrypt/live/your.host.url/privkey.pem",
-        "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
-    },
-    "feedbackservice":{
-        "smtpserverhost": "smtp.gmail.com",
-        "smtpserverport": "578",
-        "feedbackemailaddr": "sender_mail_name",
-        "feedbackemailpswd": "password",     
-        "recipients":[
-            "receiver1_mail_name@mail.host",
-            "receiver2_mail_name@mail.host"
-        ]
+      "tlskey": "/etc/letsencrypt/live/your.host.url/privkey.pem",
+      "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
     }
   }
-  ```
 
 **3. Run `./server` to delopy the server, deployment is successful if you see:**
-  ```
-  found config file, read parameters from config file...
-  server is listening at {your_port_number}...
-  ```
+
+```
+found config file, read parameters from config file...
+server is listening at {your_port_number}...
+```
 
 ### With Docker
+
 Make sure docker service is runing on your server, make change to the script blow and run:
+- variables
+  - `ADDR`: port of server
+  - `RUNMODE`:
+    - dev: developing mode
+    - prod: producting mode
+  - `TLSKEYPATH`: TLS certificate privatekey path
+  - `TLSCERTPATH`: TLS certification path
 
 - minimal (non-https) hosting script:
+
   ```sh
   docker pull louisylwang/watchtogether
+
+  export ADDR=:4000 \      
+  export RUNMODE=dev \   
+  export IMGNAME=yourimagename \   
 
   docker run -d \
   -e ADDR=:4000 \
-  -e RUNMODE="dev" \
+  -e RUNMODE=RUNMODE \
   -p 4000:4000 \
-  --name wtgt louisylwang/watchtogether
+  --name IMGNAME louisylwang/watchtogether
   ```
+
 - production environment (https) hosting script:
-  ```sh
-  docker pull louisylwang/watchtogether
-
-  docker run -d \
-  -p {your docker internal port}:{your external port} \
-  -v /etc/letsencrypt:/etc/letsencrypt:ro \ #if you use letsencrypt
-  -e ADDR=:{your port} \
-  -e TLSKEY={your tlskey name} \
-  -e TLSCERT={your tlscert name} \
-  -e RUNMODE={"prod"or"dev"} \
-  --name {your docker image name} louisylwang/watchtogether
-  --restart=always
-  ```
-
-- if you want to add feedback feature (not necessary and reqired):
 
   ```sh
   docker pull louisylwang/watchtogether
 
+  export ADDR=:443 \      #your port
+  export RUNMODE=prod \   #dev or prod
+  export APIHOST=your.host.name \   #your host name
+  export IMGNAME=yourimagename \   #your docker image name, set arbitrarily
+  export TLSKEYPATH=/your/path/to/TLS/privatekey \
+  export TLSCERTPATH=/your/path/to/TLS/certification \
+
+
   docker run -d \
-  -p {your docker internal port}:{your external port} \
-  -v /etc/letsencrypt:/etc/letsencrypt:ro \ #if you use letsencrypt
-  -e ADDR=:{your port} \
-  -e TLSKEY={your tlskey name} \
-  -e TLSCERT={your tlscert name} \
-  -e SMTPSERVERHOST= {feedback mail server host} \  
-  -e SMTPSERVERPORT= {feedback mail server port} \
-  -e FEEDBACKEMAILADDR= {feedback mail sender address} \
-  -e FEEDBACKEMAILPSWD= {feedback mail sender password} \
-  -e RUNMODE={"prod"or"dev"} \
-  -e RECIPIENTS= {a string with all targeted email address, separate by ",". exp: "rec1@mail.addr, rec2@mail.addr"}
-  --name {your docker image name} louisylwang/watchtogether
+  -e ADDR=:ADDR \
+  #docker port to server:server port to docker, not necessarily the same
+  -p ADDR:ADDR \ 
+  -e RUNMODE=RUNMODE \
+  #if you use letsencrypt, TLSKEY value should be /etc/letsencrypt/live/$APIHOST/privkey.pem
+  -e TLSKEY=TLSKEYPATH \ 
+  #if you use letsencrypt, TLSCERT value should be /etc/letsencrypt/live/$APIHOST/fullchain.pem 
+  -e TLSCERT=TLSCERTPATH \ 
+  #need to expose your TLS certification file to docker
+  -v /etc/letsencrypt:/etc/letsencrypt:ro \ 
+  --name IMGNAME louisylwang/watchtogether \
   --restart=always
   ```
+
 
 - deployment is successful if you see in `docker logs {your docker image name}`:
+
   ```
   not found config file, read parameters from system variables...
   YYYY/MM/DD HH:MM:SS server is listening at :ADDR...
   ```
+
 ## Release History
 
 ### v1.0.6
