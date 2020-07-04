@@ -66,24 +66,30 @@ func (s Store) BeginSessions(r *http.Request) (SessionID, error) {
 	defer s.Lock.Unlock()
 	hostSessionID := SessionID(r.URL.Query().Get(paramID))
 
-	id := make([]byte, idLength)
-	_, err := rand.Read(id)
-	if err != nil {
-		return InvalidSessionID, fmt.Errorf("not correctly generate cryptographically random: %v", err)
-	}
-	timeNow := time.Now()
-	sessionID := SessionID(b64.URLEncoding.EncodeToString(id))
-	guestPair := &Pair{
-		SelfID:    sessionID,
-		PartnerID: hostSessionID,
-		BeginTime: timeNow,
-	}
-	s.SessionMap[sessionID] = guestPair
+	if _, roomExist := s.SessionMap[hostSessionID]; roomExist {
+		id := make([]byte, idLength)
+		_, err := rand.Read(id)
+		if err != nil {
+			return InvalidSessionID, fmt.Errorf("not correctly generate cryptographically random: %v", err)
+		}
 
-	hostPair := s.SessionMap[hostSessionID]
-	hostPair.PartnerID = sessionID
-	hostPair.BeginTime = timeNow
+		sessionID := SessionID(b64.URLEncoding.EncodeToString(id))
 
-	log.Printf("add session by %s", sessionID)
-	return sessionID, nil
+		guestPair := &Pair{
+			SelfID:    sessionID,
+			PartnerID: hostSessionID,
+			BeginTime: time.Now(),
+		}
+		s.SessionMap[sessionID] = guestPair
+
+		hostPair := s.SessionMap[hostSessionID]
+		hostPair.PartnerID = sessionID
+		hostPair.BeginTime = time.Now()
+
+		log.Printf("add session by %s", sessionID)
+		return sessionID, nil
+	}
+
+	log.Printf("wrong sessionID")
+	return InvalidSessionID, nil
 }

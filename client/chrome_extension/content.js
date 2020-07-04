@@ -575,13 +575,16 @@ class SyncHelper {
     receive(message) {
         // var that = this;
         message = JSON.parse(message);
-
         // compatible with older versions.
         if (message.type == undefined) {
+            var el = document.createElement('div');
+            el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
+            SyncHelper.notification(``, 3000, el);
             message = {
                 "type": this.SYSTEMMESSAGE,
                 "content": message + ""
             }
+            return;
         }
         // end.
 
@@ -711,7 +714,7 @@ class SyncHelper {
                 },
                 fail: function (status) {
                     that.VLCCount += 1;
-                    if(that.VLCCount >= 5) {
+                    if (that.VLCCount >= 5) {
                         that.close();
                     }
                     // alert("Error Code: " + status); // 此处为执行成功后的代码
@@ -875,12 +878,20 @@ class SyncHelper {
             clearTimeout(this.heartBeatTimer[i]);
         }
     }
-    static notification(msg, duration = 3000) {
+    static notification(msg, duration = 3000, content = null) {
         // this.isFullScreen() && this.exitFullscreen();
-        swal(msg, {
-            buttons: false,
-            timer: duration,
-        });
+        if (content != null) {
+            swal({
+                buttons: false,
+                content: content,
+                timer: duration,
+              })
+        } else {
+            swal(msg, {
+                buttons: false,
+                timer: duration,
+            });
+        }
     }
 
     static addCode(code) {

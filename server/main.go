@@ -53,13 +53,13 @@ func main() {
 		fmt.Println("found config file, read parameters from config file...")
 		fileData, err := ioutil.ReadFile("./config.json")
 		if err != nil {
-			fmt.Println("incorrect config file")
+			log.Println("incorrect config file")
 		} else {
 			err = json.Unmarshal(fileData, &cfg)
 		}
 
 		if err != nil {
-			fmt.Println("unable to unmarshal file format correctly")
+			log.Println("unable to unmarshal file format correctly")
 		}
 
 		addr = cfg.Addr
@@ -73,7 +73,14 @@ func main() {
 	} else {
 		fmt.Println("not found config file, read parameters from system variables...")
 		addr = os.Getenv("ADDR")
+		if addr == "" {
+			log.Println("Please specify the port")
+		}
 		runmode = os.Getenv("RUNMODE")
+		if runmode == "" {
+			log.Println("Please choose the hosting mode")
+		}
+		// below are not required variables
 		smtpServerHost = os.Getenv("SMTPSERVERHOST") //"smtp.gmail.com"
 		smtpServerPort = os.Getenv("SMTPSERVERPORT") //"587"
 		feedbackAccount = os.Getenv("FEEDBACKEMAILADDR")
