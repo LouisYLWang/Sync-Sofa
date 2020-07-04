@@ -448,8 +448,8 @@ class SyncHelper {
     }
     socketLock = false;
     ackFlag = false;
-    heartBeatTimer = [null, null, null];
-    heartBeatTimes = [1, 7, 20];
+    heartBeatTimer = [null, null, null,null];
+    heartBeatTimes = [1, 7, 20,60];
 
     VLCTimer = null;
     VLCStatus = "paused";
@@ -862,7 +862,7 @@ class SyncHelper {
 
     heartBeats() {
         var that = this;
-        for (var i = 0; i < this.heartBeatTimes.length; i++) {
+        for (var i = 0; i < this.heartBeatTimes.length-1; i++) {
             this.heartBeatTimer[i] = setTimeout(
                 function () {
                     that.socketLock = false;
@@ -872,11 +872,21 @@ class SyncHelper {
                     that.ackFlag = false;
                 }, 1000 * this.heartBeatTimes[i]);
         }
+        var intervalIndex = this.heartBeatTimes.length-1;
+        this.heartBeatTimer[intervalIndex] = setInterval(
+            function () {
+                that.socketLock = false;
+                Debugger.log(`HEARTBEATS REPEATEDLY`);
+                that.ackFlag = true;
+                that.sync();
+                that.ackFlag = false;
+            }, 1000 * this.heartBeatTimes[intervalIndex]);
     }
     clearHeartBeats() {
-        for (var i = 0; i < this.heartBeatTimer.length; i++) {
+        for (var i = 0; i < this.heartBeatTimer.length-1; i++) {
             clearTimeout(this.heartBeatTimer[i]);
-        }
+		}
+		clearInterval(this.heartBeatTimer[this.heartBeatTimes.length-1]);
     }
     static notification(msg, duration = 3000, content = null) {
         // this.isFullScreen() && this.exitFullscreen();
