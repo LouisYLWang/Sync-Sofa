@@ -328,6 +328,8 @@ Make sure docker service is runing on your server, make change to the script blo
   - `RUNMODE`:
     - dev: developing mode
     - prod: producting mode
+  - `APIHOST`: your host name
+  - `IMGNAME`: your docker image name, set arbitrarily
   - `TLSKEYPATH`: TLS certificate privatekey path
   - `TLSCERTPATH`: TLS certification path
 
@@ -352,10 +354,10 @@ Make sure docker service is runing on your server, make change to the script blo
   ```sh
   docker pull louisylwang/watchtogether
 
-  export ADDR=:443 \      #your port
-  export RUNMODE=prod \   #dev or prod
-  export APIHOST=your.host.name \   #your host name
-  export IMGNAME=yourimagename \   #your docker image name, set arbitrarily
+  export ADDR=:443 \      
+  export RUNMODE=prod \   
+  export APIHOST=your.host.name \   
+  export IMGNAME=yourimagename \   
   export TLSKEYPATH=/your/path/to/TLS/privatekey \
   export TLSCERTPATH=/your/path/to/TLS/certification \
 
