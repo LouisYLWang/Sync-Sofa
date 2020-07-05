@@ -466,13 +466,8 @@ class SyncHelper {
             (resolve) => {
                 chrome.storage.local.get(['apihost', 'protocol'], result => {
                     var apihost = result.apihost;
-                    Debugger.log(apihost);
-
-                    Debugger.log(result.protocol);
                     var protocol = result.protocol;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
-                    Debugger.log(socketprotocol);
-
                     var url = `wss://app.ylwang.me/ws/?id=${serverCode}`;
                     if (apihost != undefined && socketprotocol != undefined) {
                         url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
@@ -484,7 +479,6 @@ class SyncHelper {
         getURLPromise.then((url) => {
             var timer = null;
             Debugger.log(`RECEIVED sessionID ${serverCode}`);
-            Debugger.log(url);
 
             if (websocket) {
                 websocket.close();
@@ -580,14 +574,17 @@ class SyncHelper {
         message = JSON.parse(message);
         // compatible with older versions.
         if (message.type == undefined) {
-            var el = document.createElement('div');
-            el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
-            SyncHelper.notification(``, 3000, el);
-            message = {
-                "type": this.SYSTEMMESSAGE,
-                "content": message + ""
+            if (message === "-1"){
+                var el = document.createElement('div');
+                el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
+                SyncHelper.notification(``, 5000, el);
+                return;
+            } else {
+                message = {
+                    "type": this.SYSTEMMESSAGE,
+                    "content": message + ""
+                }
             }
-            return;
         }
         // end.
 
@@ -598,7 +595,7 @@ class SyncHelper {
                 switch (message.content) {
                     case this.CLOSEDCODE:
                         this.handleVideoPause();
-                        SyncHelper.notification("socket connection closed by other partner");
+                        SyncHelper.notification("connection closed by other partner");
                         this.close();
                         break;
                     case this.DISCONNECTCODE:
