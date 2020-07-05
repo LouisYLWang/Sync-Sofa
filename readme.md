@@ -119,13 +119,15 @@ After saving options, please also refresh the video page or local mp4 page or [h
 
 ### Notices
 
-⚠️ Before use, please make sure the version number of two clients are consistent. 
+⚠️ Before use, please make sure `the version number` of two clients are consistent. 
+
+⚠️ Before use, please make sure `the server host` of two clients are consistent. 
 
 ⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page. 
 1. Open `chrome://extensions/`, find `Sync Sofa`, click `Detaild` button, enable `Allow access to file URLs`.
 2. Right click `Sync Sofa` extension, choose `Manage Extensions`, enable `Allow access to file URLs`.
 
-⚠️ If there are multiple versions of extensions in your browser, please enable one and disable others.
+⚠️ If there are `multiple versions` of extensions in your browser, please enable one and disable others.
 
 ### Open a video page
 
