@@ -1,5 +1,5 @@
 var urlPattern = [
-    "https://*.bilibili.com/video/*",
+    "https://*.bilibili.com/*",
     "https://www.dandanzan.com/*",
     "https://duonaolive.com/*",
     "https://v.qq.com/*",

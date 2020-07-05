@@ -12,6 +12,8 @@ const STATUSEND = "end"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
+const STATUSUNREADY = "unready"
+const STATUSREADY = "ready"
 
 var status = STATUSEND;
 var video = null;
@@ -448,8 +450,8 @@ class SyncHelper {
     }
     socketLock = false;
     ackFlag = false;
-    heartBeatTimer = [null, null, null];
-    heartBeatTimes = [1, 7, 20];
+    heartBeatTimer = [null, null, null, null];
+    heartBeatTimes = [1, 7, 20, 60];
 
     VLCTimer = null;
     VLCStatus = "paused";
@@ -464,13 +466,8 @@ class SyncHelper {
             (resolve) => {
                 chrome.storage.local.get(['apihost', 'protocol'], result => {
                     var apihost = result.apihost;
-                    Debugger.log(apihost);
-
-                    Debugger.log(result.protocol);
                     var protocol = result.protocol;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
-                    Debugger.log(socketprotocol);
-
                     var url = `wss://app.ylwang.me/ws/?id=${serverCode}`;
                     if (apihost != undefined && socketprotocol != undefined) {
                         url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
@@ -482,7 +479,6 @@ class SyncHelper {
         getURLPromise.then((url) => {
             var timer = null;
             Debugger.log(`RECEIVED sessionID ${serverCode}`);
-            Debugger.log(url);
 
             if (websocket) {
                 websocket.close();
@@ -511,6 +507,7 @@ class SyncHelper {
 
     close() {
         this.send(this.CLOSEDCODE);
+        this.clearHeartBeats();
         websocket.close();
         status = STATUSEND;
         switch (this.type) {
@@ -577,14 +574,17 @@ class SyncHelper {
         message = JSON.parse(message);
         // compatible with older versions.
         if (message.type == undefined) {
-            var el = document.createElement('div');
-            el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
-            SyncHelper.notification(``, 3000, el);
-            message = {
-                "type": this.SYSTEMMESSAGE,
-                "content": message + ""
+            if (message === this.HELLOCODE){
+                var el = document.createElement('div');
+                el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
+                SyncHelper.notification(``, 5000, el);
+                return;
+            } else {
+                message = {
+                    "type": this.SYSTEMMESSAGE,
+                    "content": message + ""
+                }
             }
-            return;
         }
         // end.
 
@@ -595,7 +595,7 @@ class SyncHelper {
                 switch (message.content) {
                     case this.CLOSEDCODE:
                         this.handleVideoPause();
-                        SyncHelper.notification("socket connection closed by other partner");
+                        SyncHelper.notification("connection closed by other partner");
                         this.close();
                         break;
                     case this.DISCONNECTCODE:
@@ -862,7 +862,7 @@ class SyncHelper {
 
     heartBeats() {
         var that = this;
-        for (var i = 0; i < this.heartBeatTimes.length; i++) {
+        for (var i = 0; i < this.heartBeatTimes.length - 1; i++) {
             this.heartBeatTimer[i] = setTimeout(
                 function () {
                     that.socketLock = false;
@@ -872,11 +872,21 @@ class SyncHelper {
                     that.ackFlag = false;
                 }, 1000 * this.heartBeatTimes[i]);
         }
+        var intervalIndex = this.heartBeatTimes.length - 1;
+        this.heartBeatTimer[intervalIndex] = setInterval(
+            function () {
+                that.socketLock = false;
+                Debugger.log(`HEARTBEATS REPEATEDLY`);
+                that.ackFlag = true;
+                that.sync();
+                that.ackFlag = false;
+            }, 1000 * this.heartBeatTimes[intervalIndex]);
     }
     clearHeartBeats() {
-        for (var i = 0; i < this.heartBeatTimer.length; i++) {
+        for (var i = 0; i < this.heartBeatTimer.length - 1; i++) {
             clearTimeout(this.heartBeatTimer[i]);
         }
+        clearInterval(this.heartBeatTimer[this.heartBeatTimes.length - 1]);
     }
     static notification(msg, duration = 3000, content = null) {
         // this.isFullScreen() && this.exitFullscreen();
@@ -885,7 +895,7 @@ class SyncHelper {
                 buttons: false,
                 content: content,
                 timer: duration,
-              })
+            })
         } else {
             swal(msg, {
                 buttons: false,
@@ -1050,7 +1060,27 @@ class SyncHelper {
 }
 
 
+function isVLC() {
+    if (window.location.port == "8080") {
+        return true;
+    }
+    return false;
+}
 
+var videoTimer = null;
+
+if (!isVLC()) {
+    status = STATUSUNREADY;
+    videoTimer = setInterval(
+        function () {
+            video = document.querySelector('video');
+            if (video != null) {
+                Debugger.log("video is ready");
+                clearInterval(videoTimer);
+                status = STATUSREADY;
+            }
+        }, 500);
+}
 
 
 
@@ -1062,7 +1092,7 @@ chrome.runtime.onMessage.addListener(
             "from a content script:" + sender.tab.url :
             "from the extension");
         if (request.status === STATUSSTART) {
-            if (window.location.port == "8080") {
+            if (isVLC()) {
                 syncTool = new SyncHelper(request.body, request.message, "vlc");
             } else {
                 syncTool = new SyncHelper(request.body, request.message);
