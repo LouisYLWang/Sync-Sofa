@@ -80,19 +80,23 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 Recently, Many Chinese users said our service is unstable, that is because our default server is located at us, so here is the server list, you can pick the nearest one.
 
-* https://app.ylwang.me
-* https://sync-cn.onns.xyz
+* sync-cn: 
+    - `https` 
+    - `sync-cn.onns.xyz`
+* sync-cn-2 (Thanks to [@huoranxuanyuan](https://github.com/huoranxuanyuan)): 
+    - `https` 
+    - `api.huoranxuanyuan.cn` 
+* sync-us: 
+    - `https` 
+    - `app.ylwang.me`
 
 Before setting, check server status here: [https://sync-status.onns.xyz/](https://sync-status.onns.xyz/).
 
 We will be grateful for supporting us to build more server, if it is convenient (Cause this project is unprofitable).
 
-<div>
-<h5> Alipay, Wechat pay, Paypal</h5>
-<img src="client/chrome_extension/images/alipay.png" alt="alipay" width="20.5%">
-<img src="client/chrome_extension/images/wechat.png" alt="wechat" width="20%">
-<img src="client/chrome_extension/images/paypal.jpg" alt="paypal" width="20%">
-</div>
+**Alipay, Wechat pay, Paypal**
+
+![alipay](https://onns.xyz/blog/image/20200704-1.png) ![wechat pay](https://onns.xyz/blog/image/20200704-2.png) ![paypal](https://onns.xyz/blog/image/20200704-3.jpg)
 
 If you have already built your own server, and wanna share, please tell us! 
 
