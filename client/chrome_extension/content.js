@@ -12,6 +12,8 @@ const STATUSEND = "end"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
+const STATUSUNREADY = "unready"
+const STATUSREADY = "ready"
 
 var status = STATUSEND;
 var video = null;
@@ -448,8 +450,8 @@ class SyncHelper {
     }
     socketLock = false;
     ackFlag = false;
-    heartBeatTimer = [null, null, null,null];
-    heartBeatTimes = [1, 7, 20,60];
+    heartBeatTimer = [null, null, null, null];
+    heartBeatTimes = [1, 7, 20, 60];
 
     VLCTimer = null;
     VLCStatus = "paused";
@@ -510,8 +512,8 @@ class SyncHelper {
     }
 
     close() {
-		this.send(this.CLOSEDCODE);
-		this.clearHeartBeats();
+        this.send(this.CLOSEDCODE);
+        this.clearHeartBeats();
         websocket.close();
         status = STATUSEND;
         switch (this.type) {
@@ -863,7 +865,7 @@ class SyncHelper {
 
     heartBeats() {
         var that = this;
-        for (var i = 0; i < this.heartBeatTimes.length-1; i++) {
+        for (var i = 0; i < this.heartBeatTimes.length - 1; i++) {
             this.heartBeatTimer[i] = setTimeout(
                 function () {
                     that.socketLock = false;
@@ -873,7 +875,7 @@ class SyncHelper {
                     that.ackFlag = false;
                 }, 1000 * this.heartBeatTimes[i]);
         }
-        var intervalIndex = this.heartBeatTimes.length-1;
+        var intervalIndex = this.heartBeatTimes.length - 1;
         this.heartBeatTimer[intervalIndex] = setInterval(
             function () {
                 that.socketLock = false;
@@ -884,10 +886,10 @@ class SyncHelper {
             }, 1000 * this.heartBeatTimes[intervalIndex]);
     }
     clearHeartBeats() {
-        for (var i = 0; i < this.heartBeatTimer.length-1; i++) {
+        for (var i = 0; i < this.heartBeatTimer.length - 1; i++) {
             clearTimeout(this.heartBeatTimer[i]);
-		}
-		clearInterval(this.heartBeatTimer[this.heartBeatTimes.length-1]);
+        }
+        clearInterval(this.heartBeatTimer[this.heartBeatTimes.length - 1]);
     }
     static notification(msg, duration = 3000, content = null) {
         // this.isFullScreen() && this.exitFullscreen();
@@ -896,7 +898,7 @@ class SyncHelper {
                 buttons: false,
                 content: content,
                 timer: duration,
-              })
+            })
         } else {
             swal(msg, {
                 buttons: false,
@@ -1061,7 +1063,27 @@ class SyncHelper {
 }
 
 
+function isVLC() {
+    if (window.location.port == "8080") {
+        return true;
+    }
+    return false;
+}
 
+var videoTimer = null;
+
+if (!isVLC()) {
+    status = STATUSUNREADY;
+    videoTimer = setInterval(
+        function () {
+            video = document.querySelector('video');
+            if (video != null) {
+                Debugger.log("video is ready");
+                clearInterval(videoTimer);
+                status = STATUSREADY;
+            }
+        }, 500);
+}
 
 
 
@@ -1073,7 +1095,7 @@ chrome.runtime.onMessage.addListener(
             "from a content script:" + sender.tab.url :
             "from the extension");
         if (request.status === STATUSSTART) {
-            if (window.location.port == "8080") {
+            if (isVLC()) {
                 syncTool = new SyncHelper(request.body, request.message, "vlc");
             } else {
                 syncTool = new SyncHelper(request.body, request.message);

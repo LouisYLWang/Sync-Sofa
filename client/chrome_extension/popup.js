@@ -16,6 +16,8 @@ const STATUSEND = "end"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
+const STATUSUNREADY = "unready"
+const STATUSREADY = "ready"
 var apihost = "app.ylwang.me"
 var protocol = "https"
 
@@ -110,6 +112,12 @@ function handleCreateHostSession(e) {
 
 function handleResponse(response) {
     if (response.status == STATUSASK) {
+        if (response.body == STATUSUNREADY) {
+            UIStatusToUnready();
+        }
+        if (response.body == STATUSREADY) {
+            UIStatusToready();
+        }
         if (response.body == STATUSEND) {
             UIStatusToInit();
         }
@@ -166,6 +174,30 @@ function UIStatusToInit() {
     inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
+    stopbutton.style.display = "none";
+    cancelbutton.style.display = "none";
+    // mtctbutton.style.display = "none";
+}
+
+function UIStatusToUnready() {
+    selfID = "";
+    inputbox.value = selfID;
+    startbutton.style.display = "block";
+    startbutton.setAttribute("disabled","disabled");
+    requestbutton.style.display = "block";
+    requestbutton.setAttribute("disabled","disabled");
+    stopbutton.style.display = "none";
+    cancelbutton.style.display = "none";
+    // mtctbutton.style.display = "none";
+}
+
+function UIStatusToready() {
+    selfID = "";
+    inputbox.value = selfID;
+    startbutton.style.display = "block";
+    startbutton.removeAttribute("disabled");
+    requestbutton.style.display = "block";
+    requestbutton.removeAttribute("disabled");
     stopbutton.style.display = "none";
     cancelbutton.style.display = "none";
     // mtctbutton.style.display = "none";
