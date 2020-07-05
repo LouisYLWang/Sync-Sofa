@@ -574,7 +574,7 @@ class SyncHelper {
         message = JSON.parse(message);
         // compatible with older versions.
         if (message.type == undefined) {
-            if (message === "-1"){
+            if (message === this.HELLOCODE){
                 var el = document.createElement('div');
                 el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
                 SyncHelper.notification(``, 5000, el);
