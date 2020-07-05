@@ -9,7 +9,20 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 - 2 party connection: either party can be the host of a sync room and the other can join with connection code.
 - sync pause/play: each user pause/play the video, the other side will do the same
 - sync play process bar control: the playing time change will also affect other side user
-- out-of-sync notification: if any party disconnected/left the room, the other user will be notified.
+- local video sync: provide two ways to sync your playing of local video file 
+
+## Current version:
+
+**v1.0.7 - update on 7 July 2020**
+
+⚠⚠⚠ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
+
+Add:
+    add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
+     
+Fix:
+    fix support for https://www.bilibili.com/bangumi/* (bilibili movie)
+    fix support for Youku & mangoTV
 
 ---
 
@@ -392,6 +405,19 @@ Make sure docker service is runing on your server, make change to the script blo
   ```
 
 ## Release History
+
+### v1.0.7
+🛠 update on 7 July 2020
+---
+⚠⚠⚠ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
+
+Add:
+    add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
+     
+Fix:
+    fix support for https://www.bilibili.com/bangumi/* (bilibili movie)
+    fix support for Youku & mangoTV
+
 
 ### v1.0.6
 🛠 update on 28 June 2020
