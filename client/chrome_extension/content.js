@@ -88,8 +88,7 @@ class chat {
             }
         }
 
-        this.listenDragIcon();
-        this.listenDragPopup();
+        this.listenDrag();
     }
 
     addChatStyle() {
@@ -337,14 +336,18 @@ class chat {
     toggleChatUIstate() {
         var chatButton = this.chatButton;
         var chatPopup = this.chatPopup;
+        this.chatButton.style.top = "90%";
+        this.chatButton.style.left = "90%";
 
         if (!this.isChatPopup()) {
+            chatButton.setAttribute("class", "draggable show"); 
             chatButton.innerHTML = `<svg t="1593111631184" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27674" width="30" height="30"><path d="M378.965333 512l-272.213333-272.213333a85.333333 85.333333 0 0 1 0-120.746667l12.288-12.373333a85.333333 85.333333 0 0 1 120.746667 0L512 378.965333l272.213333-272.213333a85.333333 85.333333 0 0 1 120.746667 0l12.373333 12.288a85.333333 85.333333 0 0 1 0 120.746667L645.034667 512l272.213333 272.213333a85.333333 85.333333 0 0 1 0 120.746667l-12.288 12.373333a85.333333 85.333333 0 0 1-120.746667 0L512 645.034667l-272.213333 272.213333a85.333333 85.333333 0 0 1-120.746667 0l-12.373333-12.288a85.333333 85.333333 0 0 1 0-120.746667L378.965333 512z" p-id="27675" fill="#cac8c7"></path></svg>`;
             chatButton.style.backgroundColor = "#1cb495";
             chatPopup.style.display = "block";
             this.chatList.lastElementChild.scrollIntoView();
         } else {
             chatPopup.style.display = "none";
+            chatButton.setAttribute("class", "draggable"); 
             chatButton.innerHTML = `<svg t="1592196731793" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11334" width="30" height="30"><path d="M146.6 782C146.6 782 146.6 782 146.6 782c3.6 6 5.6 12.8 5.6 20.4L128 928l112.4-44.2c5.4-2.2 11.2-3.4 17.4-3.4 5.6 0 11 1 16 2.8 0 0 0.2 0 0.4 0 0.8 0.4 1.6 0.6 2.4 1 35.6 14.6 74.8 22.8 115.8 22.8 92.6 0 175.2-41 229.6-105.2-28.2 7.2-57.8 11.4-88.2 11.4-191.8 0-347.4-150-347.4-335 0-23.6 2.6-46.4 7.4-68.6C133.8 461.8 96 537.2 96 621.2c0 56.8 17.2 110.4 47 155C144.2 777.8 145.4 780 146.6 782z" p-id="11335" fill="#cac8c7"></path><path d="M580.6 96c-167.4 0-307.2 114.4-340 266.4-4.8 22.2-7.4 45-7.4 68.6 0 185 155.4 335 347.4 335 30.6 0 60-4.2 88.2-11.4 16.2-4.2 32.2-9 47.6-15.2 1-0.4 1.8-0.8 2.8-1.2 0.2 0 0.4 0 0.4-0.2 5.8-2.2 12.2-3.4 18.6-3.4 7.2 0 14 1.4 20.2 4l137.2 51.6-34-147.6c0-8.8 2.4-17.2 6.6-24.4 0 0 0 0 0 0 1.2-2.2 2.8-4.2 4.2-6.2 34.8-52.2 55-114.4 55-181C928 246 772.6 96 580.6 96z" p-id="11336" fill="#cac8c7"></path></svg>`;
         }
     }
@@ -370,9 +373,12 @@ class chat {
     }
     notification() {
         this.chatButton.style.backgroundColor = "#e13b3b";
-
+        var curLeftPos = this.chatButton.getBoundingClientRect().left.toString();
+        var curTopPos = this.chatButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
         this.chatButton.className += ' chat-shake';
+        this.chatButton.style.top = curTopPos+"px";
+        this.chatButton.style.left = curLeftPos+"px";
     }
 
     renderMessage(message, type) {
@@ -407,7 +413,7 @@ class chat {
     }
 
 
-    listenDragIcon(){
+    listenDrag(){
         interact('.draggable')
         .draggable({
           autoScroll: true,
