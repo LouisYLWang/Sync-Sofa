@@ -95,7 +95,7 @@ Fix:
       - [从谷歌商店安装](#从谷歌商店安装)
       - [从本地 .crx 文件安装](#从本地-crx-文件安装)
       - [安装未打包的插件](#安装未打包的插件)
-      - [微软Edge浏览器:](#微软edge浏览器)
+    - [微软Edge浏览器:](#微软edge浏览器)
       - [从Edge浏览器插件中心安装](#从edge浏览器插件中心安装)
     - [Firefox（后续版本添加支持）](#firefox后续版本添加支持)
   - [服务端部署指南](#服务端部署指南)
@@ -193,6 +193,8 @@ In this doc, for example, `User A` will watch the video on Bilibili and `User B`
 
 * [https://www.bilibili.com/video/BV1k5411Y7Rc](https://www.bilibili.com/video/BV1k5411Y7Rc)
 * [https://www.youtube.com/watch?v=QAelMP1PoNA](https://www.youtube.com/watch?v=QAelMP1PoNA)
+
+PS: I'm a fan of Boki, and screenshots have been Gaussian blurred. If there is copyright infringement, please contact us to delete.
 
 ![User A](https://onns.xyz/blog/image/20200627-1.png)
 ![User B](https://onns.xyz/blog/image/20200627-2.png)
@@ -665,6 +667,8 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 * [https://www.youtube.com/watch?v=QAelMP1PoNA](https://www.youtube.com/watch?v=QAelMP1PoNA)
 ![User B](https://onns.xyz/blog/image/20200627-2.png)
 
+PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模糊处理过了，如果有侵权的话，请联系我们删除，真的很抱歉！
+
 如果视频开始前有广告，请在广告结束后进入下一步。
 
 ### 获取连接码
@@ -754,7 +758,7 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 
 **注意**: 
-如果该插件被Chrome浏览器禁用，请尝试 [从chrome web store下载安装]() 或者 [安装未打包的插件]()
+如果该插件被Chrome浏览器禁用，请尝试 [从谷歌商店安装](#从谷歌商店安装) 或者 [安装未打包的插件](#安装未打包的插件)
 
 > This extension is not listed in the Chrome Web Store and may have been added without your knowledge.
 
@@ -768,7 +772,7 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 6. 选择 `下载路径/解压路径/client/chrome_extension`
 7. 点击 `选择`
 
-#### 微软Edge浏览器: 
+### 微软Edge浏览器: 
 
 #### 从Edge浏览器插件中心安装
 
