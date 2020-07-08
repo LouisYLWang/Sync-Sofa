@@ -25,6 +25,7 @@
             "run_at": "document_end",
             "js": [
                 "sweetalert.min.js",
+                "interact.min.js",
                 "content.js"
             ]
         }
