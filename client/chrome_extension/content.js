@@ -85,7 +85,9 @@ class chat {
                 that.send(that.chatSentInput.value);
             }
         }
-
+        chrome.storage.local.set({
+            'statuschat':false
+        });   
         this.listenDrag();
     }
 
@@ -601,9 +603,6 @@ class SyncHelper {
         this.clearHeartBeats();
         websocket.close();
         status = STATUSEND;
-        chrome.storage.local.set({
-            'statuschat':false
-        });   
         switch (this.type) {
             case "video":
                 break;

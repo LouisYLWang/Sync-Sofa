@@ -27,7 +27,7 @@ var protocol = "https"
 chrome.storage.local.get("statuschat", result =>{
     if (result.statuschat == undefined){
         chrome.storage.local.set({
-            'statuschat':chatbutton.style.display != "none"
+            'statuschat':false
         });   
     } 
 
