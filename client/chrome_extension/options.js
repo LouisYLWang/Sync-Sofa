@@ -3,6 +3,7 @@ const confirmbutton = document.getElementById('confirmbutton');
 const resetbutton = document.getElementById('resetbutton');
 const protocol = document.getElementById('protocol');
 const debugtoggle = document.getElementById('debugtoggle');
+const chattoggle = document.getElementById('chattoggle');
 
 
 function saveOptions() {
@@ -40,8 +41,21 @@ function toggleDebugging() {
     });
 }
 
+function toggleChat() {
+    var chatFlag = chattoggle.checked;
+    chrome.storage.local.set({
+        'chat': chatFlag
+    }, () => {
+        if (chatFlag == true) {
+            notification("Switch on built-in chat!")
+        } else {
+            notification("Switch off built-in chat!")
+        }
+    });
+}
+
 function initialize() {
-    chrome.storage.local.get(['apihost', 'protocol', 'debug'], result => {
+    chrome.storage.local.get(['apihost', 'protocol', 'debug', 'chat'], result => {
         if (result.apihost != undefined && result.apihost != "") {
             inputbox.value = result.apihost;
         } else {
@@ -67,6 +81,14 @@ function initialize() {
                 'debug': "false"
             }, () => { })
         }
+
+        if (result.chat != undefined) {
+            chattoggle.checked = result.chat
+        } else {
+            chrome.storage.local.set({
+                'chat': "false"
+            }, () => { })
+        }
     });
 }
 
@@ -90,3 +112,4 @@ inputbox.addEventListener('click', e => {
 });
 
 debugtoggle.addEventListener('change', toggleDebugging);
+chattoggle.addEventListener('change', toggleChat);
