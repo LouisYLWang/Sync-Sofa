@@ -71,6 +71,7 @@ Fix:
   - [Meta](#meta)
   - [Contributing](#contributing)
   - [FAQ](#faq)
+    - [How to get debug info](#how-to-get-debug-info)
 - [Sync Sofa （在线视频同步播放插件）](#sync-sofa-在线视频同步播放插件)
   - [当前版本特性:](#当前版本特性)
   - [支持网站列表](#支持网站列表)
@@ -112,6 +113,7 @@ Fix:
   - [开发者](#开发者)
   - [参与更新](#参与更新)
   - [常见问题](#常见问题)
+    - [如何获取调试信息](#如何获取调试信息)
 
 <!-- /code_chunk_output -->
 
@@ -180,7 +182,7 @@ After saving options, please also refresh the video page or local mp4 page or [h
 ⚠️ Before use, please make sure `the server host` of two clients are consistent. 
 
 ⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page. 
-1. Open `chrome://extensions/`, find `Sync Sofa`, click `Detaild` button, enable `Allow access to file URLs`.
+1. Open `chrome://extensions/`, find `Sync Sofa`, click `Details` button, enable `Allow access to file URLs`.
 2. Right click `Sync Sofa` extension, choose `Manage Extensions`, enable `Allow access to file URLs`.
 
 ⚠️ If there are `multiple versions` of extensions in your browser, please enable one and disable others.
@@ -542,6 +544,7 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 [chrome-url]: https://chrome.google.com/webstore/detail/sync-sofa-beta-online-vid/kgpnhgmpijhpkefpddoehhminpfiddmg
 
 ## FAQ 
+
 1. **Q:** When I installed, Chrome popup says that Sync Sofa requires the permissions of `read and change your data on a number of websites` and `read your browsing history`, sounds so horrible, is that safe?
 **A:** We do not collect your browsing data, the only thing we do is to get your current tab information and make sure you are visiting a site we support ([support list](#supported-list)). All information is collected and processed locally. We do not mess up the data on the websites you are watching, just inject a sync script to get your pause, play and seek operation. **All source code can be reviewed at [our github page](https://github.com/LouisYLWang/Sync-Sofa), we promise everything we did is necessary and not harmful.**
 
@@ -553,6 +556,12 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
     1. please make sure the **version number** of two clients are consistent. To check the version number, you need to open [chrome extension page](chrome://extensions/) (if this link is not work, please type `chrome://extensions/` into the address bar and visit). You will find a extension with the title of `Sync Sofa - Online Video Synchronizer 1.0.6`. `1.0.6` is your current version number of Sync Sofa.
     2. If 4.1 does not solve your problem, please try step 2 again.
 
+### How to get debug info
+
+1. Open `Debug mode` in [Options page](#options-page).
+2. Refresh video page (to make changes work).
+3. `Shift + ctrl + i` in Windows or `Shift + cmd + i` in MacOS.
+4. Choose `console` tab.
 
 # Sync Sofa （在线视频同步播放插件）
 
@@ -1044,6 +1053,11 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
     4. 请检查服务器当前状态 [https://sync-status.onns.xyz/](https://sync-status.onns.xyz/)是否正常启动.
     5. 如以上都不能解决你的问题，请通过[项目反馈页面](https://github.com/LouisYLWang/Sync-Sofa/issues)或[项目wiki页面](https://onns.xyz/sync-sofa/)右下角的反馈按钮通知我们。
 
+### 如何获取调试信息
 
+1. 在[选项页](#选项页)里打开 `debug模式`。
+2. 刷新视频页面。
+3. `Shift + ctrl + i` 在 Windows 下 或者 `Shift + cmd + i` 在 MacOS 下.
+4. 选择 `console` 标签页.
 
 
