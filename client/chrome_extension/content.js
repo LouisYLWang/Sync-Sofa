@@ -494,6 +494,12 @@ class chat {
             }
         });
     }
+
+    popConnectedSubmsg(){
+        this.renderTime("Connected to peer, now you can chat with each other. ", "time");
+        this.renderTime("Please do not share sensitive information such as bank account or password at here.", "time");
+        this.notification();
+    }
 }
 
 var chatHandler = new chat();
@@ -544,8 +550,6 @@ class SyncHelper {
     ackFlag = false;
     heartBeatTimer = [null, null, null, null];
     heartBeatTimes = [1, 7, 20, 60];
-    connected = false;
-
     VLCTimer = null;
     VLCStatus = "paused";
     VLCTime = 0;
@@ -585,6 +589,7 @@ class SyncHelper {
                         status = STATUSSYNC;
                         that.send(that.HELLOCODE);
                         SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                        chatHandler.popConnectedSubmsg();
                     }
                 }, 500);
             } else {
@@ -699,17 +704,9 @@ class SyncHelper {
                         this.close();
                         break;
                     case this.HELLOCODE:
-                        if (!this.connected) {
-                            SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
-                            status = STATUSSYNC;
-                            chatHandler.renderTime("Connected to peer, now you can chat with each other. ", "time");
-                            chatHandler.renderTime("Please do not share sensitive information such as bank account or password at here.", "time");
-                            chatHandler.notification();
-                            //that.send(this.HELLOCODE)
-                            this.send(this.HELLOCODE);
-                            this.connected = true;
-                        }
-
+                        SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
+                        status = STATUSSYNC;
+                        chatHandler.popConnectedSubmsg();
                         break;
                     case this.WAITINGCODE:
                         this.handleVideoPause();
