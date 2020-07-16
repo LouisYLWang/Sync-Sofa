@@ -4,7 +4,9 @@ const resetbutton = document.getElementById('resetbutton');
 const protocol = document.getElementById('protocol');
 const debugtoggle = document.getElementById('debugtoggle');
 const chattoggle = document.getElementById('chattoggle');
+const notificationtoggle = document.getElementById('notificationtoggle');
 
+var systemNotification = false;
 
 function saveOptions() {
     var apihostVal = inputbox.value;
@@ -54,8 +56,23 @@ function toggleChat() {
     });
 }
 
+function toggleNotification() {
+    var notificationFlag = notificationtoggle.checked;
+    chrome.storage.local.set({
+        'notification': notificationFlag
+    }, () => {
+        if (notificationFlag == true) {
+            systemNotification = true;
+            notification("notification via system method.")
+        } else {
+            systemNotification = false;
+            notification("notification via sweetalert.")
+        }
+    });
+}
+
 function initialize() {
-    chrome.storage.local.get(['apihost', 'protocol', 'debug', 'chat'], result => {
+    chrome.storage.local.get(['apihost', 'protocol', 'debug', 'chat', 'notification'], result => {
         if (result.apihost != undefined && result.apihost != "") {
             inputbox.value = result.apihost;
         } else {
@@ -89,14 +106,35 @@ function initialize() {
                 'chat': "false"
             }, () => { })
         }
+
+        if (result.notification != undefined) {
+            notificationtoggle.checked = result.notification
+            systemNotification = result.notification;
+        } else {
+            chrome.storage.local.set({
+                'notification': "false"
+            }, () => { })
+        }
     });
 }
 
 function notification(msg) {
-    swal(msg, {
-        buttons: false,
-        timer: 3000,
-    });
+    if (systemNotification) {
+        chrome.runtime.sendMessage('', {
+            type: 'notification',
+            options: {
+                title: 'Sync Sofa notification',
+                message: msg,
+                iconUrl: '/icons/icon128_on.png',
+                type: 'basic'
+            }
+        });
+    } else {
+        swal(msg, {
+            buttons: false,
+            timer: 3000,
+        });
+    }
 }
 
 initialize();
@@ -113,3 +151,4 @@ inputbox.addEventListener('click', e => {
 
 debugtoggle.addEventListener('change', toggleDebugging);
 chattoggle.addEventListener('change', toggleChat);
+notificationtoggle.addEventListener('change', toggleNotification);

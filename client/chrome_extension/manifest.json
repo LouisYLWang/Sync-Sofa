@@ -4,7 +4,8 @@
     "description": "This extension allows multi-user sync streaming video in a fast, simple and stable way.",
     "permissions": [
         "storage",
-        "tabs"
+        "tabs",
+        "notifications"
     ],
     "content_scripts": [
         {

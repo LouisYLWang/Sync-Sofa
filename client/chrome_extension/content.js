@@ -20,7 +20,7 @@ var status = STATUSEND;
 var video = null;
 // video = document.querySelector('video');
 var websocket = null;
-
+var systemNotification = false;
 
 // Date format function
 Date.prototype.format = function (formatStr) {
@@ -86,8 +86,8 @@ class chat {
             }
         }
         chrome.storage.local.set({
-            'statuschat':false
-        });   
+            'statuschat': false
+        });
         this.listenDrag();
     }
 
@@ -385,8 +385,8 @@ class chat {
         var curTopPos = this.chatButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
         this.chatButton.classList.toggle("chat-shake");
-        this.chatButton.style.top = curTopPos+"px";
-        this.chatButton.style.left = curLeftPos+"px";
+        this.chatButton.style.top = curTopPos + "px";
+        this.chatButton.style.left = curLeftPos + "px";
     }
 
 
@@ -426,40 +426,40 @@ class chat {
     }
 
 
-    listenDrag(){
+    listenDrag() {
         interact('.chatbutton')
-        .draggable({
-          autoScroll: false,
-          cursorChecker () {
-            // don't set a cursor for drag actions
-            return null
-          },
-          listeners: {
-            // call this function on every dragmove event
-            move: this.dragMoveListener
-          }
-        })
-        .on("tap", (e) => {
-            this.toggleChatUIstate();
-            e.preventDefault();
-            e.currentTarget.classList.toggle('showpopup');
-        })
+            .draggable({
+                autoScroll: false,
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+            .on("tap", (e) => {
+                this.toggleChatUIstate();
+                e.preventDefault();
+                e.currentTarget.classList.toggle('showpopup');
+            })
 
         interact('.chatpopup')
-        .draggable({
-          autoScroll: false,
-          cursorChecker () {
-            // don't set a cursor for drag actions
-            return null
-          },
-          listeners: {
-            // call this function on every dragmove event
-            move: this.dragMoveListener
-          }
-        })
+            .draggable({
+                autoScroll: false,
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
     }
 
-    dragMoveListener (event) {
+    dragMoveListener(event) {
         var target = event.target
         // keep the dragged position in the data-x/data-y attributes
         var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
@@ -467,7 +467,7 @@ class chat {
 
         // translate the element
         target.style.webkitTransform =
-        target.style.transform =
+            target.style.transform =
             'translate(' + x + 'px, ' + y + 'px)'
 
         // update the posiion attributes
@@ -475,22 +475,22 @@ class chat {
         target.setAttribute('data-y', y)
     }
 
-    toggleChatDisplay (){
+    toggleChatDisplay() {
         chrome.storage.local.get(['statuschat'], result => {
-            if (!result.statuschat){
+            if (!result.statuschat) {
                 this.chatButton.style.display = "block";
                 this.chatButton.style.left = "90%";
                 this.chatButton.style.top = "90%";
                 chrome.storage.local.set({
                     'statuschat': true
-                });   
+                });
             } else {
                 this.chatButton.style.display = "none";
                 this.chatPopup.style.display = "none";
-                this.statuschat = false; 
+                this.statuschat = false;
                 chrome.storage.local.set({
                     'statuschat': false
-                });   
+                });
             }
         });
     }
@@ -557,9 +557,10 @@ class SyncHelper {
         var that = this;
         var getURLPromise = new Promise(
             (resolve) => {
-                chrome.storage.local.get(['apihost', 'protocol'], result => {
+                chrome.storage.local.get(['apihost', 'protocol', 'notification'], result => {
                     var apihost = result.apihost;
                     var protocol = result.protocol;
+                    systemNotification = result.notification;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
                     var url = `wss://app.ylwang.me/ws/?id=${serverCode}`;
                     if (apihost != undefined && socketprotocol != undefined) {
@@ -583,7 +584,7 @@ class SyncHelper {
                         clearInterval(timer);
                         status = STATUSSYNC;
                         that.send(that.HELLOCODE);
-                        //SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                     }
                 }, 500);
             } else {
@@ -668,7 +669,7 @@ class SyncHelper {
         message = JSON.parse(message);
         // compatible with older versions.
         if (message.type == undefined) {
-            if (message === this.HELLOCODE){
+            if (message === this.HELLOCODE) {
                 var el = document.createElement('div');
                 el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
                 SyncHelper.notification(``, 5000, el);
@@ -698,7 +699,7 @@ class SyncHelper {
                         this.close();
                         break;
                     case this.HELLOCODE:
-                        if (!this.connected){
+                        if (!this.connected) {
                             SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
                             status = STATUSSYNC;
                             chatHandler.renderTime("Connected to peer, now you can chat with each other. ", "time");
@@ -992,17 +993,29 @@ class SyncHelper {
     }
     static notification(msg, duration = 3000, content = null) {
         // this.isFullScreen() && this.exitFullscreen();
-        if (content != null) {
-            swal({
-                buttons: false,
-                content: content,
-                timer: duration,
-            })
-        } else {
-            swal(msg, {
-                buttons: false,
-                timer: duration,
+        if (systemNotification) {
+            chrome.runtime.sendMessage('', {
+                type: 'notification',
+                options: {
+                    title: 'Sync Sofa notification',
+                    message: msg,
+                    iconUrl: '/icons/icon128_on.png',
+                    type: 'basic'
+                }
             });
+        } else {
+            if (content != null) {
+                swal({
+                    buttons: false,
+                    content: content,
+                    timer: duration,
+                })
+            } else {
+                swal(msg, {
+                    buttons: false,
+                    timer: duration,
+                });
+            }
         }
     }
 
