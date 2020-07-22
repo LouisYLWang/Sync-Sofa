@@ -15,7 +15,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 **v1.0.7 - update on 7 July 2020**
 
-⚠⚠⚠ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
+⚠️⚠️⚠️ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
 
 Add:
     add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
@@ -45,6 +45,7 @@ Fix:
     - [Enjoy yourselves](#enjoy-yourselves)
   - [VLC support](#vlc-support)
     - [Start VLC on the server with the Web Interface](#start-vlc-on-the-server-with-the-web-interface)
+    - [Open your video](#open-your-video)
     - [Request new code](#request-new-code-1)
     - [Start connection](#start-connection-1)
     - [Enjoy yourselves](#enjoy-yourselves-1)
@@ -87,6 +88,7 @@ Fix:
     - [愉快观看吧](#愉快观看吧)
   - [VLC支持](#vlc支持)
     - [通过Web控制界面操控VLC播放](#通过web控制界面操控vlc播放)
+    - [打开本地视频](#打开本地视频)
     - [获取连接码](#获取连接码-1)
     - [开始连接](#开始连接-1)
     - [愉快观看吧](#愉快观看吧-1)
@@ -246,6 +248,14 @@ First we need to enable controlling VLC via our browser, here is the official do
 Your webpage should be like this:
 
 ![VLC media player - Web Interface](https://onns.xyz/blog/image/20200628-3.png)
+
+### Open your video
+
+Our extension control `VLC` via controlling `VLC Web Interface`([http://127.0.0.1:8080/](http://127.0.0.1:8080/)), so next step you should open your local video via `VLC Media Player` and see if [http://127.0.0.1:8080/](http://127.0.0.1:8080/) can control the video. If the answer is "yes", go to the next step, otherwise you should check if there are multiple `VLC windows`, close the others and recheck. Your `VLC Web Interface` should be like this:
+
+![VLC media player - Web Interface](https://onns.xyz/blog/image/20200722-1.png)
+
+Video title, current time and total time on the webpage.
 
 ### Request new code
 
@@ -456,7 +466,7 @@ Make sure docker service is runing on your server, make change to the script blo
 ### v1.0.7
 🛠 update on 7 July 2020
 ---
-⚠⚠⚠ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
+⚠️⚠️⚠️ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
 
 Add:
     add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
@@ -469,7 +479,7 @@ Fix:
 ### v1.0.6
 🛠 update on 28 June 2020
 ---
-⚠⚠⚠ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
+⚠️⚠️⚠️ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
 
 - Add:
     - add support for Mango TV (happy Sistering 🤣)
@@ -579,7 +589,7 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 **v1.0.7 - 2020年7月5日更新**
 
-⚠⚠⚠ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
 
 - 新增功能：
     - 新增版本检测（高版本用户与低版本用户连接时，若连接码由低版本用户申请，高版本用户将收到提示，请根据提示告知对方升级最新版本）
@@ -721,6 +731,14 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
 这时你的网页应该如下图所示:
 
 ![VLC media player - Web Interface](https://onns.xyz/blog/image/20200628-3.png)
+
+### 打开本地视频
+
+本插件本质上是通过控制`VLC的网页控制页面`（[http://127.0.0.1:8080/](http://127.0.0.1:8080/)）来控制`VLC`的，所以下一步你应该用`VLC媒体播放器`来打开你想同步的视频，然后检查一下[http://127.0.0.1:8080/](http://127.0.0.1:8080/)能否顺利控制视频的播放等。如果可以，即可进入下一步；否则需要坚持一下是不是打开了多个`VLC的窗口`，如果是请关掉其它的，然后重新尝试控制。一个正常的`VLC控制界面`应该如下图所示：
+
+![VLC media player - Web Interface](https://onns.xyz/blog/image/20200722-1.png)
+
+在网页上有视频标题，当前播放时间和总播放时长等。
 
 ### 获取连接码
 确认已在浏览器中打开 [http://127.0.0.1:8080/](http://127.0.0.1:8080/),
@@ -940,7 +958,7 @@ server is listening at {your_port_number}...
 ### v1.0.7
 🛠 2020年7月5日更新
 ---
-⚠⚠⚠ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
 
 - 新增功能：
     - 新增版本检测（高版本用户与低版本用户连接时，若连接码由低版本用户申请，高版本用户将收到提示，请根据提示告知对方升级最新版本）
@@ -952,7 +970,7 @@ server is listening at {your_port_number}...
 ### v1.0.6
 🛠 2020年6月28日更新
 ---
-⚠⚠⚠ 注意，此版本与之前的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ 注意，此版本与之前的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
 
 
 - 新增功能：
