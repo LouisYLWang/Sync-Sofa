@@ -9,15 +9,18 @@ var syncTool = null;
 
 const STATUSSTART = "start"
 const STATUSEND = "end"
+const STATUSCHAT = "chat"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
+const STATUSUNREADY = "unready"
+const STATUSREADY = "ready"
 
 var status = STATUSEND;
 var video = null;
 // video = document.querySelector('video');
 var websocket = null;
-
+var systemNotification = false;
 
 // Date format function
 Date.prototype.format = function (formatStr) {
@@ -61,7 +64,7 @@ class chat {
     chatSentInput = null;
     chatList = null;
     lastMsgUpdateTime = 0;
-
+    statuschat = false;
 
     constructor() {
 
@@ -69,10 +72,6 @@ class chat {
         this.renderChatIcon();
         this.renderChatPopup();
 
-        this.chatButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            this.toggleChatUIstate();
-        })
         this.chatSentButton.addEventListener("click", (e) => {
             e.stopPropagation();
             if (this.chatSentInput.value !== "") {
@@ -86,6 +85,10 @@ class chat {
                 that.send(that.chatSentInput.value);
             }
         }
+        chrome.storage.local.set({
+            'statuschat': false
+        });
+        this.listenDrag();
     }
 
     addChatStyle() {
@@ -99,20 +102,29 @@ class chat {
             border-radius: 50%;
             width: 50px;
             height: 50px;
-            background-color: #1cb495;
+            background-color: #1fcaa7;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
             border-width: 0;
             top: 90%;
             left: 90%;
-            transition: all 0.2s;
             outline:none;
             cursor: pointer;
             text-align: center;
+            opacity: 0.25;
+            -webkit-transform: translate(0px, 0px);
+                transform: translate(0px, 0px);
+            display: none;
         }
         
         #chatbutton:hover {
-            background-color: #1fcaa7;
-            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        #chatbutton.showpopup {
+            background-color: #1cb495;
+            top: 90%;
+            left: 90%;
+            opacity: 1;
         }
     
         #chatbutton > svg{
@@ -126,7 +138,7 @@ class chat {
         }
     
         #chatpopup {
-            z-index: 999999;
+            z-index: 999998;
             position: fixed;
             bottom: 10%;
             right: 10%;
@@ -149,7 +161,7 @@ class chat {
             height: 48px;
             position: sticky;
             padding: 4px;
-            background-color: rgba(165, 151, 151, 0.5);
+            background-color: whitesmoke;
             left: 10px;
             border-radius: 7px;
             bottom: 10px;
@@ -270,17 +282,17 @@ class chat {
             border-right-color: #cccac7;
           }
         @-webkit-keyframes chat-shake {
-            0% { -webkit-transform: translate(2px, 1px) rotate(0deg); } 
-            10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); }
-            30% { -webkit-transform: translate(0px, 2px) rotate(0deg); }
-            40% { -webkit-transform: translate(1px, -1px) rotate(1deg); }
-            50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); }
-            70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); }
-            80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); }
-            90% { -webkit-transform: translate(2px, 2px) rotate(0deg); }
-            100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); }
+            0% { -webkit-transform: translate(2px, 1px) rotate(0deg); opacity: 1;} 
+            10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); opacity: 1;}
+            20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); opacity: 1;}
+            30% { -webkit-transform: translate(0px, 2px) rotate(0deg); opacity: 1;}
+            40% { -webkit-transform: translate(1px, -1px) rotate(1deg); opacity: 1;}
+            50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); opacity: 1;}
+            60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); opacity: 1;}
+            70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); opacity: 1;}
+            80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); opacity: 1;}
+            90% { -webkit-transform: translate(2px, 2px) rotate(0deg); opacity: 1;}
+            100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); opacity: 1;}
         }
         .chat-shake {
             -webkit-animation-name: chat-shake;
@@ -289,7 +301,8 @@ class chat {
             -webkit-animation-iteration-count: infinite;
         }
         .chat-shake {
-            display:inline-block
+            opacity: 1;
+            display:inline-block;
         }
           
         `;
@@ -299,6 +312,7 @@ class chat {
         // render chat icon
         var chatButton = this.chatButton;
         chatButton.setAttribute("id", "chatbutton");
+        chatButton.setAttribute("class", "chatbutton");
         chatButton.textContent = "test";
         document.body.appendChild(chatButton);
         chatButton.innerHTML = `<svg t="1592196731793" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11334" width="30" height="30"><path d="M146.6 782C146.6 782 146.6 782 146.6 782c3.6 6 5.6 12.8 5.6 20.4L128 928l112.4-44.2c5.4-2.2 11.2-3.4 17.4-3.4 5.6 0 11 1 16 2.8 0 0 0.2 0 0.4 0 0.8 0.4 1.6 0.6 2.4 1 35.6 14.6 74.8 22.8 115.8 22.8 92.6 0 175.2-41 229.6-105.2-28.2 7.2-57.8 11.4-88.2 11.4-191.8 0-347.4-150-347.4-335 0-23.6 2.6-46.4 7.4-68.6C133.8 461.8 96 537.2 96 621.2c0 56.8 17.2 110.4 47 155C144.2 777.8 145.4 780 146.6 782z" p-id="11335" fill="#cac8c7"></path><path d="M580.6 96c-167.4 0-307.2 114.4-340 266.4-4.8 22.2-7.4 45-7.4 68.6 0 185 155.4 335 347.4 335 30.6 0 60-4.2 88.2-11.4 16.2-4.2 32.2-9 47.6-15.2 1-0.4 1.8-0.8 2.8-1.2 0.2 0 0.4 0 0.4-0.2 5.8-2.2 12.2-3.4 18.6-3.4 7.2 0 14 1.4 20.2 4l137.2 51.6-34-147.6c0-8.8 2.4-17.2 6.6-24.4 0 0 0 0 0 0 1.2-2.2 2.8-4.2 4.2-6.2 34.8-52.2 55-114.4 55-181C928 246 772.6 96 580.6 96z" p-id="11336" fill="#cac8c7"></path></svg>`;
@@ -306,7 +320,8 @@ class chat {
     renderChatPopup() {
         // render chat popup
         var chatPopup = this.chatPopup;
-        chatPopup.setAttribute("id", "chatpopup");
+        chatPopup.id = "chatpopup";
+        chatPopup.setAttribute("class", "chatpopup");
         chatPopup.style.display = "none";
         document.body.appendChild(chatPopup);
 
@@ -330,16 +345,18 @@ class chat {
     toggleChatUIstate() {
         var chatButton = this.chatButton;
         var chatPopup = this.chatPopup;
+        this.chatButton.style.top = "90%";
+        this.chatButton.style.left = "90%";
+        if (this.chatButton.classList.contains('chat-shake')) {
+            this.chatButton.classList.remove('chat-shake');
+        }
 
         if (!this.isChatPopup()) {
-            chatButton.setAttribute("class", "chatbutton show");
             chatButton.innerHTML = `<svg t="1593111631184" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27674" width="30" height="30"><path d="M378.965333 512l-272.213333-272.213333a85.333333 85.333333 0 0 1 0-120.746667l12.288-12.373333a85.333333 85.333333 0 0 1 120.746667 0L512 378.965333l272.213333-272.213333a85.333333 85.333333 0 0 1 120.746667 0l12.373333 12.288a85.333333 85.333333 0 0 1 0 120.746667L645.034667 512l272.213333 272.213333a85.333333 85.333333 0 0 1 0 120.746667l-12.288 12.373333a85.333333 85.333333 0 0 1-120.746667 0L512 645.034667l-272.213333 272.213333a85.333333 85.333333 0 0 1-120.746667 0l-12.373333-12.288a85.333333 85.333333 0 0 1 0-120.746667L378.965333 512z" p-id="27675" fill="#cac8c7"></path></svg>`;
-            chatButton.style.backgroundColor = "#1cb495";
             chatPopup.style.display = "block";
             this.chatList.lastElementChild.scrollIntoView();
         } else {
             chatPopup.style.display = "none";
-            chatButton.setAttribute("class", "chatbutton");
             chatButton.innerHTML = `<svg t="1592196731793" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11334" width="30" height="30"><path d="M146.6 782C146.6 782 146.6 782 146.6 782c3.6 6 5.6 12.8 5.6 20.4L128 928l112.4-44.2c5.4-2.2 11.2-3.4 17.4-3.4 5.6 0 11 1 16 2.8 0 0 0.2 0 0.4 0 0.8 0.4 1.6 0.6 2.4 1 35.6 14.6 74.8 22.8 115.8 22.8 92.6 0 175.2-41 229.6-105.2-28.2 7.2-57.8 11.4-88.2 11.4-191.8 0-347.4-150-347.4-335 0-23.6 2.6-46.4 7.4-68.6C133.8 461.8 96 537.2 96 621.2c0 56.8 17.2 110.4 47 155C144.2 777.8 145.4 780 146.6 782z" p-id="11335" fill="#cac8c7"></path><path d="M580.6 96c-167.4 0-307.2 114.4-340 266.4-4.8 22.2-7.4 45-7.4 68.6 0 185 155.4 335 347.4 335 30.6 0 60-4.2 88.2-11.4 16.2-4.2 32.2-9 47.6-15.2 1-0.4 1.8-0.8 2.8-1.2 0.2 0 0.4 0 0.4-0.2 5.8-2.2 12.2-3.4 18.6-3.4 7.2 0 14 1.4 20.2 4l137.2 51.6-34-147.6c0-8.8 2.4-17.2 6.6-24.4 0 0 0 0 0 0 1.2-2.2 2.8-4.2 4.2-6.2 34.8-52.2 55-114.4 55-181C928 246 772.6 96 580.6 96z" p-id="11336" fill="#cac8c7"></path></svg>`;
         }
     }
@@ -364,10 +381,20 @@ class chat {
         this.chatSentInput.value = "";
     }
     notification() {
-        this.chatButton.style.backgroundColor = "#e13b3b";
-
+        var curLeftPos = this.chatButton.getBoundingClientRect().left.toString();
+        var curTopPos = this.chatButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
-        this.chatButton.className += ' chat-shake';
+        this.chatButton.classList.toggle("chat-shake");
+        this.chatButton.style.top = curTopPos + "px";
+        this.chatButton.style.left = curLeftPos + "px";
+    }
+
+
+    renderTime(message) {
+        var chatTime = document.createElement("p");
+        chatTime.setAttribute("class", "time");
+        chatTime.innerHTML = `<span>${message}</span>`;
+        this.chatList.appendChild(chatTime);
     }
 
     renderMessage(message, type) {
@@ -376,10 +403,7 @@ class chat {
         var curTime = new Date().format('hh:mm');
 
         if (this.lastMsgUpdateTime != curTime) {
-            var chatTime = document.createElement("p");
-            chatTime.setAttribute("class", "time");
-            chatTime.innerHTML = `<span>${curTime}</span>`;
-            chatList.appendChild(chatTime);
+            this.renderTime(curTime);
             this.lastMsgUpdateTime = curTime;
         }
 
@@ -400,9 +424,85 @@ class chat {
             }[c];
         });
     }
+
+
+    listenDrag() {
+        interact('.chatbutton')
+            .draggable({
+                autoScroll: false,
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+            .on("tap", (e) => {
+                this.toggleChatUIstate();
+                e.preventDefault();
+                e.currentTarget.classList.toggle('showpopup');
+            })
+
+        interact('.chatpopup')
+            .draggable({
+                autoScroll: false,
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+    }
+
+    dragMoveListener(event) {
+        var target = event.target
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)'
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x)
+        target.setAttribute('data-y', y)
+    }
+
+    toggleChatDisplay() {
+        chrome.storage.local.get(['statuschat'], result => {
+            if (!result.statuschat) {
+                this.chatButton.style.display = "block";
+                this.chatButton.style.left = "90%";
+                this.chatButton.style.top = "90%";
+                chrome.storage.local.set({
+                    'statuschat': true
+                });
+            } else {
+                this.chatButton.style.display = "none";
+                this.chatPopup.style.display = "none";
+                this.statuschat = false;
+                chrome.storage.local.set({
+                    'statuschat': false
+                });
+            }
+        });
+    }
+
+    popConnectedSubmsg(){
+        this.renderTime("Connected to peer, now you can chat with each other. ", "time");
+        this.renderTime("Please do not share sensitive information such as bank account or password at here.", "time");
+        this.notification();
+    }
 }
 
-// var chatHandler = new chat();
+var chatHandler = new chat();
 
 
 
@@ -448,9 +548,8 @@ class SyncHelper {
     }
     socketLock = false;
     ackFlag = false;
-    heartBeatTimer = [null, null, null];
-    heartBeatTimes = [1, 7, 20];
-
+    heartBeatTimer = [null, null, null, null];
+    heartBeatTimes = [1, 7, 20, 60];
     VLCTimer = null;
     VLCStatus = "paused";
     VLCTime = 0;
@@ -462,15 +561,11 @@ class SyncHelper {
         var that = this;
         var getURLPromise = new Promise(
             (resolve) => {
-                chrome.storage.local.get(['apihost', 'protocol'], result => {
+                chrome.storage.local.get(['apihost', 'protocol', 'notification'], result => {
                     var apihost = result.apihost;
-                    Debugger.log(apihost);
-
-                    Debugger.log(result.protocol);
                     var protocol = result.protocol;
+                    systemNotification = result.notification;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
-                    Debugger.log(socketprotocol);
-
                     var url = `wss://app.ylwang.me/ws/?id=${serverCode}`;
                     if (apihost != undefined && socketprotocol != undefined) {
                         url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
@@ -482,7 +577,6 @@ class SyncHelper {
         getURLPromise.then((url) => {
             var timer = null;
             Debugger.log(`RECEIVED sessionID ${serverCode}`);
-            Debugger.log(url);
 
             if (websocket) {
                 websocket.close();
@@ -495,6 +589,7 @@ class SyncHelper {
                         status = STATUSSYNC;
                         that.send(that.HELLOCODE);
                         SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
+                        chatHandler.popConnectedSubmsg();
                     }
                 }, 500);
             } else {
@@ -511,6 +606,7 @@ class SyncHelper {
 
     close() {
         this.send(this.CLOSEDCODE);
+        this.clearHeartBeats();
         websocket.close();
         status = STATUSEND;
         switch (this.type) {
@@ -531,6 +627,7 @@ class SyncHelper {
                 video = document.querySelector('video');
                 video.addEventListener("pause", (e) => {
                     e.stopPropagation();
+
                     that.sync();
                 })
 
@@ -577,14 +674,17 @@ class SyncHelper {
         message = JSON.parse(message);
         // compatible with older versions.
         if (message.type == undefined) {
-            var el = document.createElement('div');
-            el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
-            SyncHelper.notification(``, 3000, el);
-            message = {
-                "type": this.SYSTEMMESSAGE,
-                "content": message + ""
+            if (message === this.HELLOCODE) {
+                var el = document.createElement('div');
+                el.innerHTML = "Your partner are using an outdated version of Sync Sofa, please remind your partner to update follow the instruction of <a href='https://onns.xyz/sync-sofa/#installation'>our Wiki page</a>";
+                SyncHelper.notification(``, 5000, el);
+                return;
+            } else {
+                message = {
+                    "type": this.SYSTEMMESSAGE,
+                    "content": message + ""
+                }
             }
-            return;
         }
         // end.
 
@@ -595,7 +695,7 @@ class SyncHelper {
                 switch (message.content) {
                     case this.CLOSEDCODE:
                         this.handleVideoPause();
-                        SyncHelper.notification("socket connection closed by other partner");
+                        SyncHelper.notification("connection closed by other partner");
                         this.close();
                         break;
                     case this.DISCONNECTCODE:
@@ -606,7 +706,7 @@ class SyncHelper {
                     case this.HELLOCODE:
                         SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
                         status = STATUSSYNC;
-                        // chatHandler.receive("Hi");
+                        chatHandler.popConnectedSubmsg();
                         break;
                     case this.WAITINGCODE:
                         this.handleVideoPause();
@@ -617,7 +717,7 @@ class SyncHelper {
                 }
                 break;
             case this.CHATMESSAGE:
-                // chatHandler.receive(message.content);
+                chatHandler.receive(message.content);
                 break;
             case this.SYNCMESSAGE:
                 this.handleSyncMessage(message.content);
@@ -862,7 +962,7 @@ class SyncHelper {
 
     heartBeats() {
         var that = this;
-        for (var i = 0; i < this.heartBeatTimes.length; i++) {
+        for (var i = 0; i < this.heartBeatTimes.length - 1; i++) {
             this.heartBeatTimer[i] = setTimeout(
                 function () {
                     that.socketLock = false;
@@ -872,25 +972,47 @@ class SyncHelper {
                     that.ackFlag = false;
                 }, 1000 * this.heartBeatTimes[i]);
         }
+        var intervalIndex = this.heartBeatTimes.length - 1;
+        this.heartBeatTimer[intervalIndex] = setInterval(
+            function () {
+                that.socketLock = false;
+                Debugger.log(`HEARTBEATS REPEATEDLY`);
+                that.ackFlag = true;
+                that.sync();
+                that.ackFlag = false;
+            }, 1000 * this.heartBeatTimes[intervalIndex]);
     }
     clearHeartBeats() {
-        for (var i = 0; i < this.heartBeatTimer.length; i++) {
+        for (var i = 0; i < this.heartBeatTimer.length - 1; i++) {
             clearTimeout(this.heartBeatTimer[i]);
         }
+        clearInterval(this.heartBeatTimer[this.heartBeatTimes.length - 1]);
     }
     static notification(msg, duration = 3000, content = null) {
         // this.isFullScreen() && this.exitFullscreen();
-        if (content != null) {
-            swal({
-                buttons: false,
-                content: content,
-                timer: duration,
-              })
-        } else {
-            swal(msg, {
-                buttons: false,
-                timer: duration,
+        if (systemNotification) {
+            chrome.runtime.sendMessage('', {
+                type: 'notification',
+                options: {
+                    title: 'Sync Sofa notification',
+                    message: msg,
+                    iconUrl: '/icons/icon128_on.png',
+                    type: 'basic'
+                }
             });
+        } else {
+            if (content != null) {
+                swal({
+                    buttons: false,
+                    content: content,
+                    timer: duration,
+                })
+            } else {
+                swal(msg, {
+                    buttons: false,
+                    timer: duration,
+                });
+            }
         }
     }
 
@@ -1050,7 +1172,27 @@ class SyncHelper {
 }
 
 
+function isVLC() {
+    if (window.location.port == "8080") {
+        return true;
+    }
+    return false;
+}
 
+var videoTimer = null;
+
+if (!isVLC()) {
+    status = STATUSUNREADY;
+    videoTimer = setInterval(
+        function () {
+            video = document.querySelector('video');
+            if (video != null) {
+                Debugger.log("video is ready");
+                clearInterval(videoTimer);
+                status = STATUSREADY;
+            }
+        }, 500);
+}
 
 
 
@@ -1062,7 +1204,7 @@ chrome.runtime.onMessage.addListener(
             "from a content script:" + sender.tab.url :
             "from the extension");
         if (request.status === STATUSSTART) {
-            if (window.location.port == "8080") {
+            if (isVLC()) {
                 syncTool = new SyncHelper(request.body, request.message, "vlc");
             } else {
                 syncTool = new SyncHelper(request.body, request.message);
@@ -1071,6 +1213,10 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSEND) {
             syncTool.close();
+        }
+
+        if (request.status === STATUSCHAT) {
+            chatHandler.toggleChatDisplay();
         }
 
         if (request.status == STATUSASK) {

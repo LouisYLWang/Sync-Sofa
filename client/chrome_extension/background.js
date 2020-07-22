@@ -1,5 +1,5 @@
 var urlPattern = [
-    "https://*.bilibili.com/video/*",
+    "https://*.bilibili.com/*",
     "https://www.dandanzan.com/*",
     "https://duonaolive.com/*",
     "https://v.qq.com/*",
@@ -62,3 +62,9 @@ chrome.runtime.onInstalled.addListener((details) => {
     }
 
 })
+
+chrome.runtime.onMessage.addListener(data => {
+    if (data.type === 'notification') {
+        chrome.notifications.create('', data.options);
+    }
+});

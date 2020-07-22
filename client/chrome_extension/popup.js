@@ -4,6 +4,8 @@ const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
 const cancelbutton = document.getElementById("cancelbutton");
+const chatbutton = document.getElementById("chatbutton");
+
 //const mtctbutton = document.getElementById("mtctbutton");
 
 const PAUSECODE = "-5";
@@ -13,11 +15,29 @@ const CLOSEDCODE = "-1";
 const DISCONNECTCODE = "-2";
 const STATUSSTART = "start"
 const STATUSEND = "end"
+const STATUSCHAT = "chat"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
+const STATUSUNREADY = "unready"
+const STATUSREADY = "ready"
 var apihost = "app.ylwang.me"
 var protocol = "https"
+//var statuschat;
+chrome.storage.local.get("statuschat", result =>{
+    if (result.statuschat == undefined){
+        chrome.storage.local.set({
+            'statuschat':false
+        });   
+    } 
+
+    if (result.statuschat){
+        chatbutton.value = "CLOSE CHAT";
+    } else {
+        chatbutton.value = "OPEN CHAT";
+    }
+    
+})
 
 chrome.storage.local.get(['apihost'], function (result) {
     if (result.apihost != undefined && result.apihost != "app.ylwang.me") {
@@ -69,6 +89,18 @@ stopbutton.addEventListener("click", e => {
     }
 })
 
+chatbutton.addEventListener("click", e => {
+    e.preventDefault();
+    chrome.storage.local.get(['statuschat'], result => {
+        if (!result.statuschat){
+            chatbutton.value = "CLOSE CHAT";
+        } else {
+            chatbutton.value = "OPEN CHAT";
+        }
+    });
+    sentMsgToContent(STATUSCHAT);
+})
+
 cancelbutton.addEventListener("click", e => {
     e.preventDefault();
     UIStatusToInit();
@@ -110,6 +142,12 @@ function handleCreateHostSession(e) {
 
 function handleResponse(response) {
     if (response.status == STATUSASK) {
+        if (response.body == STATUSUNREADY) {
+            UIStatusToUnready();
+        }
+        if (response.body == STATUSREADY) {
+            UIStatusToready();
+        }
         if (response.body == STATUSEND) {
             UIStatusToInit();
         }
@@ -158,6 +196,15 @@ function UIStatusToLinked() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
     stopbutton.style.display = "block";
+    chrome.storage.local.get("chat", result =>{
+        if (result.chat){
+            chatbutton.style.display = "block";
+        } else {
+            chatbutton.style.display = "none";
+        };
+    })
+    chatbutton.style.display = "block";
+    cancelbutton.style.display = "none";
     // mtctbutton.style.display = "block";
 }
 
@@ -167,6 +214,33 @@ function UIStatusToInit() {
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
     stopbutton.style.display = "none";
+    chatbutton.style.display = "none";
+    cancelbutton.style.display = "none";
+    // mtctbutton.style.display = "none";
+}
+
+function UIStatusToUnready() {
+    selfID = "";
+    inputbox.value = selfID;
+    startbutton.style.display = "block";
+    startbutton.setAttribute("disabled","disabled");
+    requestbutton.style.display = "block";
+    requestbutton.setAttribute("disabled","disabled");
+    stopbutton.style.display = "none";
+    chatbutton.style.display = "none";
+    cancelbutton.style.display = "none";
+    // mtctbutton.style.display = "none";
+}
+
+function UIStatusToready() {
+    selfID = "";
+    inputbox.value = selfID;
+    startbutton.style.display = "block";
+    startbutton.removeAttribute("disabled");
+    requestbutton.style.display = "block";
+    requestbutton.removeAttribute("disabled");
+    stopbutton.style.display = "none";
+    chatbutton.style.display = "none";
     cancelbutton.style.display = "none";
     // mtctbutton.style.display = "none";
 }
@@ -178,6 +252,7 @@ function initialize() {
             inputbox.value = selfID;
             requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
+            chatbutton.style.display = "none";
             //mtctbutton.style.display = "none";
             cancelbutton.style.display = "none";
         }

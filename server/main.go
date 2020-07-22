@@ -97,6 +97,7 @@ func main() {
 	r.HandleFunc("/v1/session", ctx.SessionHandler)
 	r.HandleFunc("/v1/session/", ctx.SessionSpecificHandler)
 	r.HandleFunc("/ws/", ctx.WebSocketConnHandler)
+	r.HandleFunc("/v1/status", ctx.StatusConnHandler)
 	if smtpServerHost != "" {
 		r.HandleFunc("/v1/feedback", ctx.FeedbackHandler)
 	}

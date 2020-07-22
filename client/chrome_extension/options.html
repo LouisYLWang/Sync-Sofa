@@ -85,6 +85,10 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        p {
+            margin: 0 0 1rem 0;
+        }
     </style>
 </head>
 
@@ -118,6 +122,25 @@
         </p>
         <label class="switch">
             <input type="checkbox" id="debugtoggle">
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+    <div id="chat">
+        <h3>Chat feature:</h3>
+        <p>Choose whether you need our built-in chat, notice that chat information are not end-to-end encrypted, please do not share sensitive information such as bank account or password. We assume that you are fully understant that if you switch on the chat feature. </p>
+        <label class="switch">
+            <input type="checkbox" id="chattoggle">
+            <span class="slider round"></span>
+        </label>
+    </div>
+
+
+    <div id="notification">
+        <h3>System notification:</h3>
+        <p>If true, we will use system notification. If you always watch videos with fullscreen or with VLC, we recommend you turn on this feature.</p>
+        <label class="switch">
+            <input type="checkbox" id="notificationtoggle">
             <span class="slider round"></span>
         </label>
     </div>
