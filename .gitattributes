@@ -1,3 +1,5 @@
 *.css linguist-language=other
 *.sh linguist-language=go
 *.js linguist-detectable=false
+*.html linguist-detectable=false
+
