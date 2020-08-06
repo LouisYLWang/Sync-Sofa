@@ -495,7 +495,7 @@ class chat {
         });
     }
 
-    popConnectedSubmsg(){
+    popConnectedSubmsg() {
         this.renderTime("Connected to peer, now you can chat with each other. ", "time");
         this.renderTime("Please do not share sensitive information such as bank account or password at here.", "time");
         this.notification();
@@ -555,6 +555,7 @@ class SyncHelper {
     VLCTime = 0;
     VLCLength = 0;
     VLCCount = 0;
+    socketTimer = null;
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
@@ -597,10 +598,7 @@ class SyncHelper {
                 status = STATUSCONNECT;
             }
             that.handleSessions();
-            // check connection every 30s.
-            setInterval(function () {
-                that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
-            }, 1000 * 30);
+            that.checkSocket();
         })
     }
 
@@ -608,6 +606,7 @@ class SyncHelper {
         this.send(this.CLOSEDCODE);
         this.clearHeartBeats();
         websocket.close();
+        clearInterval(this.socketTimer);
         status = STATUSEND;
         switch (this.type) {
             case "video":
@@ -1164,6 +1163,19 @@ class SyncHelper {
         arr.push(("randomNumber=" + Math.random()).replace("."));
         // console.log(arr);
         return arr.join("&");
+    }
+
+    checkSocket() {
+        // check connection every 5s.
+        var that = this;
+        that.socketTimer = setInterval(function () {
+            if (that.isOpen()) {
+                status = STATUSSYNC;
+            } else {
+                SyncHelper.notification(`Socket disconnected, unknown reason.`);
+                that.close();
+            }
+        }, 1000 * 5);
     }
 
     isOpen() {
