@@ -24,19 +24,19 @@ const STATUSREADY = "ready"
 var apihost = "app.ylwang.me"
 var protocol = "https"
 //var statuschat;
-chrome.storage.local.get("statuschat", result =>{
-    if (result.statuschat == undefined){
+chrome.storage.local.get("statuschat", result => {
+    if (result.statuschat == undefined) {
         chrome.storage.local.set({
-            'statuschat':false
-        });   
-    } 
+            'statuschat': false
+        });
+    }
 
-    if (result.statuschat){
+    if (result.statuschat) {
         chatbutton.value = "CLOSE CHAT";
     } else {
         chatbutton.value = "OPEN CHAT";
     }
-    
+
 })
 
 chrome.storage.local.get(['apihost'], function (result) {
@@ -84,15 +84,15 @@ stopbutton.addEventListener("click", e => {
     e.preventDefault();
     sentMsgToContent(STATUSEND)
     UIStatusToInit();
-    if (inputbox.value !== "") {
-        inputbox.value = "";
-    }
+    // if (inputbox.value !== "") {
+    //     inputbox.value = "";
+    // }
 })
 
 chatbutton.addEventListener("click", e => {
     e.preventDefault();
     chrome.storage.local.get(['statuschat'], result => {
-        if (!result.statuschat){
+        if (!result.statuschat) {
             chatbutton.value = "CLOSE CHAT";
         } else {
             chatbutton.value = "OPEN CHAT";
@@ -127,7 +127,11 @@ function handleCreateHostSession(e) {
     }).then(data => {
         sessionPair = JSON.parse(JSON.stringify(data));
         if (sessionPair != null) {
-            inputbox.value = sessionPair.selfID;
+            if (selfID.length == 5) {
+                inputbox.value = sessionPair.selfID.substr(0, 4);
+            } else {
+                inputbox.value = sessionPair.selfID;
+            }
         }
         chrome.storage.local.set({ "selfID": sessionPair.selfID }, function () { });
         sentMsgToContent(STATUSSTART, sessionPair.selfID);
@@ -181,7 +185,11 @@ function handleBeginSessions(e) {
     }).then(data => {
         sessionPair = JSON.parse(JSON.stringify(data));
         if (sessionPair != null) {
-            inputbox.value = sessionPair.selfID;
+            if (selfID.length == 5) {
+                inputbox.value = sessionPair.selfID.substr(0, 4);
+            } else {
+                inputbox.value = sessionPair.selfID;
+            }
         }
         sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
         UIStatusToLinked();
@@ -196,8 +204,8 @@ function UIStatusToLinked() {
     startbutton.style.display = "none";
     requestbutton.style.display = "none";
     stopbutton.style.display = "block";
-    chrome.storage.local.get("chat", result =>{
-        if (result.chat){
+    chrome.storage.local.get("chat", result => {
+        if (result.chat) {
             chatbutton.style.display = "block";
         } else {
             chatbutton.style.display = "none";
@@ -209,8 +217,8 @@ function UIStatusToLinked() {
 }
 
 function UIStatusToInit() {
-    selfID = "";
-    inputbox.value = selfID;
+    // selfID = "";
+    // inputbox.value = selfID;
     startbutton.style.display = "block";
     requestbutton.style.display = "block";
     stopbutton.style.display = "none";
@@ -220,12 +228,12 @@ function UIStatusToInit() {
 }
 
 function UIStatusToUnready() {
-    selfID = "";
-    inputbox.value = selfID;
+    // selfID = "";
+    // inputbox.value = selfID;
     startbutton.style.display = "block";
-    startbutton.setAttribute("disabled","disabled");
+    startbutton.setAttribute("disabled", "disabled");
     requestbutton.style.display = "block";
-    requestbutton.setAttribute("disabled","disabled");
+    requestbutton.setAttribute("disabled", "disabled");
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
     cancelbutton.style.display = "none";
@@ -233,8 +241,8 @@ function UIStatusToUnready() {
 }
 
 function UIStatusToready() {
-    selfID = "";
-    inputbox.value = selfID;
+    // selfID = "";
+    // inputbox.value = selfID;
     startbutton.style.display = "block";
     startbutton.removeAttribute("disabled");
     requestbutton.style.display = "block";
@@ -249,6 +257,9 @@ function initialize() {
     chrome.storage.local.get(['selfID'], function (result) {
         if (result.selfID != undefined) {
             selfID = result.selfID;
+            if (selfID.length == 5) {
+                selfID = selfID.substr(0, 4);
+            }
             inputbox.value = selfID;
             requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
