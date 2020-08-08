@@ -127,7 +127,7 @@ function handleCreateHostSession(e) {
     }).then(data => {
         sessionPair = JSON.parse(JSON.stringify(data));
         if (sessionPair != null) {
-            if (selfID.length == 5) {
+            if (sessionPair.selfID.length == 5) {
                 inputbox.value = sessionPair.selfID.substr(0, 4);
             } else {
                 inputbox.value = sessionPair.selfID;
@@ -185,13 +185,16 @@ function handleBeginSessions(e) {
     }).then(data => {
         sessionPair = JSON.parse(JSON.stringify(data));
         if (sessionPair != null) {
-            if (selfID.length == 5) {
+            if (sessionPair.selfID.length == 5) {
                 inputbox.value = sessionPair.selfID.substr(0, 4);
             } else {
                 inputbox.value = sessionPair.selfID;
             }
         }
-        sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true, "pairExisted": sessionPair.pairExist});
+        chrome.storage.local.set({ "selfID": sessionPair.selfID }, function () { });
+        sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true, "pairExisted": sessionPair.pairExisted == true });
+        inputbox.select();
+        document.execCommand("copy");
         UIStatusToLinked();
         setTimeout(function () {
             window.close();
