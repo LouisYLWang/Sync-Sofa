@@ -79,6 +79,7 @@ func (s Store) RemoveSession(pairID SessionID) {
 
 // change to join pair
 func (s Store) BeginSessions(pairID SessionID) (SessionID, error, bool) {
+	pairID = pairID[0:4]
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
 	if _, pairExist := s.SessionMap[pairID]; pairExist {
