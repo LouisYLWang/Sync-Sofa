@@ -16,7 +16,13 @@ const STATUSASK = "ask"
 const STATUSUNREADY = "unready"
 const STATUSREADY = "ready"
 const STATUSMESSAGE = "message"
-
+const iconList = {
+    "ready": "/icons/icon128_red.png",
+    "unready": "/icons/icon128_on.png",
+    "end": "/icons/icon128_red.png",
+    "sync": "/icons/icon128_green.png",
+    "connect": "/icons/icon128_yellow.png"
+}
 var status = STATUSEND;
 var video = null;
 // video = document.querySelector('video');
@@ -589,6 +595,7 @@ class SyncHelper {
                     if (that.isOpen()) {
                         clearInterval(timer);
                         status = STATUSSYNC;
+                        SyncHelper.updateIcon();
                         that.send(that.HELLOCODE);
                         SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                         chatHandler.popConnectedSubmsg();
@@ -597,6 +604,7 @@ class SyncHelper {
             } else {
                 SyncHelper.notification(`Room created and room code copied to clipboard`);
                 status = STATUSCONNECT;
+                SyncHelper.updateIcon();
             }
             that.handleSessions();
             that.checkSocket();
@@ -609,6 +617,7 @@ class SyncHelper {
         websocket.close();
         clearInterval(this.socketTimer);
         status = STATUSEND;
+        SyncHelper.updateIcon();
         switch (this.type) {
             case "video":
                 break;
@@ -706,6 +715,7 @@ class SyncHelper {
                     case this.HELLOCODE:
                         SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
                         status = STATUSSYNC;
+                        SyncHelper.updateIcon();
                         chatHandler.popConnectedSubmsg();
                         break;
                     case this.WAITINGCODE:
@@ -1171,7 +1181,8 @@ class SyncHelper {
         var that = this;
         that.socketTimer = setInterval(function () {
             if (that.isOpen()) {
-                status = STATUSSYNC;
+                // status = STATUSSYNC;
+                // SyncHelper.updateIcon();
             } else {
                 SyncHelper.notification(`Socket disconnected, unknown reason.`);
                 that.close();
@@ -1181,6 +1192,13 @@ class SyncHelper {
 
     isOpen() {
         return websocket !== null && websocket.readyState === websocket.OPEN;
+    }
+
+    static updateIcon(){
+        chrome.runtime.sendMessage('', {
+            type: 'changeIcon',
+            path: iconList[status]
+        });
     }
 }
 
@@ -1203,6 +1221,7 @@ if (!isVLC()) {
                 Debugger.log("video is ready");
                 clearInterval(videoTimer);
                 status = STATUSREADY;
+                SyncHelper.updateIcon();
             }
         }, 500);
 }
