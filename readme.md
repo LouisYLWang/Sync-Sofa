@@ -207,7 +207,7 @@ If there are any ads before the video, watch them before the next step.
 
 ### Request new code
 
-Click the `Sync Sofa` extension and then click `REQUEST NEW CODE` button.
+Click the `Sync Sofa` extension and then click `START` button.
 
 ![User A](https://onns.xyz/blog/image/20200627-3.png)
 
@@ -692,7 +692,7 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
 
 ### 获取连接码
 
-点击 `Sync Sofa` 插件图标并点击`REQUEST NEW CODE`（获取链接码） 按钮.
+点击 `Sync Sofa` 插件图标并点击`START`（开始） 按钮.
 
 ![User A](https://onns.xyz/blog/image/20200627-3.png)
 
