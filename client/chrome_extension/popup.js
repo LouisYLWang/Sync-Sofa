@@ -1,9 +1,9 @@
-const requestbutton = document.getElementById("requestbutton");
+// const requestbutton = document.getElementById("requestbutton");
 const startbutton = document.getElementById("startbutton");
 const stopbutton = document.getElementById("stopbutton");
 const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
-const cancelbutton = document.getElementById("cancelbutton");
+// const cancelbutton = document.getElementById("cancelbutton");
 const chatbutton = document.getElementById("chatbutton");
 
 //const mtctbutton = document.getElementById("mtctbutton");
@@ -61,11 +61,11 @@ var status = "end"
 var defaultHost = ""
 var selfID = ""
 
-requestbutton.addEventListener("click", e => {
-    e.preventDefault();
-    UIStatusToLinked();
-    handleCreateHostSession(e);
-})
+// requestbutton.addEventListener("click", e => {
+//     e.preventDefault();
+//     UIStatusToLinked();
+//     handleCreateHostSession(e);
+// })
 
 startbutton.addEventListener("click", e => {
     e.preventDefault();
@@ -75,10 +75,10 @@ startbutton.addEventListener("click", e => {
 
 inputbox.addEventListener("click", e => {
     e.preventDefault();
-    if (requestbutton.style.display === "block") {
-        requestbutton.style.display = "none";
-        cancelbutton.style.display = "block";
-    }
+    // if (requestbutton.style.display === "block") {
+    //     requestbutton.style.display = "none";
+    //     cancelbutton.style.display = "block";
+    // }
 })
 
 stopbutton.addEventListener("click", e => {
@@ -102,13 +102,13 @@ chatbutton.addEventListener("click", e => {
     sentMsgToContent(STATUSCHAT);
 })
 
-cancelbutton.addEventListener("click", e => {
-    e.preventDefault();
-    UIStatusToInit();
-    if (inputbox.value !== "") {
-        inputbox.value = "";
-    }
-})
+// cancelbutton.addEventListener("click", e => {
+//     e.preventDefault();
+//     UIStatusToInit();
+//     if (inputbox.value !== "") {
+//         inputbox.value = "";
+//     }
+// })
 
 // mtctbutton.addEventListener("click", e => {
 //     e.preventDefault();
@@ -212,7 +212,7 @@ function handleBeginSessions(e) {
 
 function UIStatusToLinked() {
     startbutton.style.display = "none";
-    requestbutton.style.display = "none";
+    // requestbutton.style.display = "none";
     stopbutton.style.display = "block";
     chrome.storage.local.get("chat", result => {
         if (result.chat) {
@@ -222,7 +222,7 @@ function UIStatusToLinked() {
         };
     })
     chatbutton.style.display = "block";
-    cancelbutton.style.display = "none";
+    // cancelbutton.style.display = "none";
     // mtctbutton.style.display = "block";
 }
 
@@ -230,10 +230,10 @@ function UIStatusToInit() {
     // selfID = "";
     // inputbox.value = selfID;
     startbutton.style.display = "block";
-    requestbutton.style.display = "block";
+    // requestbutton.style.display = "block";
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
-    cancelbutton.style.display = "none";
+    // cancelbutton.style.display = "none";
     // mtctbutton.style.display = "none";
 }
 
@@ -242,11 +242,11 @@ function UIStatusToUnready() {
     // inputbox.value = selfID;
     startbutton.style.display = "block";
     startbutton.setAttribute("disabled", "disabled");
-    requestbutton.style.display = "block";
-    requestbutton.setAttribute("disabled", "disabled");
+    // requestbutton.style.display = "block";
+    // requestbutton.setAttribute("disabled", "disabled");
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
-    cancelbutton.style.display = "none";
+    // cancelbutton.style.display = "none";
     // mtctbutton.style.display = "none";
 }
 
@@ -255,11 +255,11 @@ function UIStatusToready() {
     // inputbox.value = selfID;
     startbutton.style.display = "block";
     startbutton.removeAttribute("disabled");
-    requestbutton.style.display = "block";
-    requestbutton.removeAttribute("disabled");
+    // requestbutton.style.display = "block";
+    // requestbutton.removeAttribute("disabled");
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
-    cancelbutton.style.display = "none";
+    // cancelbutton.style.display = "none";
     // mtctbutton.style.display = "none";
 }
 
@@ -271,11 +271,11 @@ function initialize() {
                 selfID = selfID.substr(0, 4);
             }
             inputbox.value = selfID;
-            requestbutton.value = "REQUEST NEW CODE";
+            // requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
             chatbutton.style.display = "none";
             //mtctbutton.style.display = "none";
-            cancelbutton.style.display = "none";
+            // cancelbutton.style.display = "none";
         }
     });
     sentMsgToContent(STATUSASK);
