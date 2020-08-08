@@ -583,7 +583,7 @@ class SyncHelper {
                 websocket.close();
             }
             websocket = new WebSocket(url);
-            if (option && option.beginFlag) {
+            if (option && option.beginFlag && option.pairExisted) {
                 timer = setInterval(function () {
                     if (that.isOpen()) {
                         clearInterval(timer);

@@ -191,7 +191,7 @@ function handleBeginSessions(e) {
                 inputbox.value = sessionPair.selfID;
             }
         }
-        sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true });
+        sentMsgToContent(STATUSSTART, sessionPair.selfID, { "beginFlag": true, "pairExisted": sessionPair.pairExist});
         UIStatusToLinked();
         setTimeout(function () {
             window.close();
