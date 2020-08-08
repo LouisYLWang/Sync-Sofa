@@ -21,6 +21,7 @@ const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 const STATUSUNREADY = "unready"
 const STATUSREADY = "ready"
+const STATUSMESSAGE = "message"
 var apihost = "app.ylwang.me"
 var protocol = "https"
 //var statuschat;
@@ -184,7 +185,13 @@ function handleBeginSessions(e) {
         return res.text();
     }).then(data => {
         sessionPair = JSON.parse(JSON.stringify(data));
+
         if (sessionPair != null) {
+            if (sessionPair.selfID == undefined) { // full pair
+                sentMsgToContent(STATUSMESSAGE, "Room code already in use, please try another one.");
+                UIStatusToInit();
+                return;
+            }
             if (sessionPair.selfID.length == 5) {
                 inputbox.value = sessionPair.selfID.substr(0, 4);
             } else {

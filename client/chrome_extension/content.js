@@ -15,6 +15,7 @@ const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 const STATUSUNREADY = "unready"
 const STATUSREADY = "ready"
+const STATUSMESSAGE = "message"
 
 var status = STATUSEND;
 var video = null;
@@ -1225,6 +1226,10 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSEND) {
             syncTool.close();
+        }
+
+        if (request.status === STATUSMESSAGE) {
+            SyncHelper.notification(request.body);
         }
 
         if (request.status === STATUSCHAT) {
