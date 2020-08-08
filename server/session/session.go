@@ -34,19 +34,19 @@ func NewStore(sessionDuration time.Duration) *Store {
 	}
 }
 
-func RandStringBytesRmndr(n int) string {
+func RandStringBytesRmndr(n int, pairID string) string {
 	bytes := make([]byte, n)
 	for i := range bytes {
 		bytes[i] = letterBytes[rand.Int63()%int64(len(letterBytes))]
 	}
-	return string(bytes)
+	return (pairID + string(bytes))[0:4]
 }
 
 // should be create pair
 func (s Store) CreateHostSession() (SessionID, error) {
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
-	pairID := SessionID(RandStringBytesRmndr(idLength))
+	pairID := SessionID(RandStringBytesRmndr(idLength,""))
 	newPair := &Pair{
 		PairID: pairID,
 		UsrNum: 1,
@@ -94,6 +94,7 @@ func (s Store) BeginSessions(pairID SessionID) (SessionID, error, bool) {
 			return InvalidSessionID, nil, pairExist
 		}
 	} else {
+		pairID := SessionID(RandStringBytesRmndr(idLength, string(pairID)))
 		newPair := &Pair{
 			PairID: pairID,
 			UsrNum: 1,
