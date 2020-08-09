@@ -81,6 +81,10 @@ func (s Store) RemoveSession(pairID SessionID) {
 
 // change to join pair
 func (s Store) BeginSessions(pairID SessionID) (SessionID, error, bool) {
+	if (len(pairID) < 4){
+		pairID = SessionID(RandStringBytesRmndr(idLength, string(pairID)))
+	}
+
 	pairID = pairID[0:4]
 	s.Lock.Lock()
 	defer s.Lock.Unlock()

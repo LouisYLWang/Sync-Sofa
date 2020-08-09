@@ -30,7 +30,10 @@ func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn) 
 func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocket.Conn) {
 	ctx.SocketStore.Lock.Lock()
 	defer ctx.SocketStore.Lock.Unlock()
-	partnerID := GetPartnerID(sessionID)
+	partnerID, err := GetPartnerID(sessionID)
+	if err != nil {
+		return
+	}
 	partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
 	if exist {
 		log.Printf("partner cient %s been force closed\n", sessionID)
@@ -41,7 +44,11 @@ func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocke
 	log.Println("socket remove connection to session: ", sessionID)
 }
 
-func GetPartnerID(selfID session.SessionID) session.SessionID {
+func GetPartnerID(selfID session.SessionID) (session.SessionID, error) {
+	if (len(selfID) != 5) {
+		return session.InvalidSessionID, fmt.Errorf("incorrect sessionID length!")
+	}
+
 	usrID := selfID[len(selfID)-1 : len(selfID)]
 	pairID := selfID[0 : len(selfID)-1]
 	var partnerID session.SessionID
@@ -52,9 +59,9 @@ func GetPartnerID(selfID session.SessionID) session.SessionID {
 		partnerID = pairID + "0"
 	} else {
 		log.Printf("error parsing the partnerID\n")
-		return session.InvalidSessionID
+		return session.InvalidSessionID, nil
 	}
-	return partnerID
+	return partnerID, nil
 }
 
 func GetPairID(selfID session.SessionID) session.SessionID {
@@ -86,10 +93,12 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 			}
 			log.Printf("client %s operate \n", id)
 			//conn.WriteMessage(websocket.TextMessage, p)
-			partnerID := GetPartnerID(id)
-			if partnerID == session.InvalidSessionID {
-				break
+			partnerID, err:= GetPartnerID(id)
+			if err != nil {
+				http.Error(w, "failed to open websocket connection", http.StatusUnauthorized)
+				return
 			}
+
 
 			if messageType == websocket.TextMessage {
 				partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
