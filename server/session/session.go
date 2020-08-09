@@ -3,6 +3,7 @@ package session
 import (
 	"log"
 	"math/rand"
+	"regexp"
 	"sync"
 	"time"
 )
@@ -10,6 +11,7 @@ import (
 const idLength = 4
 const InvalidSessionID SessionID = ""
 const letterBytes = "abcdefghijklmnopqrstuvwxyz1234567890"
+var reg *regexp.Regexp
 
 type (
 	SessionID string
@@ -95,6 +97,12 @@ func (s Store) BeginSessions(pairID SessionID) (SessionID, error, bool) {
 			return InvalidSessionID, nil, pairExist
 		}
 	} else {
+		//validation
+		pattern := `[a-z0-9]{4}`
+		 if !regexp.MustCompile(pattern).MatchString(string(pairID)) {
+			 log.Printf("invalid pairID")
+			 pairID = ""
+		 }
 		pairID := SessionID(RandStringBytesRmndr(idLength, string(pairID)))
 		newPair := &Pair{
 			PairID: pairID,
