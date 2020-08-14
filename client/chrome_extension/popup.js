@@ -146,6 +146,10 @@ function handleCreateHostSession(e) {
 }
 
 function handleResponse(response) {
+    if(response == undefined){
+        UIStatusToUnready();
+        return;
+    }
     if (response.status == STATUSASK) {
         if (response.body == STATUSUNREADY) {
             UIStatusToUnready();
