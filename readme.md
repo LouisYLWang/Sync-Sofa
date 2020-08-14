@@ -11,7 +11,7 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 - sync play process bar control: the playing time change will also affect other side user
 - local video sync: provide two ways to sync your playing of local video file 
 
-## Current version:
+## Current version
 
 **v1.0.8 - update on 8 Aug 2020**
 
@@ -32,99 +32,36 @@ Fix:
 
 ## Index
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=2 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
 - [Sync Sofa (streaming video playback synchronizer extension)](#sync-sofa-streaming-video-playback-synchronizer-extension)
-  - [Current version:](#current-version)
+  - [Current version](#current-version)
   - [Index](#index)
   - [Supported list](#supported-list)
   - [Setting](#setting)
-    - [Server list](#server-list)
-    - [Options page](#options-page)
-    - [Refresh video page](#refresh-video-page)
   - [Usage](#usage)
-    - [Notices](#notices)
-    - [Open a video page](#open-a-video-page)
-    - [Request new code](#request-new-code)
-    - [Start connection](#start-connection)
-    - [Enjoy yourselves](#enjoy-yourselves)
   - [VLC support](#vlc-support)
-    - [Start VLC on the server with the Web Interface](#start-vlc-on-the-server-with-the-web-interface)
-    - [Open your video](#open-your-video)
-    - [Request new code](#request-new-code-1)
-    - [Start connection](#start-connection-1)
-    - [Enjoy yourselves](#enjoy-yourselves-1)
-    - [Close Controller webpage](#close-controller-webpage)
   - [Installation](#installation)
-    - [Google Chrome](#google-chrome)
-      - [Install from Chrome Web Store](#install-from-chrome-web-store)
-      - [Install from local .crx file](#install-from-local-crx-file)
-      - [Install from unpackaged folder](#install-from-unpackaged-folder)
-    - [Microsoft Edge:](#microsoft-edge)
-      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
-    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
   - [Self-hosting Guide](#self-hosting-guide)
-    - [Without Docker](#without-docker)
-    - [With Docker](#with-docker)
   - [Release History](#release-history)
-    - [v1.0.8](#v108)
-    - [v1.0.7](#v107)
-    - [v1.0.6](#v106)
-    - [v1.0.5](#v105)
-    - [v1.0.4](#v104)
-    - [v1.0.3](#v103)
-    - [v1.0.2](#v102)
-    - [v0.0.1](#v001)
   - [Meta](#meta)
   - [Contributing](#contributing)
   - [FAQ](#faq)
-    - [How to get debug info](#how-to-get-debug-info)
 - [Sync Sofa （在线视频同步播放插件）](#sync-sofa-在线视频同步播放插件)
-  - [当前版本特性:](#当前版本特性)
+  - [当前版本特性](#当前版本特性)
   - [目录](#目录)
   - [支持网站列表](#支持网站列表)
   - [设置](#设置)
-    - [服务器列表](#服务器列表)
-    - [选项页](#选项页)
-    - [刷新视频页面](#刷新视频页面)
   - [使用说明](#使用说明)
-    - [注意事项](#注意事项)
-    - [打开视频页面](#打开视频页面)
-    - [获取连接码](#获取连接码)
-    - [开始连接](#开始连接)
-    - [愉快观看吧](#愉快观看吧)
   - [VLC支持](#vlc支持)
-    - [通过Web控制界面操控VLC播放](#通过web控制界面操控vlc播放)
-    - [打开本地视频](#打开本地视频)
-    - [获取连接码](#获取连接码-1)
-    - [开始连接](#开始连接-1)
-    - [愉快观看吧](#愉快观看吧-1)
-    - [关闭控制页面](#关闭控制页面)
   - [安装](#安装)
-    - [谷歌浏览器](#谷歌浏览器)
-      - [从谷歌商店安装](#从谷歌商店安装)
-      - [从本地 .crx 文件安装](#从本地-crx-文件安装)
-      - [安装未打包的插件](#安装未打包的插件)
-    - [微软Edge浏览器:](#微软edge浏览器)
-      - [从Edge浏览器插件中心安装](#从edge浏览器插件中心安装)
-    - [Firefox（后续版本添加支持）](#firefox后续版本添加支持)
   - [服务端部署指南](#服务端部署指南)
-    - [直接部署（不使用Docker容器）:](#直接部署不使用docker容器)
-    - [使用Docker容器部署](#使用docker容器部署)
   - [版本日志](#版本日志)
-    - [v1.0.7](#v107-1)
-    - [v1.0.6](#v106-1)
-    - [v1.0.5](#v105-1)
-    - [v1.0.4](#v104-1)
-    - [v1.0.3](#v103-1)
-    - [v1.0.2](#v102-1)
-    - [v0.0.1](#v001-1)
   - [开发者](#开发者)
   - [参与更新](#参与更新)
   - [常见问题](#常见问题)
-    - [如何获取调试信息](#如何获取调试信息)
 
 <!-- /code_chunk_output -->
 
@@ -611,115 +548,57 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 - 同步播放进度：支持播放、暂停、进度切换等操作
 - 本地视频同步：可通过VLC同步本地视频播放状态
 
-## 当前版本特性:
+## 当前版本特性
 
-**v1.0.7 - 2020年7月5日更新**
+**v1.0.8 - 2020年8月8日更新**
 
-⚠️⚠️⚠️ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ **请不要**尝试使用像`0000`和`1234`这样简单的`房间码`，我们强烈建议你使用不常见的房间码，这样就不必频繁更改它。
 
-- 新增功能：
-    - 新增版本检测（高版本用户与低版本用户连接时，若连接码由低版本用户申请，高版本用户将收到提示，请根据提示告知对方升级最新版本）
-- 修复功能:
-    - 修复对 [bilibili movie](https://www.bilibili.com/bangumi/*) 的支持
-    - 修复了优酷及芒果TV无法同步操作的问题
+新增：
+1. 修改房间申请码逻辑，用户可自行输入房间码，且下次连接时无需重新申请，只需点击start按钮即可快速连接（！房间码须为四位小写字母+数字的组合）
+1. 增加内置文字聊天（可在配置页面切换）
+2. 增加系统通知选项（可在配置页面切换）
+3. 增加连接状态指示灯，显示在插件图标右下角（红-未连接，黄-等待对方连接，绿-正在连接）
+4. 增加socket断开因未知原因断开通知
+5. 增加房间码占用通知
+
+修复：
+1. 修复了没有bug的bug
 
 ---
 
 ## 目录
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=2 orderedList=false} -->
 
 <!-- code_chunk_output -->
 
 - [Sync Sofa (streaming video playback synchronizer extension)](#sync-sofa-streaming-video-playback-synchronizer-extension)
-  - [Current version:](#current-version)
+  - [Current version](#current-version)
   - [Index](#index)
   - [Supported list](#supported-list)
   - [Setting](#setting)
-    - [Server list](#server-list)
-    - [Options page](#options-page)
-    - [Refresh video page](#refresh-video-page)
   - [Usage](#usage)
-    - [Notices](#notices)
-    - [Open a video page](#open-a-video-page)
-    - [Request new code](#request-new-code)
-    - [Start connection](#start-connection)
-    - [Enjoy yourselves](#enjoy-yourselves)
   - [VLC support](#vlc-support)
-    - [Start VLC on the server with the Web Interface](#start-vlc-on-the-server-with-the-web-interface)
-    - [Open your video](#open-your-video)
-    - [Request new code](#request-new-code-1)
-    - [Start connection](#start-connection-1)
-    - [Enjoy yourselves](#enjoy-yourselves-1)
-    - [Close Controller webpage](#close-controller-webpage)
   - [Installation](#installation)
-    - [Google Chrome](#google-chrome)
-      - [Install from Chrome Web Store](#install-from-chrome-web-store)
-      - [Install from local .crx file](#install-from-local-crx-file)
-      - [Install from unpackaged folder](#install-from-unpackaged-folder)
-    - [Microsoft Edge:](#microsoft-edge)
-      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
-    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
   - [Self-hosting Guide](#self-hosting-guide)
-    - [Without Docker](#without-docker)
-    - [With Docker](#with-docker)
   - [Release History](#release-history)
-    - [v1.0.8](#v108)
-    - [v1.0.7](#v107)
-    - [v1.0.6](#v106)
-    - [v1.0.5](#v105)
-    - [v1.0.4](#v104)
-    - [v1.0.3](#v103)
-    - [v1.0.2](#v102)
-    - [v0.0.1](#v001)
   - [Meta](#meta)
   - [Contributing](#contributing)
   - [FAQ](#faq)
-    - [How to get debug info](#how-to-get-debug-info)
 - [Sync Sofa （在线视频同步播放插件）](#sync-sofa-在线视频同步播放插件)
-  - [当前版本特性:](#当前版本特性)
+  - [当前版本特性](#当前版本特性)
   - [目录](#目录)
   - [支持网站列表](#支持网站列表)
   - [设置](#设置)
-    - [服务器列表](#服务器列表)
-    - [选项页](#选项页)
-    - [刷新视频页面](#刷新视频页面)
   - [使用说明](#使用说明)
-    - [注意事项](#注意事项)
-    - [打开视频页面](#打开视频页面)
-    - [获取连接码](#获取连接码)
-    - [开始连接](#开始连接)
-    - [愉快观看吧](#愉快观看吧)
   - [VLC支持](#vlc支持)
-    - [通过Web控制界面操控VLC播放](#通过web控制界面操控vlc播放)
-    - [打开本地视频](#打开本地视频)
-    - [获取连接码](#获取连接码-1)
-    - [开始连接](#开始连接-1)
-    - [愉快观看吧](#愉快观看吧-1)
-    - [关闭控制页面](#关闭控制页面)
   - [安装](#安装)
-    - [谷歌浏览器](#谷歌浏览器)
-      - [从谷歌商店安装](#从谷歌商店安装)
-      - [从本地 .crx 文件安装](#从本地-crx-文件安装)
-      - [安装未打包的插件](#安装未打包的插件)
-    - [微软Edge浏览器:](#微软edge浏览器)
-      - [从Edge浏览器插件中心安装](#从edge浏览器插件中心安装)
-    - [Firefox（后续版本添加支持）](#firefox后续版本添加支持)
   - [服务端部署指南](#服务端部署指南)
-    - [直接部署（不使用Docker容器）:](#直接部署不使用docker容器)
-    - [使用Docker容器部署](#使用docker容器部署)
   - [版本日志](#版本日志)
-    - [v1.0.7](#v107-1)
-    - [v1.0.6](#v106-1)
-    - [v1.0.5](#v105-1)
-    - [v1.0.4](#v104-1)
-    - [v1.0.3](#v103-1)
-    - [v1.0.2](#v102-1)
-    - [v0.0.1](#v001-1)
   - [开发者](#开发者)
   - [参与更新](#参与更新)
   - [常见问题](#常见问题)
-    - [如何获取调试信息](#如何获取调试信息)
 
 <!-- /code_chunk_output -->
 
@@ -1078,6 +957,23 @@ server is listening at {your_port_number}...
   ```
 
 ## 版本日志
+
+### v1.0.8
+🛠 2020年8月8日更新
+---
+⚠️⚠️⚠️ **请不要**尝试使用像`0000`和`1234`这样简单的`房间码`，我们强烈建议你使用不常见的房间码，这样就不必频繁更改它。
+
+新增：
+1. 修改房间申请码逻辑，用户可自行输入房间码，且下次连接时无需重新申请，只需点击start按钮即可快速连接（！房间码须为四位小写字母+数字的组合）
+1. 增加内置文字聊天（可在配置页面切换）
+2. 增加系统通知选项（可在配置页面切换）
+3. 增加连接状态指示灯，显示在插件图标右下角（红-未连接，黄-等待对方连接，绿-正在连接）
+4. 增加socket断开因未知原因断开通知
+5. 增加房间码占用通知
+
+修复：
+1. 修复了没有bug的bug
+
 
 ### v1.0.7
 🛠 2020年7月5日更新
