@@ -1,6 +1,6 @@
 {
     "name": "Sync Sofa - Online Video Synchronizer",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "description": "This extension allows multi-user sync streaming video in a fast, simple and stable way.",
     "permissions": [
         "storage",
