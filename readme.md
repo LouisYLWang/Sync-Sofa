@@ -2,7 +2,9 @@
 
 > This chrome extension allows multi-user sync streaming video in a fast, simple and stable way.
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url]
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
+
+[English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
 Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently, the feartures include:
 
@@ -15,6 +17,8 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 **v1.0.9 - update on 14 Aug 2020**
 
+⚠️⚠️⚠️ Each website has it's `own controller` of playback rate, so please ignore the wrong display of `playback rate`.
+
 Add:
 1. playback rate sync: any side user's change to the playback rate will sync to the other side.
 
@@ -23,40 +27,24 @@ Fix:
 
 ---
 
-## Index
+**v1.0.8 - update on 8 Aug 2020**
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=2 orderedList=false} -->
+⚠️⚠️⚠️ **Do Not** try to use `Room code` like `0000` or `1234`, We strongly recommend you use uncommon code so that you do not need to change it.
 
-<!-- code_chunk_output -->
+Add:
+1. allow customized connection code, user can directly connect to peer simply click the start button, without reapplying a new code
+1. simple built-in chat feature (can be toggled in options page)
+2. add system notification (can be toggled in options page)
+3. add connection status budge to extension icon (red-unconnected, yellow-pending connection, green-connecting)
+4. add a notification for unknown socket disconcerting
+5. add duplicate connection code notification
 
-- [Sync Sofa (streaming video playback synchronizer extension)](#sync-sofa-streaming-video-playback-synchronizer-extension)
-  - [Current version](#current-version)
-  - [Index](#index)
-  - [Supported list](#supported-list)
-  - [Setting](#setting)
-  - [Usage](#usage)
-  - [VLC support](#vlc-support)
-  - [Installation](#installation)
-  - [Self-hosting Guide](#self-hosting-guide)
-  - [Release History](#release-history)
-  - [Meta](#meta)
-  - [Contributing](#contributing)
-  - [FAQ](#faq)
-- [Sync Sofa （在线视频同步播放插件）](#sync-sofa-在线视频同步播放插件)
-  - [当前版本特性](#当前版本特性)
-  - [目录](#目录)
-  - [支持网站列表](#支持网站列表)
-  - [设置](#设置)
-  - [使用说明](#使用说明)
-  - [VLC支持](#vlc支持)
-  - [安装](#安装)
-  - [服务端部署指南](#服务端部署指南)
-  - [版本日志](#版本日志)
-  - [开发者](#开发者)
-  - [参与更新](#参与更新)
-  - [常见问题](#常见问题)
+Fix:
+1. Fix bug of no new bugs
 
-<!-- /code_chunk_output -->
+---
+
+<!-- more -->
 
 ## Supported list
 
@@ -318,6 +306,7 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
   ```
 
 - production environment (https) config file:
+
   ```json
   {
     "addr": ":443",
@@ -327,13 +316,14 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
       "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
     }
   }
+  ```
 
 **3. Run `./server` to delopy the server, deployment is successful if you see:**
 
-```
-found config file, read parameters from config file...
-server is listening at {your_port_number}...
-```
+  ```
+  found config file, read parameters from config file...
+  server is listening at {your_port_number}...
+  ```
 
 ### With Docker
 
@@ -350,7 +340,7 @@ Make sure docker service is runing on your server, make change to the script blo
 
 - minimal (non-https) hosting script:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:4000 \      
@@ -366,7 +356,7 @@ Make sure docker service is runing on your server, make change to the script blo
 
 - production environment (https) hosting script:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:443 \      
@@ -405,12 +395,13 @@ Make sure docker service is runing on your server, make change to the script blo
 ### v1.0.9 
 🛠 update on 14 Aug 2020
 ---
+⚠️⚠️⚠️ Each website has it's `own controller` of playback rate, so please ignore the wrong display of `playback rate`.
+
 Add:
 1. playback rate sync: any side user's change to the playback rate will sync to the other side.
 
 Fix:
 1. Fix bug of no new bugs
-
 
 ### v1.0.8
 🛠 update on 8 Aug 2020
@@ -427,7 +418,6 @@ Add:
 
 Fix:
 1. Fix bug of no new bugs
-
 
 ### v1.0.7
 🛠 update on 7 July 2020
@@ -539,11 +529,13 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 3. `Shift + ctrl + i` in Windows or `Shift + cmd + i` in MacOS.
 4. Choose `console` tab.
 
-# Sync Sofa （在线视频同步播放插件）
+# Sync Sofa (在线视频同步播放插件)
 
 > 以稳定，快捷的方式远程同步观看在线/本地视频
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url]
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
+
+[English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
 Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端用户的视频播放操作，提高与身处异地的小伙伴一同观看视频的体验，目前支持以下主要功能：
 
@@ -555,6 +547,8 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 **v1.0.9 - 2020年8月14日更新**
 
+⚠️⚠️⚠️ 每个网站都有它`自己的倍速控件`，所以请忽略前端的错误`播放速度`显示。
+
 新增：
 1. 播放速率同步功能：任意端用户对播放速率的调整会自动同步至另一端
 
@@ -563,40 +557,22 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 ---
 
-## 目录
+**v1.0.8 - 2020年8月8日更新**
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=2 orderedList=false} -->
+⚠️⚠️⚠️ **请不要**尝试使用像`0000`和`1234`这样简单的`房间码`，我们强烈建议你使用不常见的房间码，这样就不必频繁更改它。
 
-<!-- code_chunk_output -->
+新增：
+1. 修改房间申请码逻辑，用户可自行输入房间码，且下次连接时无需重新申请，只需点击start按钮即可快速连接（！房间码须为四位小写字母+数字的组合）
+1. 增加内置文字聊天（可在配置页面切换）
+2. 增加系统通知选项（可在配置页面切换）
+3. 增加连接状态指示灯，显示在插件图标右下角（红-未连接，黄-等待对方连接，绿-正在连接）
+4. 增加socket断开因未知原因断开通知
+5. 增加房间码占用通知
 
-- [Sync Sofa (streaming video playback synchronizer extension)](#sync-sofa-streaming-video-playback-synchronizer-extension)
-  - [Current version](#current-version)
-  - [Index](#index)
-  - [Supported list](#supported-list)
-  - [Setting](#setting)
-  - [Usage](#usage)
-  - [VLC support](#vlc-support)
-  - [Installation](#installation)
-  - [Self-hosting Guide](#self-hosting-guide)
-  - [Release History](#release-history)
-  - [Meta](#meta)
-  - [Contributing](#contributing)
-  - [FAQ](#faq)
-- [Sync Sofa （在线视频同步播放插件）](#sync-sofa-在线视频同步播放插件)
-  - [当前版本特性](#当前版本特性)
-  - [目录](#目录)
-  - [支持网站列表](#支持网站列表)
-  - [设置](#设置)
-  - [使用说明](#使用说明)
-  - [VLC支持](#vlc支持)
-  - [安装](#安装)
-  - [服务端部署指南](#服务端部署指南)
-  - [版本日志](#版本日志)
-  - [开发者](#开发者)
-  - [参与更新](#参与更新)
-  - [常见问题](#常见问题)
+修复：
+1. 修复了没有bug的bug
 
-<!-- /code_chunk_output -->
+---
 
 ## 支持网站列表
 
@@ -877,14 +853,14 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
       "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
     }
   }
+  ```
 
 **3. 在执行文件所在路径下，执行 `./server` 部署服务器, 部署成功信息如下:**
 
-
-```
-found config file, read parameters from config file...
-server is listening at {your_port_number}...
-```
+  ```
+  found config file, read parameters from config file...
+  server is listening at {your_port_number}...
+  ```
 
 ### 使用Docker容器部署
 
@@ -902,7 +878,7 @@ server is listening at {your_port_number}...
 
 - 开发模式（http）配置文件样例:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:4000 \      
@@ -918,7 +894,7 @@ server is listening at {your_port_number}...
 
 - 生产模式（https）配置文件样例:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:443 \      
@@ -955,16 +931,15 @@ server is listening at {your_port_number}...
 ## 版本日志
 
 ### v1.0.9 
-
 🛠 2020年8月14日更新
 --- 
+⚠️⚠️⚠️ 每个网站都有它`自己的倍速控件`，所以请忽略前端的错误`播放速度`显示。
 
 新增：
 1. 播放速率同步功能：任意端用户对播放速率的调整会自动同步至另一端
 
 修复：
 1. 修复了没有bug的bug
-
 
 ### v1.0.8
 🛠 2020年8月8日更新
@@ -1105,5 +1080,3 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 2. 刷新视频页面。
 3. `Shift + ctrl + i` 在 Windows 下 或者 `Shift + cmd + i` 在 MacOS 下.
 4. 选择 `console` 标签页.
-
-
