@@ -13,17 +13,10 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 
 ## Current version
 
-**v1.0.8 - update on 8 Aug 2020**
-
-⚠️⚠️⚠️ **Do Not** try to use `Room code` like `0000` or `1234`, We strongly recommend you use uncommon code so that you do not need to change it.
+**v1.0.9 - update on 14 Aug 2020**
 
 Add:
-1. allow customized connection code, user can directly connect to peer simply click the start button, without reapplying a new code
-1. simple built-in chat feature (can be toggled in options page)
-2. add system notification (can be toggled in options page)
-3. add connection status budge to extension icon (red-unconnected, yellow-pending connection, green-connecting)
-4. add a notification for unknown socket disconcerting
-5. add duplicate connection code notification
+1. playback rate sync: any side user's change to the playback rate will sync to the other side.
 
 Fix:
 1. Fix bug of no new bugs
@@ -409,6 +402,16 @@ Make sure docker service is runing on your server, make change to the script blo
 
 ## Release History
 
+### v1.0.9 
+🛠 update on 14 Aug 2020
+---
+Add:
+1. playback rate sync: any side user's change to the playback rate will sync to the other side.
+
+Fix:
+1. Fix bug of no new bugs
+
+
 ### v1.0.8
 🛠 update on 8 Aug 2020
 ---
@@ -550,17 +553,10 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 ## 当前版本特性
 
-**v1.0.8 - 2020年8月8日更新**
-
-⚠️⚠️⚠️ **请不要**尝试使用像`0000`和`1234`这样简单的`房间码`，我们强烈建议你使用不常见的房间码，这样就不必频繁更改它。
+**v1.0.9 - 2020年8月14日更新**
 
 新增：
-1. 修改房间申请码逻辑，用户可自行输入房间码，且下次连接时无需重新申请，只需点击start按钮即可快速连接（！房间码须为四位小写字母+数字的组合）
-1. 增加内置文字聊天（可在配置页面切换）
-2. 增加系统通知选项（可在配置页面切换）
-3. 增加连接状态指示灯，显示在插件图标右下角（红-未连接，黄-等待对方连接，绿-正在连接）
-4. 增加socket断开因未知原因断开通知
-5. 增加房间码占用通知
+1. 播放速率同步功能：任意端用户对播放速率的调整会自动同步至另一端
 
 修复：
 1. 修复了没有bug的bug
@@ -957,6 +953,18 @@ server is listening at {your_port_number}...
   ```
 
 ## 版本日志
+
+### v1.0.9 
+
+🛠 2020年8月14日更新
+--- 
+
+新增：
+1. 播放速率同步功能：任意端用户对播放速率的调整会自动同步至另一端
+
+修复：
+1. 修复了没有bug的bug
+
 
 ### v1.0.8
 🛠 2020年8月8日更新
