@@ -1274,7 +1274,7 @@ class SyncHelper {
 
 
 function isVLC() {
-    if (window.location.port == "8080") {
+    if (window.location.port == "8080" || window.location.port == "9891") {
         return true;
     }
     return false;

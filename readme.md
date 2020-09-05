@@ -261,7 +261,7 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 - If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run script below to get and build binary file:
 
-  ```shell
+  ```bash
   go get github.com/LouisYLWang/Sync-Sofa/server
   # If you don't know $GOPATH
   # try "go env GOPATH"
@@ -528,6 +528,12 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 2. Refresh video page (to make changes work).
 3. `Shift + ctrl + i` in Windows or `Shift + cmd + i` in MacOS.
 4. Choose `console` tab.
+
+### Can not open VLC web Interface
+
+First, check if `http://127.0.0.1:8080/`can be opened successfully, if the answer is not, go and check if `8080` is binded by some other process. If this process can be shuted down, turn it off and try again.
+
+If not, please change the default port of the VLC web interface to `9891`. (Will come into operation from `v1.0.10`)
 
 # Sync Sofa (在线视频同步播放插件)
 
@@ -799,7 +805,7 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
 
 - 如果你想要修改源代码并自行编译，请执行以下shell脚本获取二进制文件。在执行前，请确认服务器已安装`Go`的环境
 
-  ```shell
+  ```bash
   go get github.com/LouisYLWang/Sync-Sofa/server
   # 如果你不清楚 $GOPATH
   # 请尝试输入并执行 "go env GOPATH"
@@ -1080,3 +1086,11 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 2. 刷新视频页面。
 3. `Shift + ctrl + i` 在 Windows 下 或者 `Shift + cmd + i` 在 MacOS 下.
 4. 选择 `console` 标签页.
+
+### VLC同步功能无法正常使用
+
+首先确认`http://127.0.0.1:8080/`能否正常打开，如果不能，请查看一下`8080`端口是否被其它应用程序占用。如果该程序可以被关闭，请关闭后再次尝试开启。
+
+如果不能，请参考相关配置将`VLC`的端口号设置为`9891`。（将在`v1.0.10`之后生效）
+
+如果可以打开`http://127.0.0.1:8080/`，但页面无法正常渲染，请尝试开启`科学上网`后再次刷新页面。（页面需要加载google的一个js文件）
