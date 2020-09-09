@@ -1,32 +1,33 @@
 package session
 
 import (
-	"crypto/rand"
-	b64 "encoding/base64"
-	"fmt"
 	"log"
-	"net/http"
+	"math/rand"
+	"regexp"
 	"sync"
 	"time"
 )
 
-const paramID = "id"
-const idLength = 3
+const idLength = 4
 const InvalidSessionID SessionID = ""
+const letterBytes = "abcdefghijklmnopqrstuvwxyz1234567890"
+var reg *regexp.Regexp
 
-type SessionID string
+type (
+	SessionID string
 
-type Store struct {
-	SessionMap      map[SessionID]*Pair
-	SessionDuration time.Duration
-	Lock            sync.Mutex
-}
+	Store struct {
+		SessionMap      map[SessionID]*Pair
+		SessionDuration time.Duration
+		Lock            sync.Mutex
+	}
 
-type Pair struct {
-	PartnerID SessionID `json:"partnerID,omitempty"`
-	SelfID    SessionID `json:"selfID,omitempty"`
-	BeginTime time.Time `json:"beginTime,omitempty"`
-}
+	Pair struct {
+		PairID    SessionID `json:"pairID,omitempty"`
+		UsrNum    int       `json:"usrNum,omitempty"`
+		BeginTime time.Time `json:"beginTime,omitempty"`
+	}
+)
 
 func NewStore(sessionDuration time.Duration) *Store {
 	return &Store{
@@ -35,61 +36,86 @@ func NewStore(sessionDuration time.Duration) *Store {
 	}
 }
 
+func RandStringBytesRmndr(n int, pairID string) string {
+	bytes := make([]byte, n)
+	for i := range bytes {
+		bytes[i] = letterBytes[rand.Int63()%int64(len(letterBytes))]
+	}
+	return (pairID + string(bytes))[0:4]
+}
+
+// should be create pair
 func (s Store) CreateHostSession() (SessionID, error) {
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
-
-	id := make([]byte, idLength)
-	_, err := rand.Read(id)
-	if err != nil {
-		return InvalidSessionID, fmt.Errorf("not correctly generate cryptographically random: %v", err)
-	}
-	sessionID := SessionID(b64.URLEncoding.EncodeToString(id))
+	pairID := SessionID(RandStringBytesRmndr(idLength,""))
 	newPair := &Pair{
-		SelfID: sessionID,
+		PairID: pairID,
+		UsrNum: 1,
 	}
-	s.SessionMap[sessionID] = newPair
-	log.Printf("add session by %s", sessionID)
-	return sessionID, nil
+	s.SessionMap[pairID] = newPair
+	log.Printf("add pair %s", pairID)
+	hostSessionID := pairID + "0"
+	log.Printf("add session %s to pair %s", hostSessionID, pairID)
+	return hostSessionID, nil
 }
 
-func (s Store) RemoveSession(r *http.Request) {
+// should be removeSessionAndPair
+func (s Store) RemoveSession(pairID SessionID) {
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
-	sessionID := r.URL.Query().Get(paramID)
-	delete(s.SessionMap, SessionID(sessionID))
-	log.Printf("remove session of %s", sessionID)
+
+	if pair, pairExist := s.SessionMap[pairID]; pairExist {
+		if pair.UsrNum == 1 {
+			delete(s.SessionMap, pairID)
+			log.Printf("remove pair %s", pairID)
+		} else {
+			pair.UsrNum--
+		}
+		return
+	} else {
+		log.Printf("remove a non-existing pair %s", pairID)
+		return
+	}
 }
 
-func (s Store) BeginSessions(r *http.Request) (SessionID, error) {
-	s.Lock.Lock()
-	defer s.Lock.Unlock()
-	hostSessionID := SessionID(r.URL.Query().Get(paramID))
-
-	if _, roomExist := s.SessionMap[hostSessionID]; roomExist {
-		id := make([]byte, idLength)
-		_, err := rand.Read(id)
-		if err != nil {
-			return InvalidSessionID, fmt.Errorf("not correctly generate cryptographically random: %v", err)
-		}
-
-		sessionID := SessionID(b64.URLEncoding.EncodeToString(id))
-
-		guestPair := &Pair{
-			SelfID:    sessionID,
-			PartnerID: hostSessionID,
-			BeginTime: time.Now(),
-		}
-		s.SessionMap[sessionID] = guestPair
-
-		hostPair := s.SessionMap[hostSessionID]
-		hostPair.PartnerID = sessionID
-		hostPair.BeginTime = time.Now()
-
-		log.Printf("add session by %s", sessionID)
-		return sessionID, nil
+// change to join pair
+func (s Store) BeginSessions(pairID SessionID) (SessionID, error, bool) {
+	if (len(pairID) < 4){
+		pairID = SessionID(RandStringBytesRmndr(idLength, string(pairID)))
 	}
 
-	log.Printf("wrong sessionID")
-	return InvalidSessionID, nil
+	pairID = pairID[0:4]
+	s.Lock.Lock()
+	defer s.Lock.Unlock()
+	if _, pairExist := s.SessionMap[pairID]; pairExist {
+		pair := s.SessionMap[pairID]
+		if pair.UsrNum == 1 {
+			pair.UsrNum++
+			pair.BeginTime = time.Now()
+			questSessionID := pairID + "1"
+			log.Printf("add session %s to pair %s", questSessionID, pairID)
+			return questSessionID, nil, pairExist
+		} else {
+			log.Printf("full pair")
+			return InvalidSessionID, nil, pairExist
+		}
+	} else {
+		//validation
+		pattern := `[a-z0-9]{4}`
+		 if !regexp.MustCompile(pattern).MatchString(string(pairID)) {
+			 log.Printf("invalid pairID")
+			 pairID = ""
+		 }
+		pairID := SessionID(RandStringBytesRmndr(idLength, string(pairID)))
+		newPair := &Pair{
+			PairID: pairID,
+			UsrNum: 1,
+		}
+		s.SessionMap[pairID] = newPair
+		log.Printf("add pair %s", pairID)
+		hostSessionID := pairID + "0"
+		log.Printf("add session %s to pair %s", hostSessionID, pairID)
+		return hostSessionID, nil, pairExist
+	}
 }

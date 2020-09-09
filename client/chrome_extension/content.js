@@ -15,7 +15,14 @@ const STATUSSYNC = "sync"
 const STATUSASK = "ask"
 const STATUSUNREADY = "unready"
 const STATUSREADY = "ready"
-
+const STATUSMESSAGE = "message"
+const iconList = {
+    "ready": "/icons/icon128_red.png",
+    "unready": "/icons/icon128_on.png",
+    "end": "/icons/icon128_red.png",
+    "sync": "/icons/icon128_green.png",
+    "connect": "/icons/icon128_yellow.png"
+}
 var status = STATUSEND;
 var video = null;
 // video = document.querySelector('video');
@@ -495,7 +502,7 @@ class chat {
         });
     }
 
-    popConnectedSubmsg(){
+    popConnectedSubmsg() {
         this.renderTime("Connected to peer, now you can chat with each other. ", "time");
         this.renderTime("Please do not share sensitive information such as bank account or password at here.", "time");
         this.notification();
@@ -553,8 +560,13 @@ class SyncHelper {
     VLCTimer = null;
     VLCStatus = "paused";
     VLCTime = 0;
+    VLCRate = 1;
     VLCLength = 0;
     VLCCount = 0;
+    socketTimer = null;
+    speed = 1;
+    rateTimer = null;
+
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
@@ -582,11 +594,12 @@ class SyncHelper {
                 websocket.close();
             }
             websocket = new WebSocket(url);
-            if (option && option.beginFlag) {
+            if (option && option.beginFlag && option.pairExisted) {
                 timer = setInterval(function () {
                     if (that.isOpen()) {
                         clearInterval(timer);
                         status = STATUSSYNC;
+                        SyncHelper.updateIcon();
                         that.send(that.HELLOCODE);
                         SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
                         chatHandler.popConnectedSubmsg();
@@ -595,12 +608,11 @@ class SyncHelper {
             } else {
                 SyncHelper.notification(`Room created and room code copied to clipboard`);
                 status = STATUSCONNECT;
+                SyncHelper.updateIcon();
             }
             that.handleSessions();
-            // check connection every 30s.
-            setInterval(function () {
-                that.isOpen() ? status = STATUSSYNC : status = STATUSEND;
-            }, 1000 * 30);
+            that.checkSocket();
+            that.checkSpeed();
         })
     }
 
@@ -608,7 +620,10 @@ class SyncHelper {
         this.send(this.CLOSEDCODE);
         this.clearHeartBeats();
         websocket.close();
+        clearInterval(this.socketTimer);
+        clearInterval(this.rateTimer);
         status = STATUSEND;
+        SyncHelper.updateIcon();
         switch (this.type) {
             case "video":
                 break;
@@ -706,6 +721,7 @@ class SyncHelper {
                     case this.HELLOCODE:
                         SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
                         status = STATUSSYNC;
+                        SyncHelper.updateIcon();
                         chatHandler.popConnectedSubmsg();
                         break;
                     case this.WAITINGCODE:
@@ -762,14 +778,17 @@ class SyncHelper {
     sync() {
         var isplay = false;
         var currentTime = 0;
+        var rate = 1;
         switch (this.type) {
             case "video":
                 isplay = !video.paused;
-                currentTime = video.currentTime
+                currentTime = video.currentTime;
+                rate = video.playbackRate;
                 break;
             case "vlc":
                 isplay = (this.VLCStatus == "playing");
                 currentTime = this.VLCTime;
+                rate = this.VLCRate;
                 break;
             default:
                 break;
@@ -777,6 +796,7 @@ class SyncHelper {
         this.send({
             "isPlay": isplay,
             "currentTime": currentTime,
+            "rate": rate,
             "ack": this.ackFlag
         }, this.SYNCMESSAGE);
     }
@@ -797,6 +817,7 @@ class SyncHelper {
                     let VLCTime = parseInt(xml.getElementsByTagName('time')[0].childNodes[0].nodeValue);
                     that.VLCLength = parseInt(xml.getElementsByTagName('length')[0].childNodes[0].nodeValue);
                     let VLCStatus = xml.getElementsByTagName('state')[0].childNodes[0].nodeValue;
+                    let VLCRate = parseFloat(xml.getElementsByTagName('rate')[0].childNodes[0].nodeValue);
                     let changeFlag = false;
                     if (Math.abs(VLCTime - that.VLCTime) > 2) {
                         that.VLCTime = VLCTime;
@@ -806,6 +827,10 @@ class SyncHelper {
                     }
                     if (VLCStatus != that.VLCStatus) {
                         that.VLCStatus = VLCStatus;
+                        changeFlag = true;
+                    }
+                    if (VLCRate != that.VLCRate) {
+                        that.VLCRate = VLCRate;
                         changeFlag = true;
                     }
                     if (changeFlag) {
@@ -896,6 +921,17 @@ class SyncHelper {
                         }
                     }
                 }
+                if (content.rate != undefined && video.playbackRate != content.rate) {
+                    if (content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        changeFlag = true;
+                        video.playbackRate = content.rate;
+                        this.speed = content.rate;
+                    }
+                }
                 break;
             case "vlc":
                 if (content.currentTime <= this.VLCLength && content.currentTime >= 0 && Math.abs(content.currentTime - this.VLCTime) > 3) {
@@ -935,6 +971,31 @@ class SyncHelper {
                             type: "GET", //请求方式
                             data: {
                                 "command": "pl_pause"
+                            }, //请求参数
+                            dataType: "xml", // 返回值类型的设定
+                            async: true, //是否异步
+                            success: function (response, xml) {
+                                // pass
+                            },
+                            fail: function (status) {
+                                // alert("Error Code: " + status); // 此处为执行成功后的代码
+                            }
+                        });
+                    }
+                }
+                if (content.rate != undefined && this.VLCRate != content.rate) {
+                    if (content.ack) {
+                        this.socketLock = false;
+                        this.clearHeartBeats();
+                        this.sync();
+                    } else {
+                        changeFlag = true;
+                        SyncHelper.ajax({
+                            url: "requests/status.xml", //请求地址
+                            type: "GET", //请求方式
+                            data: {
+                                "command": "rate",
+                                "val": parseFloat(content.rate)
                             }, //请求参数
                             dataType: "xml", // 返回值类型的设定
                             async: true, //是否异步
@@ -1166,14 +1227,54 @@ class SyncHelper {
         return arr.join("&");
     }
 
+    checkSocket() {
+        // check connection every 5s.
+        var that = this;
+        that.socketTimer = setInterval(function () {
+            if (that.isOpen()) {
+                // status = STATUSSYNC;
+                // SyncHelper.updateIcon();
+            } else {
+                SyncHelper.notification(`Socket disconnected, unknown reason.`);
+                that.close();
+            }
+        }, 1000 * 5);
+    }
+
+    checkSpeed() {
+        // check connection every 1s.
+        var that = this;
+        that.rateTimer = setInterval(function () {
+            switch (that.type) {
+                case "video":
+                    if (that.speed != video.playbackRate) {
+                        that.speed = video.playbackRate;
+                        that.sync();
+                    }
+                    break;
+                case "vlc":
+                    break;
+                default:
+                    break;
+            }
+        }, 1000 * 1);
+    }
+
     isOpen() {
         return websocket !== null && websocket.readyState === websocket.OPEN;
+    }
+
+    static updateIcon() {
+        chrome.runtime.sendMessage('', {
+            type: 'changeIcon',
+            path: iconList[status]
+        });
     }
 }
 
 
 function isVLC() {
-    if (window.location.port == "8080") {
+    if (window.location.port == "8080" || window.location.port == "9891") {
         return true;
     }
     return false;
@@ -1190,6 +1291,7 @@ if (!isVLC()) {
                 Debugger.log("video is ready");
                 clearInterval(videoTimer);
                 status = STATUSREADY;
+                SyncHelper.updateIcon();
             }
         }, 500);
 }
@@ -1213,6 +1315,10 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSEND) {
             syncTool.close();
+        }
+
+        if (request.status === STATUSMESSAGE) {
+            SyncHelper.notification(request.body);
         }
 
         if (request.status === STATUSCHAT) {

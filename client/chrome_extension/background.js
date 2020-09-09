@@ -10,6 +10,7 @@ var urlPattern = [
     "https://www.mgtv.com/*",
     "http://127.0.0.1/*",
     "http://music.jsososo.com/*",
+    "https://v.douyu.com/*",
     "file:///*"
 ];
 
@@ -63,8 +64,22 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 })
 
-chrome.runtime.onMessage.addListener(data => {
-    if (data.type === 'notification') {
-        chrome.notifications.create('', data.options);
+// chrome.runtime.onMessage.addListener(data => {
+//     if (data.type === 'notification') {
+//         chrome.notifications.create('', data.options);
+//     }
+// });
+
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+        if (request.type === 'notification') {
+            chrome.notifications.create('', request.options);
+        }
+        if (request.type === 'changeIcon') {
+            chrome.pageAction.setIcon({
+                path: request.path,
+                tabId: sender.tab.id
+            });
+        }
     }
-});
+);

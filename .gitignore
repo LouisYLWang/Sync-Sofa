@@ -5,3 +5,6 @@ server/*.exe
 *.pem
 server/server
 *.zip
+.idea
+server/config.json
+server/deploy.sh

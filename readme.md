@@ -2,7 +2,9 @@
 
 > This chrome extension allows multi-user sync streaming video in a fast, simple and stable way.
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url]
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
+
+[English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
 Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently, the feartures include:
 
@@ -11,111 +13,38 @@ Sync Sofa is a full stack web extension support a easy-to-use and stable way to 
 - sync play process bar control: the playing time change will also affect other side user
 - local video sync: provide two ways to sync your playing of local video file 
 
-## Current version:
+## Current version
 
-**v1.0.7 - update on 7 July 2020**
+**v1.0.9 - update on 14 Aug 2020**
 
-⚠⚠⚠ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
+⚠️⚠️⚠️ Each website has it's `own controller` of playback rate, so please ignore the wrong display of `playback rate`.
 
 Add:
-    add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
-     
+1. playback rate sync: any side user's change to the playback rate will sync to the other side.
+
 Fix:
-    fix support for https://www.bilibili.com/bangumi/* (bilibili movie)
-    fix support for Youku & mangoTV
+1. Fix bug of no new bugs
 
 ---
 
-<!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+**v1.0.8 - update on 8 Aug 2020**
 
-<!-- code_chunk_output -->
+⚠️⚠️⚠️ **Do Not** try to use `Room code` like `0000` or `1234`, We strongly recommend you use uncommon code so that you do not need to change it.
 
-- [Sync Sofa (streaming video playback synchronizer extension)](#sync-sofa-streaming-video-playback-synchronizer-extension)
-  - [Current version:](#current-version)
-  - [Supported list](#supported-list)
-  - [Setting](#setting)
-    - [Server list](#server-list)
-    - [Options page](#options-page)
-    - [Refresh video page](#refresh-video-page)
-  - [Usage](#usage)
-    - [Notices](#notices)
-    - [Open a video page](#open-a-video-page)
-    - [Request new code](#request-new-code)
-    - [Start connection](#start-connection)
-    - [Enjoy yourselves](#enjoy-yourselves)
-  - [VLC support](#vlc-support)
-    - [Start VLC on the server with the Web Interface](#start-vlc-on-the-server-with-the-web-interface)
-    - [Request new code](#request-new-code-1)
-    - [Start connection](#start-connection-1)
-    - [Enjoy yourselves](#enjoy-yourselves-1)
-    - [Close Controller webpage](#close-controller-webpage)
-  - [Installation](#installation)
-    - [Google Chrome](#google-chrome)
-      - [Install from Chrome Web Store](#install-from-chrome-web-store)
-      - [Install from local .crx file](#install-from-local-crx-file)
-      - [Install from unpackaged folder](#install-from-unpackaged-folder)
-    - [Microsoft Edge:](#microsoft-edge)
-      - [Install from Microsoft Edge Addons](#install-from-microsoft-edge-addons)
-    - [Firefox (will be supported in later version)](#firefox-will-be-supported-in-later-version)
-  - [Self-hosting Guide](#self-hosting-guide)
-    - [Without Docker](#without-docker)
-    - [With Docker](#with-docker)
-  - [Release History](#release-history)
-    - [v1.0.7](#v107)
-    - [v1.0.6](#v106)
-    - [v1.0.5](#v105)
-    - [v1.0.4](#v104)
-    - [v1.0.3](#v103)
-    - [v1.0.2](#v102)
-    - [v0.0.1](#v001)
-  - [Meta](#meta)
-  - [Contributing](#contributing)
-  - [FAQ](#faq)
-    - [How to get debug info](#how-to-get-debug-info)
-- [Sync Sofa （在线视频同步播放插件）](#sync-sofa-在线视频同步播放插件)
-  - [当前版本特性:](#当前版本特性)
-  - [支持网站列表](#支持网站列表)
-  - [设置](#设置)
-    - [服务器列表](#服务器列表)
-    - [选项页](#选项页)
-    - [刷新视频页面](#刷新视频页面)
-  - [使用说明](#使用说明)
-    - [注意事项](#注意事项)
-    - [打开视频页面](#打开视频页面)
-    - [获取连接码](#获取连接码)
-    - [开始连接](#开始连接)
-    - [愉快观看吧](#愉快观看吧)
-  - [VLC支持](#vlc支持)
-    - [通过Web控制界面操控VLC播放](#通过web控制界面操控vlc播放)
-    - [获取连接码](#获取连接码-1)
-    - [开始连接](#开始连接-1)
-    - [愉快观看吧](#愉快观看吧-1)
-    - [关闭控制页面](#关闭控制页面)
-  - [安装](#安装)
-    - [谷歌浏览器](#谷歌浏览器)
-      - [从谷歌商店安装](#从谷歌商店安装)
-      - [从本地 .crx 文件安装](#从本地-crx-文件安装)
-      - [安装未打包的插件](#安装未打包的插件)
-    - [微软Edge浏览器:](#微软edge浏览器)
-      - [从Edge浏览器插件中心安装](#从edge浏览器插件中心安装)
-    - [Firefox（后续版本添加支持）](#firefox后续版本添加支持)
-  - [服务端部署指南](#服务端部署指南)
-    - [直接部署（不使用Docker容器）:](#直接部署不使用docker容器)
-    - [使用Docker容器部署](#使用docker容器部署)
-  - [版本日志](#版本日志)
-    - [v1.0.7](#v107-1)
-    - [v1.0.6](#v106-1)
-    - [v1.0.5](#v105-1)
-    - [v1.0.4](#v104-1)
-    - [v1.0.3](#v103-1)
-    - [v1.0.2](#v102-1)
-    - [v0.0.1](#v001-1)
-  - [开发者](#开发者)
-  - [参与更新](#参与更新)
-  - [常见问题](#常见问题)
-    - [如何获取调试信息](#如何获取调试信息)
+Add:
+1. allow customized connection code, user can directly connect to peer simply click the start button, without reapplying a new code
+1. simple built-in chat feature (can be toggled in options page)
+2. add system notification (can be toggled in options page)
+3. add connection status budge to extension icon (red-unconnected, yellow-pending connection, green-connecting)
+4. add a notification for unknown socket disconcerting
+5. add duplicate connection code notification
 
-<!-- /code_chunk_output -->
+Fix:
+1. Fix bug of no new bugs
+
+---
+
+<!-- more -->
 
 ## Supported list
 
@@ -205,7 +134,7 @@ If there are any ads before the video, watch them before the next step.
 
 ### Request new code
 
-Click the `Sync Sofa` extension and then click `REQUEST NEW CODE` button.
+Click the `Sync Sofa` extension and then click `START` button.
 
 ![User A](https://onns.xyz/blog/image/20200627-3.png)
 
@@ -246,6 +175,14 @@ First we need to enable controlling VLC via our browser, here is the official do
 Your webpage should be like this:
 
 ![VLC media player - Web Interface](https://onns.xyz/blog/image/20200628-3.png)
+
+### Open your video
+
+Our extension control `VLC` via controlling `VLC Web Interface`([http://127.0.0.1:8080/](http://127.0.0.1:8080/)), so next step you should open your local video via `VLC Media Player` and see if [http://127.0.0.1:8080/](http://127.0.0.1:8080/) can control the video. If the answer is "yes", go to the next step, otherwise you should check if there are multiple `VLC windows`, close the others and recheck. Your `VLC Web Interface` should be like this:
+
+![VLC media player - Web Interface](https://onns.xyz/blog/image/20200722-1.png)
+
+Video title, current time and total time on the webpage.
 
 ### Request new code
 
@@ -324,7 +261,7 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 
 - If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run script below to get and build binary file:
 
-  ```shell
+  ```bash
   go get github.com/LouisYLWang/Sync-Sofa/server
   # If you don't know $GOPATH
   # try "go env GOPATH"
@@ -369,6 +306,7 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
   ```
 
 - production environment (https) config file:
+
   ```json
   {
     "addr": ":443",
@@ -378,13 +316,14 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
       "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
     }
   }
+  ```
 
 **3. Run `./server` to delopy the server, deployment is successful if you see:**
 
-```
-found config file, read parameters from config file...
-server is listening at {your_port_number}...
-```
+  ```
+  found config file, read parameters from config file...
+  server is listening at {your_port_number}...
+  ```
 
 ### With Docker
 
@@ -401,7 +340,7 @@ Make sure docker service is runing on your server, make change to the script blo
 
 - minimal (non-https) hosting script:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:4000 \      
@@ -417,7 +356,7 @@ Make sure docker service is runing on your server, make change to the script blo
 
 - production environment (https) hosting script:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:443 \      
@@ -453,10 +392,37 @@ Make sure docker service is runing on your server, make change to the script blo
 
 ## Release History
 
+### v1.0.9 
+🛠 update on 14 Aug 2020
+---
+⚠️⚠️⚠️ Each website has it's `own controller` of playback rate, so please ignore the wrong display of `playback rate`.
+
+Add:
+1. playback rate sync: any side user's change to the playback rate will sync to the other side.
+
+Fix:
+1. Fix bug of no new bugs
+
+### v1.0.8
+🛠 update on 8 Aug 2020
+---
+⚠️⚠️⚠️ **Do Not** try to use `Room code` like `0000` or `1234`, We strongly recommend you use uncommon code so that you do not need to change it.
+
+Add:
+1. allow customized connection code, user can directly connect to peer simply click the start button, without reapplying a new code
+1. simple built-in chat feature (can be toggled in options page)
+2. add system notification (can be toggled in options page)
+3. add connection status budge to extension icon (red-unconnected, yellow-pending connection, green-connecting)
+4. add a notification for unknown socket disconcerting
+5. add duplicate connection code notification
+
+Fix:
+1. Fix bug of no new bugs
+
 ### v1.0.7
 🛠 update on 7 July 2020
 ---
-⚠⚠⚠ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
+⚠️⚠️⚠️ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
 
 Add:
     add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
@@ -469,7 +435,7 @@ Fix:
 ### v1.0.6
 🛠 update on 28 June 2020
 ---
-⚠⚠⚠ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
+⚠️⚠️⚠️ Notice, this version is not compatible with any version before, please please please make sure your version is the same as your peer's version
 
 - Add:
     - add support for Mango TV (happy Sistering 🤣)
@@ -563,11 +529,19 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 3. `Shift + ctrl + i` in Windows or `Shift + cmd + i` in MacOS.
 4. Choose `console` tab.
 
-# Sync Sofa （在线视频同步播放插件）
+### Can not open VLC web Interface
+
+First, check if `http://127.0.0.1:8080/`can be opened successfully, if the answer is not, go and check if `8080` is binded by some other process. If this process can be shuted down, turn it off and try again.
+
+If not, please change the default port of the VLC web interface to `9891`. (Will come into operation from `v1.0.10`)
+
+# Sync Sofa (在线视频同步播放插件)
 
 > 以稳定，快捷的方式远程同步观看在线/本地视频
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url]
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
+
+[English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
 Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端用户的视频播放操作，提高与身处异地的小伙伴一同观看视频的体验，目前支持以下主要功能：
 
@@ -575,17 +549,34 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 - 同步播放进度：支持播放、暂停、进度切换等操作
 - 本地视频同步：可通过VLC同步本地视频播放状态
 
-## 当前版本特性:
+## 当前版本特性
 
-**v1.0.7 - 2020年7月5日更新**
+**v1.0.9 - 2020年8月14日更新**
 
-⚠⚠⚠ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ 每个网站都有它`自己的倍速控件`，所以请忽略前端的错误`播放速度`显示。
 
-- 新增功能：
-    - 新增版本检测（高版本用户与低版本用户连接时，若连接码由低版本用户申请，高版本用户将收到提示，请根据提示告知对方升级最新版本）
-- 修复功能:
-    - 修复对 [bilibili movie](https://www.bilibili.com/bangumi/*) 的支持
-    - 修复了优酷及芒果TV无法同步操作的问题
+新增：
+1. 播放速率同步功能：任意端用户对播放速率的调整会自动同步至另一端
+
+修复：
+1. 修复了没有bug的bug
+
+---
+
+**v1.0.8 - 2020年8月8日更新**
+
+⚠️⚠️⚠️ **请不要**尝试使用像`0000`和`1234`这样简单的`房间码`，我们强烈建议你使用不常见的房间码，这样就不必频繁更改它。
+
+新增：
+1. 修改房间申请码逻辑，用户可自行输入房间码，且下次连接时无需重新申请，只需点击start按钮即可快速连接（！房间码须为四位小写字母+数字的组合）
+1. 增加内置文字聊天（可在配置页面切换）
+2. 增加系统通知选项（可在配置页面切换）
+3. 增加连接状态指示灯，显示在插件图标右下角（红-未连接，黄-等待对方连接，绿-正在连接）
+4. 增加socket断开因未知原因断开通知
+5. 增加房间码占用通知
+
+修复：
+1. 修复了没有bug的bug
 
 ---
 
@@ -682,7 +673,7 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
 
 ### 获取连接码
 
-点击 `Sync Sofa` 插件图标并点击`REQUEST NEW CODE`（获取链接码） 按钮.
+点击 `Sync Sofa` 插件图标并点击`START`（开始） 按钮.
 
 ![User A](https://onns.xyz/blog/image/20200627-3.png)
 
@@ -721,6 +712,14 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
 这时你的网页应该如下图所示:
 
 ![VLC media player - Web Interface](https://onns.xyz/blog/image/20200628-3.png)
+
+### 打开本地视频
+
+本插件本质上是通过控制`VLC的网页控制页面`（[http://127.0.0.1:8080/](http://127.0.0.1:8080/)）来控制`VLC`的，所以下一步你应该用`VLC媒体播放器`来打开你想同步的视频，然后检查一下[http://127.0.0.1:8080/](http://127.0.0.1:8080/)能否顺利控制视频的播放等。如果可以，即可进入下一步；否则需要检查一下是不是打开了多个`VLC的窗口`，如果是请关掉其它的，然后重新尝试控制。一个正常的`VLC控制界面`应该如下图所示：
+
+![VLC media player - Web Interface](https://onns.xyz/blog/image/20200722-1.png)
+
+在网页上有视频标题，当前播放时间和总播放时长等。
 
 ### 获取连接码
 确认已在浏览器中打开 [http://127.0.0.1:8080/](http://127.0.0.1:8080/),
@@ -806,7 +805,7 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
 
 - 如果你想要修改源代码并自行编译，请执行以下shell脚本获取二进制文件。在执行前，请确认服务器已安装`Go`的环境
 
-  ```shell
+  ```bash
   go get github.com/LouisYLWang/Sync-Sofa/server
   # 如果你不清楚 $GOPATH
   # 请尝试输入并执行 "go env GOPATH"
@@ -860,14 +859,14 @@ PS：我是boki的粉丝，所以就用了她的视频截图，已经高斯模�
       "tlscert": "/etc/letsencrypt/live/your.host.url/fullchain.pem"
     }
   }
+  ```
 
 **3. 在执行文件所在路径下，执行 `./server` 部署服务器, 部署成功信息如下:**
 
-
-```
-found config file, read parameters from config file...
-server is listening at {your_port_number}...
-```
+  ```
+  found config file, read parameters from config file...
+  server is listening at {your_port_number}...
+  ```
 
 ### 使用Docker容器部署
 
@@ -885,7 +884,7 @@ server is listening at {your_port_number}...
 
 - 开发模式（http）配置文件样例:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:4000 \      
@@ -901,7 +900,7 @@ server is listening at {your_port_number}...
 
 - 生产模式（https）配置文件样例:
 
-  ```sh
+  ```bash
   docker pull louisylwang/watchtogether
 
   export ADDR=:443 \      
@@ -937,10 +936,38 @@ server is listening at {your_port_number}...
 
 ## 版本日志
 
+### v1.0.9 
+🛠 2020年8月14日更新
+--- 
+⚠️⚠️⚠️ 每个网站都有它`自己的倍速控件`，所以请忽略前端的错误`播放速度`显示。
+
+新增：
+1. 播放速率同步功能：任意端用户对播放速率的调整会自动同步至另一端
+
+修复：
+1. 修复了没有bug的bug
+
+### v1.0.8
+🛠 2020年8月8日更新
+---
+⚠️⚠️⚠️ **请不要**尝试使用像`0000`和`1234`这样简单的`房间码`，我们强烈建议你使用不常见的房间码，这样就不必频繁更改它。
+
+新增：
+1. 修改房间申请码逻辑，用户可自行输入房间码，且下次连接时无需重新申请，只需点击start按钮即可快速连接（！房间码须为四位小写字母+数字的组合）
+1. 增加内置文字聊天（可在配置页面切换）
+2. 增加系统通知选项（可在配置页面切换）
+3. 增加连接状态指示灯，显示在插件图标右下角（红-未连接，黄-等待对方连接，绿-正在连接）
+4. 增加socket断开因未知原因断开通知
+5. 增加房间码占用通知
+
+修复：
+1. 修复了没有bug的bug
+
+
 ### v1.0.7
 🛠 2020年7月5日更新
 ---
-⚠⚠⚠ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ 注意，此版本与<= 1.0.5的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
 
 - 新增功能：
     - 新增版本检测（高版本用户与低版本用户连接时，若连接码由低版本用户申请，高版本用户将收到提示，请根据提示告知对方升级最新版本）
@@ -952,7 +979,7 @@ server is listening at {your_port_number}...
 ### v1.0.6
 🛠 2020年6月28日更新
 ---
-⚠⚠⚠ 注意，此版本与之前的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
+⚠️⚠️⚠️ 注意，此版本与之前的任何版本都不兼容，请务必确保你的版本与小伙伴的版本一致。
 
 
 - 新增功能：
@@ -1060,4 +1087,10 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 3. `Shift + ctrl + i` 在 Windows 下 或者 `Shift + cmd + i` 在 MacOS 下.
 4. 选择 `console` 标签页.
 
+### VLC同步功能无法正常使用
 
+首先确认`http://127.0.0.1:8080/`能否正常打开，如果不能，请查看一下`8080`端口是否被其它应用程序占用。如果该程序可以被关闭，请关闭后再次尝试开启。
+
+如果不能，请参考相关配置将`VLC`的端口号设置为`9891`。（将在`v1.0.10`之后生效）
+
+如果可以打开`http://127.0.0.1:8080/`，但页面无法正常渲染，请尝试开启`科学上网`后再次刷新页面。（页面需要加载google的一个js文件）
