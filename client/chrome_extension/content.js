@@ -797,7 +797,8 @@ class SyncHelper {
             "isPlay": isplay,
             "currentTime": currentTime,
             "rate": rate,
-            "ack": this.ackFlag
+            "ack": this.ackFlag,
+            "timestamp": (new Date()).getTime()
         }, this.SYNCMESSAGE);
     }
 
@@ -882,6 +883,10 @@ class SyncHelper {
         this.socketLock = true;
 
         var changeFlag = false;
+
+        if (content.timestamp != undefined) {
+            content.currentTime += ((new Date()).getTime() - content.timestamp) / 1000;
+        }
 
         switch (this.type) {
             case "video":
