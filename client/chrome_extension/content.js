@@ -556,7 +556,7 @@ class SyncHelper {
     socketLock = false;
     ackFlag = false;
     heartBeatTimer = [null, null, null, null];
-    heartBeatTimes = [1, 7, 20, 60];
+    heartBeatTimes = [1, 7, 20, 30];
     VLCTimer = null;
     VLCStatus = "paused";
     VLCTime = 0;
