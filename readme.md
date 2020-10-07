@@ -13,7 +13,7 @@ Sync Sofa is a full-stack web extension that provides an easy-to-use and stable 
 - sync play process bar control: the playing time change will also affect another side user
 - local video sync: provide two ways to sync your playing of a local video file 
 
-<img src="https://s1.ax1x.com/2020/10/07/0a2FQP.png" alt="0a2FQP.png" title="title pic" width=100%/>
+![title pic](https://s1.ax1x.com/2020/10/07/0a2FQP.png)
 
 ## Current version
 
