@@ -1,23 +1,25 @@
 # Sync Sofa (streaming video playback synchronizer extension)
 
-> This chrome extension allows multi-user sync streaming video in a fast, simple and stable way.
+> This chrome extension allows multi-user sync streaming video in a fast, simple, and stable way.
 
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
 
 [English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
-Sync Sofa is a full stack web extension support a easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently, the feartures include:
+Sync Sofa is a full-stack web extension that provides an easy-to-use and stable way to synchronize streaming playback for multiple users. It can improve the experience when users from different locations want to share a video/movie remotely. Currently, the features include:
 
 - 2 party connection: either party can be the host of a sync room and the other can join with connection code.
 - sync pause/play: each user pause/play the video, the other side will do the same
-- sync play process bar control: the playing time change will also affect other side user
-- local video sync: provide two ways to sync your playing of local video file 
+- sync play process bar control: the playing time change will also affect another side user
+- local video sync: provide two ways to sync your playing of a local video file 
+
+<img src="https://s1.ax1x.com/2020/10/07/0a2FQP.png" alt="0a2FQP.png" title="title pic" width=100%/>
 
 ## Current version
 
 **v1.0.9 - update on 14 Aug 2020**
 
-⚠️⚠️⚠️ Each website has it's `own controller` of playback rate, so please ignore the wrong display of `playback rate`.
+⚠️⚠️⚠️ Each website has it's `own controller` of the playback rate, so please ignore the wrong display of `playback rate`.
 
 Add:
 1. playback rate sync: any side user's change to the playback rate will sync to the other side.
@@ -79,7 +81,7 @@ Recently, Many Chinese users said our service is unstable, that is because our d
 
 Before setting, check server status here: [https://sync-status.onns.xyz/](https://sync-status.onns.xyz/).
 
-We will be grateful for supporting us to build more server, if it is convenient (Cause this project is unprofitable).
+We will be grateful for supporting us to build more server if it is convenient (Cause this project is unprofitable).
 
 **Alipay, Wechat pay, Paypal**
 
@@ -89,10 +91,10 @@ If you have already built your own server, and wanna share, please tell us!
 
 ### Options page
 
-There are two ways to visit options page.
+There are two ways to visit the options page.
 
 1. Right click `Sync Sofa` extension, choose `Options`.
-2. Left click `Sync Sofa` extension, choose `Setting` icon in popup page.
+2. Left click `Sync Sofa` extension, choose `Setting` icon in the popup page.
 
 Your webpage should be like this:
 
@@ -100,32 +102,32 @@ Your webpage should be like this:
 
 ### Refresh video page
 
-After saving options, please also refresh the video page or local mp4 page or [http://127.0.0.1:8080/](http://127.0.0.1:8080/) to make changes work.
+After saving options, please also refresh the video page or local mp4 page or [http://127.0.0.1:8080/](http://127.0.0.1:8080/) to make changes to work.
 
 ## Usage
 
 ### Notices
 
-⚠️ Before use, please make sure `the version number` of two clients are consistent. 
+⚠️ Before use, please make sure `the version number` of two clients is consistent. 
 
 ⚠️ Before use, please make sure `the server host` of two clients are consistent. 
 
-⚠️ If you want to play local `.mp4` file, please enable `Allow access to file URLs` in extension details page. 
-1. Open `chrome://extensions/`, find `Sync Sofa`, click `Details` button, enable `Allow access to file URLs`.
+⚠️ If you want to play the local `.mp4` file, please enable `Allow access to file URLs` in the extension details page. 
+1. Open `chrome://extensions/`, find `Sync Sofa`, click the `Details` button, enable `Allow access to file URLs`.
 2. Right click `Sync Sofa` extension, choose `Manage Extensions`, enable `Allow access to file URLs`.
 
 ⚠️ If there are `multiple versions` of extensions in your browser, please enable one and disable others.
 
 ### Open a video page
 
-You two don't have to open the same webpage, you play the video via local `.mp4` file and your partner watch it one some video websites, is ok as long as you both watch the same video actually (source providers are different). 
+You two don't have to open the same webpage, you play the video via a local `.mp4` file and your partner watch it one some video websites, is ok as long as you both watch the same video actually (source providers are different). 
 
 In this doc, for example, `User A` will watch the video on Bilibili and `User B` will do it on Youtube. Here is the webpage:
 
 * [https://www.bilibili.com/video/BV1k5411Y7Rc](https://www.bilibili.com/video/BV1k5411Y7Rc)
 * [https://www.youtube.com/watch?v=QAelMP1PoNA](https://www.youtube.com/watch?v=QAelMP1PoNA)
 
-PS: I'm a fan of Boki, and screenshots have been Gaussian blurred. If there is copyright infringement, please contact us to delete.
+PS: I'm a fan of Boki, and screenshots have been Gaussian blurred. If there is copyright infringement, please contact us to delete it.
 
 ![User A](https://onns.xyz/blog/image/20200627-1.png)
 ![User B](https://onns.xyz/blog/image/20200627-2.png)
@@ -142,7 +144,7 @@ If nothing goes wrong you will receive a message like `Room created and room cod
 
 ### Start connection
 
-Your partner receives the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
+Your partner receives the `room code`, click the `Sync Sofa` extension, paste it in the input area, and click `START` button.
 
 ![User B](https://onns.xyz/blog/image/20200627-4.png)
 
@@ -159,7 +161,7 @@ If you and your partner play video via `VLC media player`, `Sync Sofa` can also 
 
 ### Start VLC on the server with the Web Interface
 
-First we need to enable controlling VLC via our browser, here is the official documentation:
+First, we need to enable controlling VLC via our browser, here is the official documentation:
 
 * [Control VLC via a browser](https://wiki.videolan.org/Control_VLC_via_a_browser/)
 * [Start VLC on the server with the Web Interface](https://wiki.videolan.org/Documentation:Modules/http_intf/#VLC_2.0.0_and_later)
@@ -178,21 +180,21 @@ Your webpage should be like this:
 
 ### Open your video
 
-Our extension control `VLC` via controlling `VLC Web Interface`([http://127.0.0.1:8080/](http://127.0.0.1:8080/)), so next step you should open your local video via `VLC Media Player` and see if [http://127.0.0.1:8080/](http://127.0.0.1:8080/) can control the video. If the answer is "yes", go to the next step, otherwise you should check if there are multiple `VLC windows`, close the others and recheck. Your `VLC Web Interface` should be like this:
+Our extension control `VLC` via controlling `VLC Web Interface`([http://127.0.0.1:8080/](http://127.0.0.1:8080/)), so next step you should open your local video via `VLC Media Player` and see if [http://127.0.0.1:8080/](http://127.0.0.1:8080/) can control the video. If the answer is "yes", go to the next step, otherwise you should check if there are multiple `VLC windows`, close the others, and recheck. Your `VLC Web Interface` should be like this:
 
 ![VLC media player - Web Interface](https://onns.xyz/blog/image/20200722-1.png)
 
-Video title, current time and total time on the webpage.
+Video title, current time, and total time on the webpage.
 
 ### Request new code
 
-Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), click the `Sync Sofa` extension and then click `REQUEST NEW CODE` button.
+Open [http://127.0.0.1:8080/](http://127.0.0.1:8080/), click the `Sync Sofa` extension, and then click `REQUEST NEW CODE` button.
 
 If nothing goes wrong you will receive a message like `Room created and room code copied to clipboard`, and the `room code` has been copied to your clipboard, send it to your partner.
 
 ### Start connection
 
-Your partner receives the `room code`, click the `Sync Sofa` extension, paste it in the input area and click `START` button.
+Your partner receives the `room code`, clicks the `Sync Sofa` extension, paste it in the input area, and clicks `START` button.
 
 ### Enjoy yourselves
 
@@ -247,19 +249,19 @@ If the extension is disabled by Chrome, try [Install from chrome web store](#ins
 1. Open [Sync Sofa - Online Video Synchronizer - Microsoft Edge Addons](https://microsoftedge.microsoft.com/addons/detail/kpfbclpafmmjalikjjlcoddffpfgghgp) in your Microsoft Edge
 2. Click `Get` button
 
-### Firefox (will be supported in later version)
+### Firefox (will be supported in a later version)
 
 ## Self-hosting Guide
 
 **Notices**:
-⚠️ Before hosting, make sure your server can communicate securely with HTTPS and link to an domain name. All deploy script are based on Let's Encrypt certificates, you can customize with your own SSL certificate providers.
-⚠️ dev mode intends for http transmission, prod mode intends for https transmission.
+⚠️ Before hosting, make sure your server can communicate securely with HTTPS and link it to a domain name. All deploy script is based on Let's Encrypt certificates, you can customize with your own SSL certificate providers.
+⚠️ dev mode intends for HTTP transmission, prod mode intends for https transmission.
 
 ### Without Docker
 
 **1. Get binary executable file**
 
-- If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run script below to get and build binary file:
+- If you want to alter the source code and build yourself, make sure you have `golang environment` in your server, then run the script below to get and build a binary file:
 
   ```bash
   go get github.com/LouisYLWang/Sync-Sofa/server
@@ -395,7 +397,7 @@ Make sure docker service is runing on your server, make change to the script blo
 ### v1.0.9 
 🛠 update on 14 Aug 2020
 ---
-⚠️⚠️⚠️ Each website has it's `own controller` of playback rate, so please ignore the wrong display of `playback rate`.
+⚠️⚠️⚠️ Each website has it's `own controller` of the playback rate, so please ignore the wrong display of `playback rate`.
 
 Add:
 1. playback rate sync: any side user's change to the playback rate will sync to the other side.
@@ -425,7 +427,7 @@ Fix:
 ⚠️⚠️⚠️ Notice, this version is not compatible with any version before 1.0.6 (<= 1.0.5), please please please make sure your version is the same as your peer's version
 
 Add:
-    add version detection (lower version number will be detected from user with higher version number if room was established by lower version extension)
+    add version detection (lower version number will be detected from the user with higher version number if a room was established by lower version extension)
      
 Fix:
     fix support for https://www.bilibili.com/bangumi/* (bilibili movie)
@@ -452,14 +454,14 @@ Fix:
 🛠 update on 12 May 2020
 ---
 Improve stability
-  > Test for a new logic to avoid infinite echo back (each party repeat the last operation of other party) : introduce a queue as a buffer of operation and if the operations is beyond frequency threshold, the client will automatically to halt and cool down for sometime.
+  > Test for a new logic to avoid infinite echo back (each party repeats the last operation of another party) : introduce a queue as a buffer of operation and if the operations are beyond the frequency threshold, the client will automatically to halt and cool down for sometime.
 
 Add support for edge browser (beta)
 
 ### v1.0.4
 🛠 update on 10 May 2020
 ---
-Now user will get notification when they successfully connected to each other
+Now the user will get a notification when they successfully connected to each other
 Improve stability, better sync performance
 Change the notification UI using sweetalert
 
@@ -512,7 +514,7 @@ Onns – [@blog](https://onns.xyz/) – [@mail](mailto:onns@onns.xyz)
 ## FAQ 
 
 1. **Q:** When I installed, Chrome popup says that Sync Sofa requires the permissions of `read and change your data on a number of websites` and `read your browsing history`, sounds so horrible, is that safe?
-**A:** We do not collect your browsing data, the only thing we do is to get your current tab information and make sure you are visiting a site we support ([support list](#supported-list)). All information is collected and processed locally. We do not mess up the data on the websites you are watching, just inject a sync script to get your pause, play and seek operation. **All source code can be reviewed at [our github page](https://github.com/LouisYLWang/Sync-Sofa), we promise everything we did is necessary and not harmful.**
+**A:** We do not collect your browsing data, the only thing we do is to get your current tab information and make sure you are visiting a site we support ([support list](#supported-list)). All information is collected and processed locally. We do not mess up the data on the websites you are watching, just inject a sync script to get your pause, play, and seek operation. **All source code can be reviewed at [our github page](https://github.com/LouisYLWang/Sync-Sofa), we promise everything we did is necessary and not harmful.**
 
 2. If your find your extension **button is darken**, please first make sure you are in a video playing page.
 
