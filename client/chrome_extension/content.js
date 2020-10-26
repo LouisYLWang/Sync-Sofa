@@ -10,6 +10,7 @@ var syncTool = null;
 const STATUSSTART = "start"
 const STATUSEND = "end"
 const STATUSCHAT = "chat"
+const STATUSVIDEO = "video"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
@@ -28,7 +29,7 @@ var video = null;
 // video = document.querySelector('video');
 var websocket = null;
 var systemNotification = false;
-
+var videoHandler = null;
 // Date format function
 Date.prototype.format = function (formatStr) {
     var str = formatStr;
@@ -511,12 +512,479 @@ class chat {
 
 var chatHandler = new chat();
 
+class videoCaller {
+    peerConnection = null;
+    dataChannel = null;
+    videoControl = null;
+    videoControlCollapseBtn = null
+    videoControlStopBtn = null
+    localVideo = null;
+    localVideoDisplayState = true;
+    videoButton = document.createElement("button");
+    videoPopup = document.createElement("div");
+    statusvideo = false;
 
 
+    constructor() {
+        
+        this.addVideoStyle()
+        this.renderVideoIcon();
+        this.renderVideoPopup();
 
+        this.videoControlCollapseBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (this.localVideoDisplayState) {
+                this.localVideo.style.display = "none";
+                this.videoControlStopBtn.textContent = "view self"
+                this.localVideoDisplayState = false;
+            } else {
+                this.localVideo.style.display = "block";
+                this.videoControlStopBtn.textContent = "hide self"
+                this.localVideoDisplayState = true;
+            }
+        })
 
+        this.videoPopup.addEventListener("mouseover", (e) => {
+            e.stopPropagation();
+            this.videoControl.style.display = "block";
+        })
 
+        this.videoPopup.addEventListener("mouseout", (e) => {
+            e.stopPropagation();
+            this.videoControl.style.display = "none";
+        })
 
+        var configuration = {
+            // free servers from https://gist.github.com/yetithefoot/7592580
+            iceServers: [
+                { urls: 'stun:stun.noblogs.org:3478' },
+                { urls: 'stun:stun01.sipphone.com' },
+                { urls: 'stun:stun.ekiga.net' },
+                { urls: 'stun:stun.fwdnet.net' },
+                { urls: 'stun:stun.ideasip.com' },
+                { urls: 'stun:stun.iptel.org' },
+                { urls: 'stun:stun.rixtelecom.se' },
+                { urls: 'stun:stun.schlund.de' },
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                { urls: 'stun:stunserver.org' },
+                { urls: 'stun:stun.softjoys.com' },
+                { urls: 'stun:stun.voiparound.com' },
+                { urls: 'stun:stun.voipbuster.com' },
+                { urls: 'stun:stun.voipstunt.com' },
+                { urls: 'stun:stun.voxgratia.org' },
+                { urls: 'stun:stun.xten.com' }, 
+                // {
+                //     urls: 'turn:numb.viagenie.ca',
+                //     credential: 'muazkh',
+                //     username: 'webrtc@live.com'
+                // },
+                // {
+                //     url: 'turn:192.158.29.39:3478?transport=udp',
+                //     credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                //     username: '28224511:1379330808'
+                // },
+                // {
+                //     url: 'turn:192.158.29.39:3478?transport=tcp',
+                //     credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                //     username: '28224511:1379330808'
+                // }
+            ]
+        };
+        this.peerConnection = new RTCPeerConnection(configuration)  
+        chrome.storage.local.set({
+            'statusvideo': false
+        });
+        this.listenDrag();
+    }
+
+    setUpPeerConnection() {
+        // Setup ice handling
+        console.log(this.peerConnection)
+        this.peerConnection.onicecandidate = function (event) {
+            console.log(event)
+            if (event.candidate) {
+                syncTool.send({
+                    event: "candidate",
+                    data: event.candidate
+                }, "4")
+            }
+        }
+    }
+
+    createOffer() {
+        console.log("createOffer")
+        const offerOptions = {
+            offerToReceiveAudio: 1,
+            offerToReceiveVideo: 1
+        };
+        this.peerConnection.createOffer(offerOptions).then(offer => {
+            syncTool.send({
+                event: "offer",
+                data: offer
+            }, "4")
+            this.peerConnection.setLocalDescription(offer);
+        })
+    }
+
+    handleOffer(offer) {
+        this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+        // create and send an answer to an offer
+        this.peerConnection.createAnswer().then((answer) => {
+            this.peerConnection.setLocalDescription(answer);
+            syncTool.send({
+                event: "answer",
+                data: answer
+            }, "4")
+        }
+        )
+    };
+
+    handleCandidate(candidate) {
+        this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    };
+
+    handleAnswer(answer) {
+        this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        console.log("connection established successfully!!");
+    };
+
+    sendMessage() {
+        this.dataChannel.send(input.value);
+        input.value = "";
+    }
+
+    // Video UI
+    addVideoStyle() {
+        // load new style
+        var videoButtonStyle = document.createElement('style');
+        videoButtonStyle.type = 'text/css';
+        videoButtonStyle.textContent = `
+        #videobutton {
+            position: fixed;
+            z-index: 999999;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background-color: #1fcaa7;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+            border-width: 0;
+            top: 80%;
+            left: 90%;
+            outline:none;
+            cursor: pointer;
+            text-align: center;
+            opacity: 0.25;
+            -webkit-transform: translate(0px, 0px);
+                transform: translate(0px, 0px);
+            display: none;
+        }
+        
+        #videobutton:hover {
+            opacity: 1;
+        }
+    
+        #videobutton.showpopup {
+            background-color: #1cb495;
+            top: 80%;
+            left: 90%;
+            opacity: 1;
+        }
+    
+        #videobutton > svg{
+            position: absolute;
+            top: 11px;
+            left: 11px;
+        }
+    
+        .bg-primary{
+            background-color: #1cb495;
+        }
+    
+        #videopopup {
+            z-index: 999998;
+            position: fixed;
+            bottom: 15%;
+            right: 10%;
+            width: 300px;
+            height: 513px;
+            border-radius: 1%;
+            //box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+            background-color: #ffffff00;
+        }
+
+        #videopopup > video {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .videoControl {
+            width: 100%;
+            height: 48px;
+            //position: absolute;
+            //padding: 4px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+            background-color: whitesmoke;
+            //left: 5px;
+            border-radius: 7px;
+            //bottom: 10px;
+            //top: 432px;
+            -webkit-transform: translate(0px, 0px);
+            transform: translate(0px, 0px);
+            display: none;
+            transition: max-height 0.2s ease-in-out;
+        }
+
+        .videoControlButton {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+            border-radius: 6px;
+            border: 0;
+            color: #ffffff !important;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 12px;
+            height: 36px;
+            text-align: center;
+            text-decoration: none;
+            white-space: nowrap;
+            outline:none;
+        }
+
+        #videoControl-stop {
+            width: 46.5%;
+            margin: 6px 0 6px 6px;
+            background-color: #e14334;
+        }
+
+        #videoControl-stop:hover {
+            background-color: #e85d51;
+        }
+
+        #videoControl-collapse {
+            width: 46.5%;
+            margin: 6px 0 6px 6px;
+            background-color: #1cb495;
+        }
+
+        #videoControl-collapse:hover {
+            background-color: #1fcaa7;
+        }
+
+        @-webkit-keyframes video-shake {
+            0% { -webkit-transform: translate(2px, 1px) rotate(0deg); opacity: 1;} 
+            10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); opacity: 1;}
+            20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); opacity: 1;}
+            30% { -webkit-transform: translate(0px, 2px) rotate(0deg); opacity: 1;}
+            40% { -webkit-transform: translate(1px, -1px) rotate(1deg); opacity: 1;}
+            50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); opacity: 1;}
+            60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); opacity: 1;}
+            70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); opacity: 1;}
+            80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); opacity: 1;}
+            90% { -webkit-transform: translate(2px, 2px) rotate(0deg); opacity: 1;}
+            100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); opacity: 1;}
+        }
+        .video-shake {
+            -webkit-animation-name: video-shake;
+            -webkit-animation-duration: 0.5s;
+            -webkit-transform-origin:50% 50%;
+            -webkit-animation-iteration-count: infinite;
+        }
+        .video-shake {
+            opacity: 1;
+            display:inline-block;
+        }
+          
+        video#localVideo {
+            height: 225px;
+            //margin: 0 0 10px 0;
+            width: 100%;
+            border-radius: 1%;
+            transition: max-height 0.2s ease-in-out;
+            background-color: aliceblue;
+        }
+
+        video#remoteVideo {
+            height: 225px;
+            //margin: 0 0 10px 0;
+            width: 100%;
+            border-radius: 1%;
+            background-color: aliceblue;
+        }
+        `;
+        document.head.appendChild(videoButtonStyle);
+    }
+
+    renderVideoIcon() {
+        // render video icon
+        var videoButton = this.videoButton;
+        videoButton.setAttribute("id", "videobutton");
+        videoButton.setAttribute("class", "videobutton");
+        videoButton.textContent = "test";
+        document.body.appendChild(videoButton);
+        videoButton.innerHTML = `<svg t="1603522170062" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1299" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"><defs><style type="text/css"></style></defs><path d="M782.378667 106.666667a42.666667 42.666667 0 0 1 42.666666 42.666666v170.666667a42.666667 42.666667 0 0 1-42.666666 42.666667h-213.333334a42.666667 42.666667 0 0 1-42.666666-42.666667v-170.666667a42.666667 42.666667 0 0 1 42.666666-42.666666h213.333334z m149.333333 34.56a21.333333 21.333333 0 0 1 21.333333 21.333333v144.213333a21.333333 21.333333 0 0 1-30.890666 19.114667L825.173333 277.333333v-85.333333l97.024-48.554667a21.333333 21.333333 0 0 1 9.557334-2.261333zM732.032 748.245333a42.666667 42.666667 0 0 1 17.877333 53.845334c-13.568 36.181333-27.264 61.184-41.130666 75.050666a149.290667 149.290667 0 0 1-145.450667 38.357334 637.056 637.056 0 0 1-322.176-174.122667 637.013333 637.013333 0 0 1-174.08-322.218667 149.248 149.248 0 0 1 38.314667-145.408c13.866667-13.866667 38.869333-27.562667 75.008-41.088a42.666667 42.666667 0 0 1 53.802666 17.834667l99.84 172.928c11.349333 19.626667 5.546667 37.76-13.397333 56.746667-16.469333 14.762667-29.866667 25.216-40.192 31.402666 21.12 39.168 48.256 75.989333 81.365333 109.098667 33.152 33.152 69.973333 60.288 109.226667 81.450667 4.522667-8.746667 15.018667-22.058667 31.488-40.064 16-16 33.194667-23.978667 51.968-15.957334l4.608 2.304 172.928 99.84z" p-id="1300" fill="#cac8c7"></path></svg>`;
+    }
+    renderVideoPopup() {
+        // render video popup
+        var videoPopup = this.videoPopup;
+        videoPopup.id = "videopopup";
+        videoPopup.setAttribute("class", "videopopup");
+        videoPopup.style.display = "none";
+        document.body.appendChild(videoPopup);
+
+        videoPopup.innerHTML = `
+            <video id="remoteVideo" playsinline autoplay poster="../images/alipay.png"></video>
+            <video id="localVideo" playsinline autoplay muted></video>
+            <div class="videoControl">
+                <button type="button" id="videoControl-stop" class="videoControlButton">stop call</button>
+                <button type="button" id="videoControl-collapse" class="videoControlButton">hide self</button>
+            </div>
+        `;
+        
+        this.videoControl = document.querySelector(".videoControl");
+        console.log(this.videoControl);
+        this.videoControlCollapseBtn = document.querySelector("#videoControl-collapse");
+        this.videoControlStopBtn = document.querySelector("#videoControl-collapse");
+        this.localVideo = document.getElementById('localVideo');
+    }
+
+    async toggleVideoUIstate() {
+        var videoButton = this.videoButton;
+        var videoPopup = this.videoPopup;
+        this.videoButton.style.top = "80%";
+        this.videoButton.style.left = "90%";
+        if (this.videoButton.classList.contains('video-shake')) {
+            this.videoButton.classList.remove('video-shake');
+        }
+
+        if (!this.isVideoPopup()) {
+            videoButton.innerHTML = `<svg t="1593111631184" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27674" width="30" height="30"><path d="M378.965333 512l-272.213333-272.213333a85.333333 85.333333 0 0 1 0-120.746667l12.288-12.373333a85.333333 85.333333 0 0 1 120.746667 0L512 378.965333l272.213333-272.213333a85.333333 85.333333 0 0 1 120.746667 0l12.373333 12.288a85.333333 85.333333 0 0 1 0 120.746667L645.034667 512l272.213333 272.213333a85.333333 85.333333 0 0 1 0 120.746667l-12.288 12.373333a85.333333 85.333333 0 0 1-120.746667 0L512 645.034667l-272.213333 272.213333a85.333333 85.333333 0 0 1-120.746667 0l-12.373333-12.288a85.333333 85.333333 0 0 1 0-120.746667L378.965333 512z" p-id="27675" fill="#cac8c7"></path></svg>`;
+            videoPopup.style.display = "block";
+            const localVideo = document.getElementById('localVideo');
+            const remoteVideo = document.getElementById('remoteVideo');
+            navigator.mediaDevices.getUserMedia({
+                audio: true,
+                video: true
+            }).then(stream => {
+                console.log('Received local stream');
+                localVideo.srcObject = stream;
+                stream.getTracks().forEach((track) => {
+                    console.log('sent local stream');
+                    this.peerConnection.addTrack(track, stream);
+                })
+                this.createOffer()
+            }).catch(e => {
+                switch (e.name) {
+                    case "NotFoundError":
+                        console.log("Unable to open your call because no camera and/or microphone" +
+                            "were found.");
+                        break;
+                    case "SecurityError":
+                    case "PermissionDeniedError":
+                        // Do nothing; this is the same as the user canceling the call.
+                        break;
+                    default:
+                        console.log("Error opening your camera and/or microphone: " + e.message);
+                        break;
+                }
+
+            });
+
+            this.peerConnection.ontrack = event => {
+                remoteVideo.srcObject = event.streams[0];
+                // if (event.steams && event.streams[0]) {
+                //     remoteVideo.srcObject = event.streams[0];
+                // } else {
+                //     let inboundStream = new MediaStream(event.track);
+                //     remoteVideo.srcObject = inboundStream;
+                // }
+                console.log('Received remote stream')
+            };
+        } else {
+            videoPopup.style.display = "none";
+            videoButton.innerHTML = `<svg t="1603522170062" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1299" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"><defs><style type="text/css"></style></defs><path d="M782.378667 106.666667a42.666667 42.666667 0 0 1 42.666666 42.666666v170.666667a42.666667 42.666667 0 0 1-42.666666 42.666667h-213.333334a42.666667 42.666667 0 0 1-42.666666-42.666667v-170.666667a42.666667 42.666667 0 0 1 42.666666-42.666666h213.333334z m149.333333 34.56a21.333333 21.333333 0 0 1 21.333333 21.333333v144.213333a21.333333 21.333333 0 0 1-30.890666 19.114667L825.173333 277.333333v-85.333333l97.024-48.554667a21.333333 21.333333 0 0 1 9.557334-2.261333zM732.032 748.245333a42.666667 42.666667 0 0 1 17.877333 53.845334c-13.568 36.181333-27.264 61.184-41.130666 75.050666a149.290667 149.290667 0 0 1-145.450667 38.357334 637.056 637.056 0 0 1-322.176-174.122667 637.013333 637.013333 0 0 1-174.08-322.218667 149.248 149.248 0 0 1 38.314667-145.408c13.866667-13.866667 38.869333-27.562667 75.008-41.088a42.666667 42.666667 0 0 1 53.802666 17.834667l99.84 172.928c11.349333 19.626667 5.546667 37.76-13.397333 56.746667-16.469333 14.762667-29.866667 25.216-40.192 31.402666 21.12 39.168 48.256 75.989333 81.365333 109.098667 33.152 33.152 69.973333 60.288 109.226667 81.450667 4.522667-8.746667 15.018667-22.058667 31.488-40.064 16-16 33.194667-23.978667 51.968-15.957334l4.608 2.304 172.928 99.84z" p-id="1300" fill="#cac8c7"></path></svg>`;
+        }
+    }
+
+    isVideoPopup() {
+        if (this.videoPopup.style.display != "none") {
+            return true;
+        }
+        return false;
+    }
+
+    listenDrag() {
+        interact('.videobutton')
+            .draggable({
+                autoScroll: false,
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+            .on("tap", (e) => {
+                this.toggleVideoUIstate();
+                e.preventDefault();
+                e.currentTarget.classList.toggle('showpopup');
+            })
+
+        interact('.videopopup')
+            .draggable({
+                autoScroll: false,
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+    }
+
+    dragMoveListener(event) {
+        var target = event.target
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)'
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x)
+        target.setAttribute('data-y', y)
+    }
+
+    toggleVideoDisplay() {
+        chrome.storage.local.get(['statusvideo'], result => {
+            if (!result.statusvideo) {
+                this.videoButton.style.display = "block";
+                this.videoButton.style.left = "90%";
+                this.videoButton.style.top = "80%";
+                chrome.storage.local.set({
+                    'statusvideo': true
+                });
+            } else {
+                this.videoButton.style.display = "none";
+                this.videoPopup.style.display = "none";
+                this.statusvideo = false;
+                chrome.storage.local.set({
+                    'statusvideo': false
+                });
+            }
+        });
+    }
+}
+videoHandler = new videoCaller();
 
 var operationFlag = 0;
 
@@ -548,10 +1016,12 @@ class SyncHelper {
     SYSTEMMESSAGE = "1";
     CHATMESSAGE = "2";
     SYNCMESSAGE = "3";
+    SIGNALINGMESSAGE = "4";
     MESSAGETYPE = {
         "1": "SYSTEMMESSAGE",
         "2": "CHATMESSAGE",
-        "3": "SYNCMESSAGE"
+        "3": "SYNCMESSAGE",
+        "4": "SIGNALINGMESSAGE"
     }
     socketLock = false;
     ackFlag = false;
@@ -566,7 +1036,7 @@ class SyncHelper {
     socketTimer = null;
     speed = 1;
     rateTimer = null;
-
+    videoHandler = null;
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
@@ -723,6 +1193,7 @@ class SyncHelper {
                         status = STATUSSYNC;
                         SyncHelper.updateIcon();
                         chatHandler.popConnectedSubmsg();
+                        videoHandler.setUpPeerConnection();
                         break;
                     case this.WAITINGCODE:
                         this.handleVideoPause();
@@ -737,6 +1208,26 @@ class SyncHelper {
                 break;
             case this.SYNCMESSAGE:
                 this.handleSyncMessage(message.content);
+                break;
+
+            case this.SIGNALINGMESSAGE:
+                Debugger.log(`RECEIVED SIGNALING MESSAGE`);
+                var data = message.content.data;
+                switch (message.content.event) {
+                    // when somebody wants to call us
+                    case "offer":
+                        videoHandler.handleOffer(data);
+                        break;
+                    case "answer":
+                        videoHandler.handleAnswer(data);
+                        break;
+                    // when a remote peer sends an ice candidate to us
+                    case "candidate":
+                        videoHandler.handleCandidate(data);
+                        break;
+                    default:
+                        break;
+                }
                 break;
             default:
                 break;
@@ -1323,6 +1814,10 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSCHAT) {
             chatHandler.toggleChatDisplay();
+        }
+
+        if (request.status === STATUSVIDEO) {
+            videoHandler.toggleVideoDisplay();
         }
 
         if (request.status == STATUSASK) {

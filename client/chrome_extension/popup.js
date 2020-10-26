@@ -5,8 +5,7 @@ const inputbox = document.getElementById("inputbox");
 const footerbuttons = document.getElementById("footerbuttons");
 // const cancelbutton = document.getElementById("cancelbutton");
 const chatbutton = document.getElementById("chatbutton");
-
-//const mtctbutton = document.getElementById("mtctbutton");
+const videotbutton = document.getElementById("videotbutton");
 
 const PAUSECODE = "-5";
 const PLAYCODE = "-4";
@@ -16,6 +15,7 @@ const DISCONNECTCODE = "-2";
 const STATUSSTART = "start"
 const STATUSEND = "end"
 const STATUSCHAT = "chat"
+const STATUSVIDEO = "video"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
@@ -25,6 +25,21 @@ const STATUSMESSAGE = "message"
 var apihost = "app.ylwang.me"
 var protocol = "https"
 //var statuschat;
+chrome.storage.local.get("statuschat", result => {
+    if (result.statuschat == undefined) {
+        chrome.storage.local.set({
+            'statuschat': false
+        });
+    }
+
+    if (result.statuschat) {
+        chatbutton.value = "CLOSE CHAT";
+    } else {
+        chatbutton.value = "OPEN CHAT";
+    }
+
+})
+
 chrome.storage.local.get("statuschat", result => {
     if (result.statuschat == undefined) {
         chrome.storage.local.set({
@@ -110,10 +125,17 @@ chatbutton.addEventListener("click", e => {
 //     }
 // })
 
-// mtctbutton.addEventListener("click", e => {
-//     e.preventDefault();
-//     chrome.windows.create({ 'url': 'chrome-extension://ocfjeogljngknapodpfhjpdidbddjaik/chatpopup.html', 'type': 'popup' }, function (window) { });
-// })
+videotbutton.addEventListener("click", e => {
+    e.preventDefault();
+    chrome.storage.local.get(['statusvideo'], result => {
+        if (!result.statusvideo) {
+            videotbutton.value = "CLOSE VIDEO CALL";
+        } else {
+            videotbutton.value = "OPEN VIDEO CALL";
+        }
+    });
+    sentMsgToContent(STATUSVIDEO);
+})
 
 function handleCreateHostSession(e) {
     e.preventDefault();
@@ -225,9 +247,16 @@ function UIStatusToLinked() {
             chatbutton.style.display = "none";
         };
     })
+    chrome.storage.local.get("video", result => {
+        if (result.video) {
+            videotbutton.style.display = "block";
+        } else {
+            videotbutton.style.display = "none";
+        };
+    })
     chatbutton.style.display = "block";
     // cancelbutton.style.display = "none";
-    // mtctbutton.style.display = "block";
+    videotbutton.style.display = "block";
 }
 
 function UIStatusToInit() {
@@ -238,7 +267,7 @@ function UIStatusToInit() {
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
     // cancelbutton.style.display = "none";
-    // mtctbutton.style.display = "none";
+    videotbutton.style.display = "none";
 }
 
 function UIStatusToUnready() {
@@ -251,7 +280,7 @@ function UIStatusToUnready() {
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
     // cancelbutton.style.display = "none";
-    // mtctbutton.style.display = "none";
+    videotbutton.style.display = "none";
 }
 
 function UIStatusToready() {
@@ -264,7 +293,7 @@ function UIStatusToready() {
     stopbutton.style.display = "none";
     chatbutton.style.display = "none";
     // cancelbutton.style.display = "none";
-    // mtctbutton.style.display = "none";
+    videotbutton.style.display = "none";
 }
 
 function initialize() {
@@ -278,7 +307,7 @@ function initialize() {
             // requestbutton.value = "REQUEST NEW CODE";
             stopbutton.style.display = "none";
             chatbutton.style.display = "none";
-            //mtctbutton.style.display = "none";
+            videotbutton.style.display = "none";
             // cancelbutton.style.display = "none";
         }
     });
