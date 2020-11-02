@@ -29,6 +29,10 @@
                 "sweetalert.min.js",
                 "interact.min.js",
                 "content.js"
+            ],
+            "css": [
+                "/assets/css/chat.css",
+                "/assets/css/vidcall.css"
             ]
         }
     ],
@@ -47,5 +51,9 @@
         "scripts" : ["background.js"],  
         "persistent" : false  
     },
-    "options_page": "options.html"
+    "options_page": "options.html",
+    "web_accessible_resources": [
+        "/images/no_video_local.png",
+        "/images/no_video_remote.png"
+      ]
 }
