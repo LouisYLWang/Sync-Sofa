@@ -4,6 +4,7 @@ const resetbutton = document.getElementById('resetbutton');
 const protocol = document.getElementById('protocol');
 const debugtoggle = document.getElementById('debugtoggle');
 const chattoggle = document.getElementById('chattoggle');
+const videotoggle = document.getElementById('videotoggle');
 const notificationtoggle = document.getElementById('notificationtoggle');
 
 var systemNotification = false;
@@ -56,6 +57,19 @@ function toggleChat() {
     });
 }
 
+function toggleVideo() {
+    var videoFlag = videotoggle.checked;
+    chrome.storage.local.set({
+        'video': videoFlag
+    }, () => {
+        if (videoFlag == true) {
+            notification("Switch on built-in video!")
+        } else {
+            notification("Switch off built-in video!")
+        }
+    });
+}
+
 function toggleNotification() {
     var notificationFlag = notificationtoggle.checked;
     chrome.storage.local.set({
@@ -72,7 +86,7 @@ function toggleNotification() {
 }
 
 function initialize() {
-    chrome.storage.local.get(['apihost', 'protocol', 'debug', 'chat', 'notification'], result => {
+    chrome.storage.local.get(['apihost', 'protocol', 'debug', 'chat', 'video', 'notification'], result => {
         if (result.apihost != undefined && result.apihost != "") {
             inputbox.value = result.apihost;
         } else {
@@ -104,6 +118,14 @@ function initialize() {
         } else {
             chrome.storage.local.set({
                 'chat': "false"
+            }, () => { })
+        }
+
+        if (result.video != undefined) {
+            videotoggle.checked = result.video
+        } else {
+            chrome.storage.local.set({
+                'video': "false"
             }, () => { })
         }
 
@@ -151,4 +173,5 @@ inputbox.addEventListener('click', e => {
 
 debugtoggle.addEventListener('change', toggleDebugging);
 chattoggle.addEventListener('change', toggleChat);
+videotoggle.addEventListener('change', toggleVideo);
 notificationtoggle.addEventListener('change', toggleNotification);
