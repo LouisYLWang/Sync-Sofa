@@ -30,29 +30,20 @@ chrome.storage.local.get("statuschat", result => {
         chrome.storage.local.set({
             'statuschat': false
         });
-    }
-
-    if (result.statuschat) {
-        chatbutton.value = "CLOSE CHAT";
     } else {
-        chatbutton.value = "OPEN CHAT";
+        chatbutton.checked = result.statuschat;
     }
-
 })
 
-chrome.storage.local.get("statuschat", result => {
-    if (result.statuschat == undefined) {
+chrome.storage.local.get("statusvideo", result => {
+    console.log(result.statusvideo);
+    if (result.statusvideo == undefined) {
         chrome.storage.local.set({
-            'statuschat': false
+            'statusvideo': false
         });
-    }
-
-    if (result.statuschat) {
-        chatbutton.value = "CLOSE CHAT";
     } else {
-        chatbutton.value = "OPEN CHAT";
+        videotbutton.checked = result.statusvideo;
     }
-
 })
 
 chrome.storage.local.get(['apihost'], function (result) {
@@ -105,14 +96,11 @@ stopbutton.addEventListener("click", e => {
     // }
 })
 
-chatbutton.addEventListener("click", e => {
+chatbutton.addEventListener("change", e => {
     e.preventDefault();
     chrome.storage.local.get(['statuschat'], result => {
-        if (!result.statuschat) {
-            chatbutton.value = "CLOSE CHAT";
-        } else {
-            chatbutton.value = "OPEN CHAT";
-        }
+        console.log(result.statuschat);
+        chatbutton.checked = !result.statuschat;
     });
     sentMsgToContent(STATUSCHAT);
 })
@@ -125,14 +113,11 @@ chatbutton.addEventListener("click", e => {
 //     }
 // })
 
-videotbutton.addEventListener("click", e => {
+videotbutton.addEventListener("change", e => {
     e.preventDefault();
     chrome.storage.local.get(['statusvideo'], result => {
-        if (!result.statusvideo) {
-            videotbutton.value = "CLOSE VIDEO CALL";
-        } else {
-            videotbutton.value = "OPEN VIDEO CALL";
-        }
+        console.log(result.statusvideo);
+        videotbutton.checked = !result.statusvideo;
     });
     sentMsgToContent(STATUSVIDEO);
 })
@@ -167,7 +152,7 @@ function handleCreateHostSession(e) {
     })
 }
 
-function handleResponse(response) {
+async function handleResponse(response) {
     if(response == undefined){
         UIStatusToUnready();
         return;
@@ -190,6 +175,7 @@ function handleResponse(response) {
         }
     }
 }
+
 function sentMsgToContent(status, body = "", message = {}) {
     chrome.tabs.query(params, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id,
@@ -254,9 +240,6 @@ function UIStatusToLinked() {
             videotbutton.style.display = "none";
         };
     })
-    chatbutton.style.display = "block";
-    // cancelbutton.style.display = "none";
-    videotbutton.style.display = "block";
 }
 
 function UIStatusToInit() {

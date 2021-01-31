@@ -1,4 +1,5 @@
 #chatbutton {
+    touch-action: none;
     position: fixed;
     z-index: 2147483647;
     border-radius: 50%;
@@ -40,6 +41,7 @@
 }
 
 #chatpopup {
+    touch-action: none;
     z-index: 2147483647;
     position: fixed;
     bottom: 10%;

@@ -229,6 +229,12 @@ class chat {
         interact('.chatbutton')
             .draggable({
                 autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
                 cursorChecker() {
                     // don't set a cursor for drag actions
                     return null
@@ -247,6 +253,12 @@ class chat {
         interact('.chatpopup')
             .draggable({
                 autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
                 cursorChecker() {
                     // don't set a cursor for drag actions
                     return null
@@ -372,21 +384,21 @@ class videoCaller {
                 { urls: 'stun:stun.voipstunt.com' },
                 { urls: 'stun:stun.voxgratia.org' },
                 { urls: 'stun:stun.xten.com' }, 
-                // {
-                //     urls: 'turn:numb.viagenie.ca',
-                //     credential: 'muazkh',
-                //     username: 'webrtc@live.com'
-                // },
-                // {
-                //     url: 'turn:192.158.29.39:3478?transport=udp',
-                //     credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                //     username: '28224511:1379330808'
-                // },
-                // {
-                //     url: 'turn:192.158.29.39:3478?transport=tcp',
-                //     credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-                //     username: '28224511:1379330808'
-                // }
+                {
+                    urls: 'turn:numb.viagenie.ca',
+                    credential: 'muazkh',
+                    username: 'webrtc@live.com'
+                },
+                {
+                    url: 'turn:192.158.29.39:3478?transport=udp',
+                    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                    username: '28224511:1379330808'
+                },
+                {
+                    url: 'turn:192.158.29.39:3478?transport=tcp',
+                    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                    username: '28224511:1379330808'
+                }
             ]
         };
         this.peerConnection = new RTCPeerConnection(configuration)  
@@ -394,9 +406,7 @@ class videoCaller {
 
     setUpPeerConnection() {
         // Setup ice handling
-        console.log(this.peerConnection)
         this.peerConnection.onicecandidate = function (event) {
-            console.log(event)
             if (event.candidate) {
                 syncTool.send({
                     event: "candidate",
@@ -407,7 +417,7 @@ class videoCaller {
     }
 
     createOffer() {
-        console.log("createOffer")
+        Debugger.log(`WEBRTC: created Offer`, 'color: blue;');
         const offerOptions = {
             offerToReceiveAudio: 1,
             offerToReceiveVideo: 1
@@ -441,7 +451,7 @@ class videoCaller {
 
     handleAnswer(answer) {
         this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-        console.log("connection established successfully!!");
+        Debugger.log(`WEBRTC: connection established successfully`, 'color: blue;');
     };
 
     sendMessage() {
@@ -459,7 +469,7 @@ class videoCaller {
           videoTrack.stop();
           this.stream.removeTrack(videoTrack);
         });
-        this.videoControlDailHangBtn.textContent = "dail";
+        this.videoControlDailHangBtn.textContent = "dial";
         this.videoControl.style.display = "block";
         this.callState = false;
     }
@@ -474,25 +484,24 @@ class videoCaller {
             video: true
         }).then(stream => {
             this.stream = stream;
-            console.log('Received local stream');
             this.localVideo.srcObject = stream;
             stream.getTracks().forEach((track) => {
-                console.log('sent local stream');
+                Debugger.log(`WEBRTC: Sent local stream`, 'color: blue;');
                 this.peerConnection.addTrack(track, stream);
             })
             this.createOffer()
         }).catch(e => {
             switch (e.name) {
                 case "NotFoundError":
-                    console.log("Unable to open your call because no camera and/or microphone" +
-                        "were found.");
+                    SyncHelper.notification("Unable to open your call because no camera and/or microphone were found.");
                     break;
                 case "SecurityError":
                 case "PermissionDeniedError":
                     // Do nothing; this is the same as the user canceling the call.
                     break;
                 default:
-                    console.log("Error opening your camera and/or microphone: " + e.message);
+                    SyncHelper.notification("Error opening your camera and/or microphone");
+                    Debugger.log("Error opening your camera and/or microphone: " + e.message);
                     break;
             }
         });
@@ -528,36 +537,37 @@ class videoCaller {
         videoPopup.innerHTML = `
             <video id="remoteVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_remote.png")}></video>
             <video id="localVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_local.png")} muted></video>
-            <div class="videoControl">
-                <button type="button" id="videoControl-dailhang" class="videoControlButton">dail</button>
+            <div id="videoControl">
+                <button type="button" id="videoControl-dialhang" class="videoControlButton">dial</button>
                 <button type="button" id="videoControl-collapse" class="videoControlButton">hide self</button>
             </div>
         `;
         
-        this.videoControl = document.querySelector(".videoControl");
+        this.videoControl = document.querySelector("#videoControl");
         this.videoControlCollapseBtn = document.querySelector("#videoControl-collapse");
-        this.videoControlDailHangBtn = document.querySelector("#videoControl-dailhang");
+        this.videoControlDailHangBtn = document.querySelector("#videoControl-dialhang");
         this.localVideo = document.getElementById('localVideo');
         this.remoteVideo = document.getElementById('remoteVideo');
     }
 
-    async toggleCallHangUp() {
+    toggleCallHangUp() {
         if (this.callState) {
-            await syncTool.send(syncTool.HANGUPCODE, "5");
+            syncTool.send(syncTool.HANGUPCODE, "5");
             this.hangup();
             //this.videoControlDailHangBtn.style.backgroundColor = "#e14334";
         } else {
             this.initRTCPeerConnection();
-            await syncTool.send(syncTool.DAILCODE, "5");
+            syncTool.send(syncTool.DAILCODE, "5");
             this.setUpPeerConnection();
             this.call();
-            console.log("before ontrack!")
             this.peerConnection.ontrack = event => {
-                console.log("ontracked")
+                Debugger.log(`WEBRTC: Ontracked remote video steam`, 'color: blue;');
                 this.remoteVideo.srcObject = event.streams[0];
             };
             //this.videoControlDailHangBtn.style.backgroundColor = "#e14334";
         }
+        // this.videoButton.classList.toggle('showpopup');
+        this.videoButton.className = 'videobutton';
     }
 
     async toggleVideoUIstate() {
@@ -567,6 +577,8 @@ class videoCaller {
         this.videoButton.style.left = "90%";
         if (this.videoButton.classList.contains('video-shake')) {
             this.videoButton.classList.remove('video-shake');
+            this.videoButton.classList.toggle('showpopup');
+            // this.videoButton.className = 'videobutton';
             this.call();
         }
 
@@ -611,6 +623,12 @@ class videoCaller {
         interact('.videobutton')
             .draggable({
                 autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
                 cursorChecker() {
                     // don't set a cursor for drag actions
                     return null
@@ -629,6 +647,12 @@ class videoCaller {
         interact('.videopopup')
             .draggable({
                 autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
                 cursorChecker() {
                     // don't set a cursor for drag actions
                     return null
@@ -907,17 +931,14 @@ class SyncHelper {
                 break;
 
             case this.SIGNALINGMESSAGE:
-                Debugger.log(`RECEIVED SIGNALING MESSAGE`);
+                Debugger.log(`RECEIVED SIGNALING MESSAGE: ${this.ALLCODE[message.content]}`);
                 var data = message.content.data;
                 switch (message.content.event) {
-                    // when somebody wants to call us
                     case "offer":
-                        console.log("RECEIVED OFFER MSG");
-                        console.log(videoHandler.RTCPeerConnection);
                         if (videoHandler.peerConnection == null || videoHandler.peerConnection.signalingState == "closed") {
                             videoHandler.initRTCPeerConnection();
                             videoHandler.peerConnection.ontrack = event => {
-                                console.log("ontracked")
+                                Debugger.log(`WEBRTC: Ontracked remote video steam`, 'color: blue;');
                                 videoHandler.remoteVideo.srcObject = event.streams[0];
                             };
                             if (videoHandler.isVideoPopup()) {
@@ -1436,9 +1457,7 @@ class SyncHelper {
                 encodeURIComponent(param) + "=" + encodeURIComponent(data[param])
             );
         }
-        // console.log(arr);
         arr.push(("randomNumber=" + Math.random()).replace("."));
-        // console.log(arr);
         return arr.join("&");
     }
 
@@ -1511,6 +1530,21 @@ if (!isVLC()) {
         }, 500);
 }
 
+document.addEventListener('fullscreenchange', (event) => {
+    // document.fullscreenElement will point to the element that
+    // is in fullscreen mode if there is one. If there isn't one,
+    // the value of the property is null.
+    if (document.fullscreenElement) {
+        var fullscreenElement = document.fullscreenElement;
+        fullscreenElement.appendChild(this.chatHandler.chatButton);
+        fullscreenElement.appendChild(this.chatHandler.chatPopup);
+        fullscreenElement.appendChild(this.videoHandler.videoButton);
+        fullscreenElement.appendChild(this.videoHandler.videoPopup);
+      console.log(`Element: ${document.fullscreenElement.id} entered full-screen mode.`);
+    } else {
+      console.log('Leaving full-screen mode.');
+    }
+  });
 
 
 
@@ -1526,6 +1560,9 @@ chrome.runtime.onMessage.addListener(
             } else {
                 syncTool = new SyncHelper(request.body, request.message);
             }
+            if (syncTool != null) {
+                sendResponse({ "body": syncTool.status });
+            }
         }
 
         if (request.status === STATUSEND) {
@@ -1538,10 +1575,12 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSCHAT) {
             chatHandler.toggleChatDisplay();
+            sendResponse({ "body": syncTool.status });
         }
 
         if (request.status === STATUSVIDEO) {
             videoHandler.toggleVideoDisplay();
+            sendResponse({ "body": syncTool.status });
         }
 
         if (request.status == STATUSASK) {
