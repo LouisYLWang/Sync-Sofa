@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/LouisYLWang/Sync-Sofa/server/session"
+	"github.com/LouisYLWang/Sync-Sofa/server/socket"
 	"github.com/gorilla/websocket"
 )
 
@@ -22,7 +23,9 @@ var upgrader = websocket.Upgrader{
 func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn) {
 	ctx.SocketStore.Lock.Lock()
 	defer ctx.SocketStore.Lock.Unlock()
-	ctx.SocketStore.ConnectionsMap[id] = conn
+	ctx.SocketStore.ConnectionsMap[id] = &socket.Connection{
+		ConnSocket: conn,
+	}
 	log.Println("socket connected to session: ", id)
 }
 
@@ -32,16 +35,17 @@ func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocke
 	partnerID := GetPartnerID(sessionID)
 	partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
 	if exist {
+		partnerSocket := partnerConn.ConnSocket
 		log.Printf("partner cient %s been force closed\n", sessionID)
-		partnerConn.WriteMessage(websocket.TextMessage, []byte("-1"))
+		partnerSocket.WriteMessage(websocket.TextMessage, []byte("-1"))
 	}
 	conn.WriteMessage(websocket.TextMessage, []byte("-1"))
 	delete(ctx.SocketStore.ConnectionsMap, sessionID)
 	log.Println("socket remove connection to session: ", sessionID)
 }
 
-func GetPartnerID(selfID session.SessionID) (session.SessionID) {
-	if (len(selfID) != 5) {
+func GetPartnerID(selfID session.SessionID) session.SessionID {
+	if len(selfID) != 5 {
 		fmt.Print("here")
 		return session.InvalidSessionID
 	}
@@ -60,13 +64,13 @@ func GetPartnerID(selfID session.SessionID) (session.SessionID) {
 	return partnerID
 }
 
-func GetPairID(selfID session.SessionID) (session.SessionID) {
+func GetPairID(selfID session.SessionID) session.SessionID {
 	return selfID[0 : len(selfID)-1]
 }
 
 func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request) {
 	sessionID := session.SessionID(r.URL.Query().Get(paramID))
-	if (len(sessionID) != 5) {
+	if len(sessionID) != 5 {
 		http.Error(w, "failed to open websocket connection", http.StatusUnauthorized)
 		return
 	}
@@ -91,7 +95,7 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 			}
 			log.Printf("client %s operate \n", id)
 			//conn.WriteMessage(websocket.TextMessage, p)
-			partnerID:= GetPartnerID(id)
+			partnerID := GetPartnerID(id)
 
 			if messageType == websocket.TextMessage {
 				partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
@@ -100,7 +104,13 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 					conn.WriteMessage(websocket.TextMessage, []byte("-2"))
 					break
 				}
-				partnerConn.WriteMessage(websocket.TextMessage, p)
+				partnerSocket := partnerConn.ConnSocket
+				partnerConn.Lock.Lock()
+				err = partnerSocket.WriteMessage(websocket.TextMessage, p)
+				if err != nil {
+					log.Printf("concurrent write %v \n", err)
+				}
+				partnerConn.Lock.Unlock()
 			} else if messageType == websocket.CloseMessage {
 				log.Printf("close message received from cient %s \n", id)
 				delete(ctx.SessionStore.SessionMap, GetPairID(sessionID))
