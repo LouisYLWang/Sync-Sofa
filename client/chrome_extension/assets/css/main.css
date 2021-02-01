@@ -854,6 +854,10 @@ button,
     src:url(../webfonts/fa-solid-900.ttf) format("truetype")}.fa,.far,.fas{font-family:"Font Awesome 5 Free"}.fa,.fas{font-weight:900}
 
 
+  #switchs {
+    display: flex;
+    justify-content: space-evenly;
+  }
     
   .switch {
     position: relative;
@@ -923,7 +927,7 @@ button,
 
   .swichgroup {    
     display: inline-block;
-    margin-left: 15px;
+    margin-right: 20px;
   }
 
   #stopbutton {

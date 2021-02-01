@@ -183,9 +183,11 @@ class chat {
         var curLeftPos = this.chatButton.getBoundingClientRect().left.toString();
         var curTopPos = this.chatButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
-        this.chatButton.classList.toggle("chat-shake");
-        this.chatButton.style.top = curTopPos + "px";
-        this.chatButton.style.left = curLeftPos + "px";
+        if (!this.chatButton.classList.contains("video-shake")) {
+           this.chatButton.classList.add("chat-shake");
+           this.chatButton.style.top = curTopPos + "px";
+           this.chatButton.style.left = curLeftPos + "px";
+        }
     }
 
 
@@ -596,9 +598,11 @@ class videoCaller {
         var curLeftPos = this.videoButton.getBoundingClientRect().left.toString();
         var curTopPos = this.videoButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
-        this.videoButton.classList.toggle("video-shake");
-        this.videoButton.style.top = curTopPos + "px";
-        this.videoButton.style.left = curLeftPos + "px";
+        if (!this.videoButton.classList.contains("video-shake")) {
+            this.videoButton.classList.toggle("video-shake");
+            this.videoButton.style.top = curTopPos + "px";
+            this.videoButton.style.left = curLeftPos + "px";
+        }
     }
 
     videoControlMousemovementListener() {
