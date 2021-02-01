@@ -287,21 +287,15 @@ class chat {
     }
 
     toggleChatDisplay() {
-        chrome.storage.local.get(['statuschat'], result => {
-            if (!result.statuschat) {
+        chrome.storage.local.get(['chat'], result => {
+            if (result.chat) {
                 this.chatButton.style.display = "block";
                 this.chatButton.style.left = "90%";
                 this.chatButton.style.top = "90%";
-                chrome.storage.local.set({
-                    'statuschat': true
-                });
             } else {
                 this.chatButton.style.display = "none";
                 this.chatPopup.style.display = "none";
                 this.statuschat = false;
-                chrome.storage.local.set({
-                    'statuschat': false
-                });
             }
         });
     }
@@ -681,21 +675,15 @@ class videoCaller {
     }
 
     toggleVideoDisplay() {
-        chrome.storage.local.get(['statusvideo'], result => {
-            if (!result.statusvideo) {
+        chrome.storage.local.get(['video'], result => {
+            if (result.video) {
                 this.videoButton.style.display = "block";
                 this.videoButton.style.left = "90%";
                 this.videoButton.style.top = "80%";
-                chrome.storage.local.set({
-                    'statusvideo': true
-                });
             } else {
                 this.videoButton.style.display = "none";
                 this.videoPopup.style.display = "none";
                 this.statusvideo = false;
-                chrome.storage.local.set({
-                    'statusvideo': false
-                });
             }
         });
     }
@@ -855,6 +843,7 @@ class SyncHelper {
             default:
                 break;
         }
+        videoHandler.hangup();
     }
 
     handleSessions() {
@@ -1585,12 +1574,12 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSCHAT) {
             chatHandler.toggleChatDisplay();
-            sendResponse({ "body": syncTool.status });
+            sendResponse({ "body": syncTool == undefined ? null : syncTool.status });
         }
 
         if (request.status === STATUSVIDEO) {
             videoHandler.toggleVideoDisplay();
-            sendResponse({ "body": syncTool.status });
+            sendResponse({ "body": syncTool == undefined ? null : syncTool.status });
         }
 
         if (request.status == STATUSASK) {

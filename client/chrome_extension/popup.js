@@ -25,24 +25,24 @@ const STATUSMESSAGE = "message"
 var apihost = "app.ylwang.me"
 var protocol = "https"
 //var statuschat;
-chrome.storage.local.get("statuschat", result => {
-    if (result.statuschat == undefined) {
+chrome.storage.local.get("chat", result => {
+    if (result.chat == undefined) {
         chrome.storage.local.set({
-            'statuschat': false
+            'chat': false
         });
     } else {
-        chatbutton.checked = result.statuschat;
+        chatbutton.checked = result.chat;
     }
 })
 
-chrome.storage.local.get("statusvideo", result => {
-    console.log(result.statusvideo);
-    if (result.statusvideo == undefined) {
+chrome.storage.local.get("video", result => {
+    console.log(result.video);
+    if (result.video == undefined) {
         chrome.storage.local.set({
-            'statusvideo': false
+            'video': false
         });
     } else {
-        videotbutton.checked = result.statusvideo;
+        videotbutton.checked = result.video;
     }
 })
 
@@ -98,9 +98,12 @@ stopbutton.addEventListener("click", e => {
 
 chatbutton.addEventListener("change", e => {
     e.preventDefault();
-    chrome.storage.local.get(['statuschat'], result => {
-        console.log(result.statuschat);
-        chatbutton.checked = !result.statuschat;
+    chrome.storage.local.get(['chat'], result => {
+        console.log(result.chat);
+        chatbutton.checked = !result.chat;
+        chrome.storage.local.set({
+            'chat': !result.chat
+        });
     });
     sentMsgToContent(STATUSCHAT);
 })
@@ -115,9 +118,12 @@ chatbutton.addEventListener("change", e => {
 
 videotbutton.addEventListener("change", e => {
     e.preventDefault();
-    chrome.storage.local.get(['statusvideo'], result => {
-        console.log(result.statusvideo);
-        videotbutton.checked = !result.statusvideo;
+    chrome.storage.local.get(['video'], result => {
+        console.log(result.video);
+        videotbutton.checked = !result.video;
+        chrome.storage.local.set({
+            'video': !result.video
+        });
     });
     sentMsgToContent(STATUSVIDEO);
 })
@@ -295,5 +301,7 @@ function initialize() {
         }
     });
     sentMsgToContent(STATUSASK);
+    sentMsgToContent(STATUSVIDEO);
+    sentMsgToContent(STATUSCHAT);
 }
 initialize();
