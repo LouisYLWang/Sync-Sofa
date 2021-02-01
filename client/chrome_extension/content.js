@@ -331,7 +331,7 @@ class videoCaller {
     callState = false;
 
     constructor() {
-        
+
         this.addVideoStyle()
         this.renderVideoIcon();
         this.renderVideoPopup();
@@ -360,7 +360,7 @@ class videoCaller {
         this.listenDrag();
     }
 
-    initRTCPeerConnection() {      
+    initRTCPeerConnection() {
         var configuration = {
             // free servers from https://gist.github.com/yetithefoot/7592580
             iceServers: [
@@ -383,7 +383,7 @@ class videoCaller {
                 { urls: 'stun:stun.voipbuster.com' },
                 { urls: 'stun:stun.voipstunt.com' },
                 { urls: 'stun:stun.voxgratia.org' },
-                { urls: 'stun:stun.xten.com' }, 
+                { urls: 'stun:stun.xten.com' },
                 {
                     urls: 'turn:numb.viagenie.ca',
                     credential: 'muazkh',
@@ -401,7 +401,7 @@ class videoCaller {
                 }
             ]
         };
-        this.peerConnection = new RTCPeerConnection(configuration)  
+        this.peerConnection = new RTCPeerConnection(configuration)
     }
 
     setUpPeerConnection() {
@@ -466,8 +466,8 @@ class videoCaller {
         this.toggleVideoUIstate();
         const videoTracks = this.stream.getVideoTracks();
         videoTracks.forEach(videoTrack => {
-          videoTrack.stop();
-          this.stream.removeTrack(videoTrack);
+            videoTrack.stop();
+            this.stream.removeTrack(videoTrack);
         });
         this.videoControlDailHangBtn.textContent = "dial";
         this.videoControl.style.display = "block";
@@ -542,7 +542,7 @@ class videoCaller {
                 <button type="button" id="videoControl-collapse" class="videoControlButton">hide self</button>
             </div>
         `;
-        
+
         this.videoControl = document.querySelector("#videoControl");
         this.videoControlCollapseBtn = document.querySelector("#videoControl-collapse");
         this.videoControlDailHangBtn = document.querySelector("#videoControl-dialhang");
@@ -698,7 +698,7 @@ class videoCaller {
                 });
             }
         });
-    }   
+    }
 }
 videoHandler = new videoCaller();
 
@@ -721,7 +721,7 @@ class SyncHelper {
     PLAYCODE = "-4";
     PAUSECODE = "-5";
     WAITINGCODE = "-6";
-    DAILCODE = "-7"; 
+    DAILCODE = "-7";
     HANGUPCODE = "-8";
     ALLCODE = {
         "-1": "CLOSEDCODE",
@@ -807,6 +807,31 @@ class SyncHelper {
             that.checkSpeed();
         })
     }
+    handleEvent(e) {
+        // console.log(e);
+        switch (e.type) {
+            case "waiting":
+                e.stopPropagation();
+                let buffered = false;
+                let BufferedInvLen = video.buffered.length;
+                var i;
+                for (i = 0; i < BufferedInvLen; i++) {
+                    buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
+                }
+                if (!buffered) {
+                    this.send(this.WAITINGCODE);
+                }
+                break;
+            case "canplay":
+                e.stopPropagation();
+                video.play();
+                break;
+            default:
+                e.stopPropagation();
+                this.sync();
+                break;
+        }
+    }
 
     close() {
         this.send(this.CLOSEDCODE);
@@ -818,6 +843,11 @@ class SyncHelper {
         SyncHelper.updateIcon();
         switch (this.type) {
             case "video":
+                video.removeEventListener("pause", this, true);
+                video.removeEventListener("play", this, true);
+                video.removeEventListener("seeking", this, true);
+                video.removeEventListener("waiting", this, true);
+                video.removeEventListener("canplay", this, true);
                 break;
             case "vlc":
                 clearInterval(this.VLCTimer);
@@ -832,36 +862,11 @@ class SyncHelper {
         switch (this.type) {
             case "video":
                 video = document.querySelector('video');
-                video.addEventListener("pause", (e) => {
-                    e.stopPropagation();
-                    that.sync();
-                })
-
-                video.addEventListener("play", (e) => {
-                    e.stopPropagation();
-                    that.sync();
-                })
-
-                video.addEventListener("waiting", (e) => {
-                    e.stopPropagation();
-                    let buffered = false;
-                    let BufferedInvLen = video.buffered.length;
-                    var i;
-                    for (i = 0; i < BufferedInvLen; i++) {
-                        buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
-                    }
-                    if (!buffered) {
-                        that.send(this.WAITINGCODE);
-                        video.addEventListener('canplay', (e) => {
-                            e.stopPropagation();
-                            video.play();
-                        });
-                    }
-                })
-                video.onseeking = function () {
-                    // video.pause();
-                    that.sync();
-                }
+                video.addEventListener("pause", this, true);
+                video.addEventListener("play", this, true);
+                video.addEventListener("seeking", this, true);
+                video.addEventListener("waiting", this, true);
+                video.addEventListener("canplay", this, true);
                 break;
             case "vlc":
                 this.handleVLC();
@@ -958,7 +963,7 @@ class SyncHelper {
                         break;
                 }
                 break;
-            
+
             case this.CALLMESSAGE:
                 Debugger.log(`RECEIVED CALL MESSAGE`);
                 switch (message.content) {
@@ -1545,11 +1550,11 @@ document.addEventListener('fullscreenchange', (event) => {
         fullscreenElement.appendChild(this.chatHandler.chatPopup);
         fullscreenElement.appendChild(this.videoHandler.videoButton);
         fullscreenElement.appendChild(this.videoHandler.videoPopup);
-      console.log(`Element: ${document.fullscreenElement.id} entered full-screen mode.`);
+        console.log(`Element: ${document.fullscreenElement.id} entered full-screen mode.`);
     } else {
-      console.log('Leaving full-screen mode.');
+        console.log('Leaving full-screen mode.');
     }
-  });
+});
 
 
 
