@@ -394,6 +394,19 @@ Make sure docker service is runing on your server, make change to the script blo
 
 ## Release History
 
+### v1.0.10
+🛠 update on 02 Feb 2021
+---
+⚠️⚠️⚠️ ALL CODE can be found on [https://github.com/LouisYLWang/Sync-Sofa](https://github.com/LouisYLWang/Sync-Sofa), ENJOY Video Calling and don't worry we won't gather anything from you.
+
+Add:
+1. Video call support.
+
+Fix:
+1. Fix bug about close connection, now you can reconnect immdediately without refreshing current page.(`Auto reconnect` will be coming soon~)
+2. UI changed.
+3. Fix bug about video buffering.
+
 ### v1.0.9 
 🛠 update on 14 Aug 2020
 ---
@@ -597,7 +610,7 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 ## 设置
 
-😊 此部分为可选设置，我们已经为你配置好默认服务器，如果你不感兴趣，或者没有修改服务器的需求，请移步至[下一部分](#usage).
+😊 此部分为可选设置，我们已经为你配置好默认服务器，如果你不感兴趣，或者没有修改服务器的需求，请移步至[下一部分](#使用说明).
 
 ### 服务器列表
 
