@@ -12,6 +12,7 @@ var urlPattern = [
     "http://127.0.0.1/*",
     "http://music.jsososo.com/*",
     "https://v.douyu.com/*",
+    "https://www.xuetangx.com/*",
     "https://w.mgtv.com/*",
     "https://www.ixigua.com/*",
     "https://music.youtube.com/*",
