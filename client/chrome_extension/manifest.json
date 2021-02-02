@@ -15,14 +15,24 @@
                 "https://duonaolive.com/*",
                 "https://v.qq.com/*",
                 "https://www.iqiyi.com/*",
+                "https://www.iq.com/*",
                 "https://www.weiyun.com/*",
-                "https://www.youtube.com/watch?*",
+                "https://www.youtube.com/*",
                 "https://v.youku.com/*",
                 "https://www.mgtv.com/*",
                 "http://127.0.0.1/*",
                 "http://music.jsososo.com/*",
                 "https://v.douyu.com/*",
                 "https://www.xuetangx.com/*",
+                "https://w.mgtv.com/*",
+                "https://www.ixigua.com/*",
+                "https://music.youtube.com/*",
+                "https://vimeo.com/*",
+                "https://www.acfun.cn/*",
+                "https://www.dandanzan.cc/*",
+                "https://*.zoom.us/*",
+                "https://*.panopto.com/*",
+                "https://www.coursera.org/*",
                 "file:///*"
             ],
             "run_at": "document_end",
@@ -30,6 +40,10 @@
                 "sweetalert.min.js",
                 "interact.min.js",
                 "content.js"
+            ],
+            "css": [
+                "/assets/css/chat.css",
+                "/assets/css/vidcall.css"
             ]
         }
     ],
@@ -48,5 +62,9 @@
         "scripts" : ["background.js"],  
         "persistent" : false  
     },
-    "options_page": "options.html"
+    "options_page": "options.html",
+    "web_accessible_resources": [
+        "/images/no_video_local.png",
+        "/images/no_video_remote.png"
+      ]
 }

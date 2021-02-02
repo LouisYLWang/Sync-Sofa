@@ -10,6 +10,7 @@ var syncTool = null;
 const STATUSSTART = "start"
 const STATUSEND = "end"
 const STATUSCHAT = "chat"
+const STATUSVIDEO = "video"
 const STATUSCONNECT = "connect"
 const STATUSSYNC = "sync"
 const STATUSASK = "ask"
@@ -28,7 +29,7 @@ var video = null;
 // video = document.querySelector('video');
 var websocket = null;
 var systemNotification = false;
-
+var videoHandler = null;
 // Date format function
 Date.prototype.format = function (formatStr) {
     var str = formatStr;
@@ -102,217 +103,7 @@ class chat {
         // load new style
         var chatButtonStyle = document.createElement('style');
         chatButtonStyle.type = 'text/css';
-        chatButtonStyle.textContent = `
-        #chatbutton {
-            position: fixed;
-            z-index: 999999;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            background-color: #1fcaa7;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-            border-width: 0;
-            top: 90%;
-            left: 90%;
-            outline:none;
-            cursor: pointer;
-            text-align: center;
-            opacity: 0.25;
-            -webkit-transform: translate(0px, 0px);
-                transform: translate(0px, 0px);
-            display: none;
-        }
-        
-        #chatbutton:hover {
-            opacity: 1;
-        }
-
-        #chatbutton.showpopup {
-            background-color: #1cb495;
-            top: 90%;
-            left: 90%;
-            opacity: 1;
-        }
-    
-        #chatbutton > svg{
-            position: absolute;
-            top: 11px;
-            left: 11px;
-        }
-    
-        .bg-primary{
-            background-color: #1cb495;
-        }
-    
-        #chatpopup {
-            z-index: 999998;
-            position: fixed;
-            bottom: 10%;
-            right: 10%;
-            width: 300px;
-            height: 500px;
-            border-radius: 1%;
-            padding-right: 10px;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-            background-color: white;
-            overflow: hidden;
-        }
-    
-        #chatpopup:hover {
-            overflow-y: scroll;
-            overflow-y: overlay;
-        }
-    
-        .putIn {
-            width: 280px;
-            height: 48px;
-            position: sticky;
-            padding: 4px;
-            background-color: whitesmoke;
-            left: 10px;
-            border-radius: 7px;
-            bottom: 10px;
-            top: 432px;
-          }
-          .chatpopup-input {
-            border: 0;
-            height: 34px;
-            margin: 3px;
-            margin-right: 0;
-            transition: border-color 0.2s ease, background-color 0.2s ease;
-            background-color: transparent;
-            border-radius: 6px;
-            border: solid 2px rgba(165, 151, 151, 0.35);
-            color: inherit;
-            outline: 0;
-            text-decoration: none;
-            width: 195px;
-            padding-left: 5px;
-            margin-left: 5px;
-          }
-    
-          .chatpopup-sent {
-            width: 54px;
-            margin: 6px;
-            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-            background-color: #1cb495;
-            border-radius: 6px;
-            border: 0;
-            color: #ffffff !important;
-            cursor: pointer;
-            display: inline-block;
-            font-size: 12px;
-            height: 36px;
-            text-align: center;
-            text-decoration: none;
-            white-space: nowrap;
-            outline:none;
-          }
-    
-          .chatpopup-input:hover {
-            border: solid 2px #1cb495;
-        }
-    
-          .putIn button:hover {
-            background-color: #1fcaa7;
-          }
-    
-          .chatlist {
-            margin-top: 20px;
-            padding: 0 5px 15px 16px;
-          }
-          .chatlist p.time {
-            margin: 0;
-            text-align: center;
-          }
-          .chatlist p.time span {
-            padding: 0 18px;
-            display: inline-block;
-            font-size: 11px;
-            color: #fff;
-            border-radius: 10px;
-            background-color: #dcdcdc;
-            margin-bottom: 10px;
-          }
-          .chatlist .chatout,
-          .chatlist .chatin {
-            margin: 10px 0;
-          }
-
-          .chatlist .chatout {
-            text-align: right;
-          }
-    
-          .chatlist .chatout span {
-            display: inline-block;
-            position: relative;
-            padding: 8px;
-            /* max-width: calc(100% - 90px); */
-            /* min-height: 10%; */
-            line-height: 20px;
-            font-size: 13px;
-            word-break: break-all;
-            border-radius: 7px;
-            background-color: #1cb495;
-            color: #fff;
-            text-align: left;
-          }
-          .chatlist .chatout span:before {
-            content: " ";
-            position: absolute;
-            top: 9px;
-            left: 100%;
-            border: 6px solid transparent;
-            border-left-color: #1cb495;
-          }
-    
-          .chatlist .chatin span {
-            display: inline-block;
-            position: relative;
-            padding: 8px;
-            /* max-width: calc(100% - 90px); */
-            /* min-height: 10%; */
-            line-height: 20px;
-            font-size: 13px;
-            word-break: break-all;
-            border-radius: 7px;
-            text-align: left;
-            background-color: #cccac7;
-            margin-right: 5px;
-          }
-          .chatlist .chatin span:before {
-            content: " ";
-            position: absolute;
-            top: 9px;
-            right: 100%;
-            border: 6px solid transparent;
-            border-right-color: #cccac7;
-          }
-        @-webkit-keyframes chat-shake {
-            0% { -webkit-transform: translate(2px, 1px) rotate(0deg); opacity: 1;} 
-            10% { -webkit-transform: translate(-1px, -2px) rotate(-1deg); opacity: 1;}
-            20% { -webkit-transform: translate(-3px, 0px) rotate(1deg); opacity: 1;}
-            30% { -webkit-transform: translate(0px, 2px) rotate(0deg); opacity: 1;}
-            40% { -webkit-transform: translate(1px, -1px) rotate(1deg); opacity: 1;}
-            50% { -webkit-transform: translate(-1px, 2px) rotate(-1deg); opacity: 1;}
-            60% { -webkit-transform: translate(-3px, 1px) rotate(0deg); opacity: 1;}
-            70% { -webkit-transform: translate(2px, 1px) rotate(-1deg); opacity: 1;}
-            80% { -webkit-transform: translate(-1px, -1px) rotate(1deg); opacity: 1;}
-            90% { -webkit-transform: translate(2px, 2px) rotate(0deg); opacity: 1;}
-            100% { -webkit-transform: translate(1px, -2px) rotate(-1deg); opacity: 1;}
-        }
-        .chat-shake {
-            -webkit-animation-name: chat-shake;
-            -webkit-animation-duration: 0.5s;
-            -webkit-transform-origin:50% 50%;
-            -webkit-animation-iteration-count: infinite;
-        }
-        .chat-shake {
-            opacity: 1;
-            display:inline-block;
-        }
-          
-        `;
+        chatButtonStyle.textContent = chrome.runtime.getURL("/assets/css/chat.css");
         document.head.appendChild(chatButtonStyle);
     }
     renderChatIcon() {
@@ -387,13 +178,16 @@ class chat {
         this.renderMessage(message, "chatout");
         this.chatSentInput.value = "";
     }
+
     notification() {
         var curLeftPos = this.chatButton.getBoundingClientRect().left.toString();
         var curTopPos = this.chatButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
-        this.chatButton.classList.toggle("chat-shake");
-        this.chatButton.style.top = curTopPos + "px";
-        this.chatButton.style.left = curLeftPos + "px";
+        if (!this.chatButton.classList.contains("video-shake")) {
+           this.chatButton.classList.add("chat-shake");
+           this.chatButton.style.top = curTopPos + "px";
+           this.chatButton.style.left = curLeftPos + "px";
+        }
     }
 
 
@@ -437,6 +231,12 @@ class chat {
         interact('.chatbutton')
             .draggable({
                 autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
                 cursorChecker() {
                     // don't set a cursor for drag actions
                     return null
@@ -455,6 +255,12 @@ class chat {
         interact('.chatpopup')
             .draggable({
                 autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
                 cursorChecker() {
                     // don't set a cursor for drag actions
                     return null
@@ -483,21 +289,15 @@ class chat {
     }
 
     toggleChatDisplay() {
-        chrome.storage.local.get(['statuschat'], result => {
-            if (!result.statuschat) {
+        chrome.storage.local.get(['chat'], result => {
+            if (result.chat) {
                 this.chatButton.style.display = "block";
                 this.chatButton.style.left = "90%";
                 this.chatButton.style.top = "90%";
-                chrome.storage.local.set({
-                    'statuschat': true
-                });
             } else {
                 this.chatButton.style.display = "none";
                 this.chatPopup.style.display = "none";
                 this.statuschat = false;
-                chrome.storage.local.set({
-                    'statuschat': false
-                });
             }
         });
     }
@@ -511,12 +311,388 @@ class chat {
 
 var chatHandler = new chat();
 
+class videoCaller {
+    peerConnection = null;
+    videoControl = null;
+    videoControlCollapseBtn = null
+    videoControlDailHangBtn = null
+    localVideo = null;
+    remoteVideo = null;
+    videoButton = document.createElement("button");
+    videoPopup = document.createElement("div");
+    statusvideo = false;
+    localStream = null;
 
+    localVideoDisplayState = true;
+    callState = false;
 
+    constructor() {
 
+        this.addVideoStyle()
+        this.renderVideoIcon();
+        this.renderVideoPopup();
 
+        this.videoControlCollapseBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            if (this.localVideoDisplayState) {
+                this.localVideo.style.display = "none";
+                this.videoControlCollapseBtn.textContent = "view self"
+                this.localVideoDisplayState = false;
+            } else {
+                this.localVideo.style.display = "block";
+                this.videoControlCollapseBtn.textContent = "hide self"
+                this.localVideoDisplayState = true;
+            }
+        })
 
+        this.videoControlDailHangBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.toggleCallHangUp();
+        })
 
+        chrome.storage.local.set({
+            'statusvideo': false
+        });
+        this.listenDrag();
+    }
+
+    initRTCPeerConnection() {
+        var configuration = {
+            // free servers from https://gist.github.com/yetithefoot/7592580
+            iceServers: [
+                { urls: 'stun:stun.noblogs.org:3478' },
+                { urls: 'stun:stun01.sipphone.com' },
+                { urls: 'stun:stun.ekiga.net' },
+                { urls: 'stun:stun.fwdnet.net' },
+                { urls: 'stun:stun.ideasip.com' },
+                { urls: 'stun:stun.iptel.org' },
+                { urls: 'stun:stun.rixtelecom.se' },
+                { urls: 'stun:stun.schlund.de' },
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                { urls: 'stun:stunserver.org' },
+                { urls: 'stun:stun.softjoys.com' },
+                { urls: 'stun:stun.voiparound.com' },
+                { urls: 'stun:stun.voipbuster.com' },
+                { urls: 'stun:stun.voipstunt.com' },
+                { urls: 'stun:stun.voxgratia.org' },
+                { urls: 'stun:stun.xten.com' },
+                {
+                    urls: 'turn:numb.viagenie.ca',
+                    credential: 'muazkh',
+                    username: 'webrtc@live.com'
+                },
+                {
+                    url: 'turn:192.158.29.39:3478?transport=udp',
+                    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                    username: '28224511:1379330808'
+                },
+                {
+                    url: 'turn:192.158.29.39:3478?transport=tcp',
+                    credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                    username: '28224511:1379330808'
+                }
+            ]
+        };
+        this.peerConnection = new RTCPeerConnection(configuration)
+    }
+
+    setUpPeerConnection() {
+        // Setup ice handling
+        this.peerConnection.onicecandidate = function (event) {
+            if (event.candidate) {
+                syncTool.send({
+                    event: "candidate",
+                    data: event.candidate
+                }, "4")
+            }
+        }
+    }
+
+    createOffer() {
+        Debugger.log(`WEBRTC: created Offer`, 'color: blue;');
+        const offerOptions = {
+            offerToReceiveAudio: 1,
+            offerToReceiveVideo: 1
+        };
+        this.peerConnection.createOffer(offerOptions).then(offer => {
+            syncTool.send({
+                event: "offer",
+                data: offer
+            }, "4")
+            this.peerConnection.setLocalDescription(offer);
+        })
+    }
+
+    handleOffer(offer) {
+        this.peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+        // create and send an answer to an offer
+        this.peerConnection.createAnswer().then((answer) => {
+            this.peerConnection.setLocalDescription(answer);
+            syncTool.send({
+                event: "answer",
+                data: answer
+            }, "4")
+        }
+        )
+    };
+
+    handleCandidate(candidate) {
+        this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+    };
+
+    handleAnswer(answer) {
+        this.peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        Debugger.log(`WEBRTC: connection established successfully`, 'color: blue;');
+    };
+
+    sendMessage() {
+        this.dataChannel.send(input.value);
+        input.value = "";
+    }
+
+    hangup() {
+        this.peerConnection.close();
+        this.localVideo.srcObject = null;
+        this.remoteVideo.srcObject = null;
+        this.toggleVideoUIstate();
+        const videoTracks = this.stream.getVideoTracks();
+        videoTracks.forEach(videoTrack => {
+            videoTrack.stop();
+            this.stream.removeTrack(videoTrack);
+        });
+        this.videoControlDailHangBtn.textContent = "dial";
+        this.videoControl.style.display = "block";
+        this.callState = false;
+    }
+
+    call() {
+        this.callState = true;
+        this.videoControl.style.display = "none";
+        this.videoControlDailHangBtn.textContent = "hang up";
+        this.videoControlMousemovementListener();
+        navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: true
+        }).then(stream => {
+            this.stream = stream;
+            this.localVideo.srcObject = stream;
+            stream.getTracks().forEach((track) => {
+                Debugger.log(`WEBRTC: Sent local stream`, 'color: blue;');
+                this.peerConnection.addTrack(track, stream);
+            })
+            this.createOffer()
+        }).catch(e => {
+            switch (e.name) {
+                case "NotFoundError":
+                    SyncHelper.notification("Unable to open your call because no camera and/or microphone were found.");
+                    break;
+                case "SecurityError":
+                case "PermissionDeniedError":
+                    // Do nothing; this is the same as the user canceling the call.
+                    break;
+                default:
+                    SyncHelper.notification("Error opening your camera and/or microphone");
+                    Debugger.log("Error opening your camera and/or microphone: " + e.message);
+                    break;
+            }
+        });
+    }
+
+    // Video UI
+    addVideoStyle() {
+        // load new style
+        var videoButtonStyle = document.createElement('style');
+        videoButtonStyle.type = 'text/css';
+        videoButtonStyle.textContent = chrome.runtime.getURL("/assets/css/vidcall.css");
+        document.head.appendChild(videoButtonStyle);
+    }
+
+    renderVideoIcon() {
+        // render video icon
+        var videoButton = this.videoButton;
+        videoButton.setAttribute("id", "videobutton");
+        videoButton.setAttribute("class", "videobutton");
+        videoButton.textContent = "test";
+        document.body.parentNode.appendChild(videoButton);
+        videoButton.innerHTML = `<svg t="1603522170062" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1299" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"><defs><style type="text/css"></style></defs><path d="M782.378667 106.666667a42.666667 42.666667 0 0 1 42.666666 42.666666v170.666667a42.666667 42.666667 0 0 1-42.666666 42.666667h-213.333334a42.666667 42.666667 0 0 1-42.666666-42.666667v-170.666667a42.666667 42.666667 0 0 1 42.666666-42.666666h213.333334z m149.333333 34.56a21.333333 21.333333 0 0 1 21.333333 21.333333v144.213333a21.333333 21.333333 0 0 1-30.890666 19.114667L825.173333 277.333333v-85.333333l97.024-48.554667a21.333333 21.333333 0 0 1 9.557334-2.261333zM732.032 748.245333a42.666667 42.666667 0 0 1 17.877333 53.845334c-13.568 36.181333-27.264 61.184-41.130666 75.050666a149.290667 149.290667 0 0 1-145.450667 38.357334 637.056 637.056 0 0 1-322.176-174.122667 637.013333 637.013333 0 0 1-174.08-322.218667 149.248 149.248 0 0 1 38.314667-145.408c13.866667-13.866667 38.869333-27.562667 75.008-41.088a42.666667 42.666667 0 0 1 53.802666 17.834667l99.84 172.928c11.349333 19.626667 5.546667 37.76-13.397333 56.746667-16.469333 14.762667-29.866667 25.216-40.192 31.402666 21.12 39.168 48.256 75.989333 81.365333 109.098667 33.152 33.152 69.973333 60.288 109.226667 81.450667 4.522667-8.746667 15.018667-22.058667 31.488-40.064 16-16 33.194667-23.978667 51.968-15.957334l4.608 2.304 172.928 99.84z" p-id="1300" fill="#cac8c7"></path></svg>`;
+    }
+
+    renderVideoPopup() {
+        // render video popup
+        var videoPopup = this.videoPopup;
+        videoPopup.id = "videopopup";
+        videoPopup.setAttribute("class", "videopopup");
+        videoPopup.style.display = "none";
+        document.body.parentNode.appendChild(videoPopup);
+
+        videoPopup.innerHTML = `
+            <video id="remoteVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_remote.png")}></video>
+            <video id="localVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_local.png")} muted></video>
+            <div id="videoControl">
+                <button type="button" id="videoControl-dialhang" class="videoControlButton">dial</button>
+                <button type="button" id="videoControl-collapse" class="videoControlButton">hide self</button>
+            </div>
+        `;
+
+        this.videoControl = document.querySelector("#videoControl");
+        this.videoControlCollapseBtn = document.querySelector("#videoControl-collapse");
+        this.videoControlDailHangBtn = document.querySelector("#videoControl-dialhang");
+        this.localVideo = document.getElementById('localVideo');
+        this.remoteVideo = document.getElementById('remoteVideo');
+    }
+
+    toggleCallHangUp() {
+        if (this.callState) {
+            syncTool.send(syncTool.HANGUPCODE, "5");
+            this.hangup();
+            //this.videoControlDailHangBtn.style.backgroundColor = "#e14334";
+        } else {
+            this.initRTCPeerConnection();
+            syncTool.send(syncTool.DAILCODE, "5");
+            this.setUpPeerConnection();
+            this.call();
+            this.peerConnection.ontrack = event => {
+                Debugger.log(`WEBRTC: Ontracked remote video steam`, 'color: blue;');
+                this.remoteVideo.srcObject = event.streams[0];
+            };
+            //this.videoControlDailHangBtn.style.backgroundColor = "#e14334";
+        }
+        // this.videoButton.classList.toggle('showpopup');
+        this.videoButton.className = 'videobutton';
+    }
+
+    async toggleVideoUIstate() {
+        var videoButton = this.videoButton;
+        var videoPopup = this.videoPopup;
+        this.videoButton.style.top = "80%";
+        this.videoButton.style.left = "90%";
+        if (this.videoButton.classList.contains('video-shake')) {
+            this.videoButton.classList.remove('video-shake');
+            this.videoButton.classList.toggle('showpopup');
+            // this.videoButton.className = 'videobutton';
+            this.call();
+        }
+
+        if (!this.isVideoPopup()) {
+            videoButton.innerHTML = `<svg t="1593111631184" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27674" width="30" height="30"><path d="M378.965333 512l-272.213333-272.213333a85.333333 85.333333 0 0 1 0-120.746667l12.288-12.373333a85.333333 85.333333 0 0 1 120.746667 0L512 378.965333l272.213333-272.213333a85.333333 85.333333 0 0 1 120.746667 0l12.373333 12.288a85.333333 85.333333 0 0 1 0 120.746667L645.034667 512l272.213333 272.213333a85.333333 85.333333 0 0 1 0 120.746667l-12.288 12.373333a85.333333 85.333333 0 0 1-120.746667 0L512 645.034667l-272.213333 272.213333a85.333333 85.333333 0 0 1-120.746667 0l-12.373333-12.288a85.333333 85.333333 0 0 1 0-120.746667L378.965333 512z" p-id="27675" fill="#cac8c7"></path></svg>`;
+            videoPopup.style.display = "block";
+        } else {
+            videoPopup.style.display = "none";
+            videoButton.innerHTML = `<svg t="1603522170062" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1299" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"><defs><style type="text/css"></style></defs><path d="M782.378667 106.666667a42.666667 42.666667 0 0 1 42.666666 42.666666v170.666667a42.666667 42.666667 0 0 1-42.666666 42.666667h-213.333334a42.666667 42.666667 0 0 1-42.666666-42.666667v-170.666667a42.666667 42.666667 0 0 1 42.666666-42.666666h213.333334z m149.333333 34.56a21.333333 21.333333 0 0 1 21.333333 21.333333v144.213333a21.333333 21.333333 0 0 1-30.890666 19.114667L825.173333 277.333333v-85.333333l97.024-48.554667a21.333333 21.333333 0 0 1 9.557334-2.261333zM732.032 748.245333a42.666667 42.666667 0 0 1 17.877333 53.845334c-13.568 36.181333-27.264 61.184-41.130666 75.050666a149.290667 149.290667 0 0 1-145.450667 38.357334 637.056 637.056 0 0 1-322.176-174.122667 637.013333 637.013333 0 0 1-174.08-322.218667 149.248 149.248 0 0 1 38.314667-145.408c13.866667-13.866667 38.869333-27.562667 75.008-41.088a42.666667 42.666667 0 0 1 53.802666 17.834667l99.84 172.928c11.349333 19.626667 5.546667 37.76-13.397333 56.746667-16.469333 14.762667-29.866667 25.216-40.192 31.402666 21.12 39.168 48.256 75.989333 81.365333 109.098667 33.152 33.152 69.973333 60.288 109.226667 81.450667 4.522667-8.746667 15.018667-22.058667 31.488-40.064 16-16 33.194667-23.978667 51.968-15.957334l4.608 2.304 172.928 99.84z" p-id="1300" fill="#cac8c7"></path></svg>`;
+        }
+    }
+
+    isVideoPopup() {
+        if (this.videoPopup.style.display != "none") {
+            return true;
+        }
+        return false;
+    }
+
+    notification() {
+        var curLeftPos = this.videoButton.getBoundingClientRect().left.toString();
+        var curTopPos = this.videoButton.getBoundingClientRect().top.toString();
+        // css animation from https://stackoverflow.com/a/36964181/13182099
+        if (!this.videoButton.classList.contains("video-shake")) {
+            this.videoButton.classList.toggle("video-shake");
+            this.videoButton.style.top = curTopPos + "px";
+            this.videoButton.style.left = curLeftPos + "px";
+        }
+    }
+
+    videoControlMousemovementListener() {
+        this.videoPopup.addEventListener("mouseover", (e) => {
+            e.stopPropagation();
+            this.videoControl.style.display = "block";
+        })
+
+        this.videoPopup.addEventListener("mouseout", (e) => {
+            e.stopPropagation();
+            this.videoControl.style.display = "none";
+        })
+    }
+
+    listenDrag() {
+        interact('.videobutton')
+            .draggable({
+                autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+            .on("tap", (e) => {
+                this.toggleVideoUIstate();
+                e.preventDefault();
+                e.currentTarget.classList.toggle('showpopup');
+            })
+
+        interact('.videopopup')
+            .draggable({
+                autoScroll: false,
+                // modifiers: [
+                //     interact.modifiers.restrictRect({
+                //       restriction: 'parent',
+                //       endOnly: true
+                //     })
+                // ],
+                cursorChecker() {
+                    // don't set a cursor for drag actions
+                    return null
+                },
+                listeners: {
+                    // call this function on every dragmove event
+                    move: this.dragMoveListener
+                }
+            })
+    }
+
+    dragMoveListener(event) {
+        var target = event.target
+        // keep the dragged position in the data-x/data-y attributes
+        var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx
+        var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy
+
+        // translate the element
+        target.style.webkitTransform =
+            target.style.transform =
+            'translate(' + x + 'px, ' + y + 'px)'
+
+        // update the posiion attributes
+        target.setAttribute('data-x', x)
+        target.setAttribute('data-y', y)
+    }
+
+    toggleVideoDisplay() {
+        chrome.storage.local.get(['video'], result => {
+            if (result.video) {
+                this.videoButton.style.display = "block";
+                this.videoButton.style.left = "90%";
+                this.videoButton.style.top = "80%";
+            } else {
+                this.videoButton.style.display = "none";
+                this.videoPopup.style.display = "none";
+                this.statusvideo = false;
+            }
+        });
+    }
+}
+videoHandler = new videoCaller();
 
 var operationFlag = 0;
 
@@ -537,26 +713,34 @@ class SyncHelper {
     PLAYCODE = "-4";
     PAUSECODE = "-5";
     WAITINGCODE = "-6";
+    DAILCODE = "-7";
+    HANGUPCODE = "-8";
     ALLCODE = {
         "-1": "CLOSEDCODE",
         "-2": "DISCONNECTCODE",
         "-3": "HELLOCODE",
         "-4": "PLAYCODE",
         "-5": "PAUSECODE",
-        "-6": "WAITINGCODE"
+        "-6": "WAITINGCODE",
+        "-7": "DAILCODE",
+        "-8": "HANGUPCODE"
     };
     SYSTEMMESSAGE = "1";
     CHATMESSAGE = "2";
     SYNCMESSAGE = "3";
+    SIGNALINGMESSAGE = "4";
+    CALLMESSAGE = "5";
     MESSAGETYPE = {
         "1": "SYSTEMMESSAGE",
         "2": "CHATMESSAGE",
-        "3": "SYNCMESSAGE"
+        "3": "SYNCMESSAGE",
+        "4": "SIGNALINGMESSAGE",
+        "5": "CALLMESSAGE"
     }
     socketLock = false;
     ackFlag = false;
     heartBeatTimer = [null, null, null, null];
-    heartBeatTimes = [1, 7, 20, 60];
+    heartBeatTimes = [1, 7, 20, 30];
     VLCTimer = null;
     VLCStatus = "paused";
     VLCTime = 0;
@@ -566,7 +750,7 @@ class SyncHelper {
     socketTimer = null;
     speed = 1;
     rateTimer = null;
-
+    videoHandler = null;
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
@@ -615,6 +799,31 @@ class SyncHelper {
             that.checkSpeed();
         })
     }
+    handleEvent(e) {
+        // console.log(e);
+        switch (e.type) {
+            case "waiting":
+                e.stopPropagation();
+                let buffered = false;
+                let BufferedInvLen = video.buffered.length;
+                var i;
+                for (i = 0; i < BufferedInvLen; i++) {
+                    buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
+                }
+                if (!buffered) {
+                    this.send(this.WAITINGCODE);
+                }
+                break;
+            case "canplay":
+                e.stopPropagation();
+                video.play();
+                break;
+            default:
+                e.stopPropagation();
+                this.sync();
+                break;
+        }
+    }
 
     close() {
         this.send(this.CLOSEDCODE);
@@ -626,6 +835,11 @@ class SyncHelper {
         SyncHelper.updateIcon();
         switch (this.type) {
             case "video":
+                video.removeEventListener("pause", this, true);
+                video.removeEventListener("play", this, true);
+                video.removeEventListener("seeking", this, true);
+                video.removeEventListener("waiting", this, true);
+                video.removeEventListener("canplay", this, true);
                 break;
             case "vlc":
                 clearInterval(this.VLCTimer);
@@ -633,6 +847,7 @@ class SyncHelper {
             default:
                 break;
         }
+        videoHandler.hangup();
     }
 
     handleSessions() {
@@ -640,37 +855,11 @@ class SyncHelper {
         switch (this.type) {
             case "video":
                 video = document.querySelector('video');
-                video.addEventListener("pause", (e) => {
-                    e.stopPropagation();
-
-                    that.sync();
-                })
-
-                video.addEventListener("play", (e) => {
-                    e.stopPropagation();
-                    that.sync();
-                })
-
-                video.addEventListener("waiting", (e) => {
-                    e.stopPropagation();
-                    let buffered = false;
-                    let BufferedInvLen = video.buffered.length;
-                    var i;
-                    for (i = 0; i < BufferedInvLen; i++) {
-                        buffered |= (video.buffered.start(i) <= video.currentTime + 5 && video.currentTime + 5 <= video.buffered.end(i));
-                    }
-                    if (!buffered) {
-                        that.send(this.WAITINGCODE);
-                        video.addEventListener('canplay', (e) => {
-                            e.stopPropagation();
-                            video.play();
-                        });
-                    }
-                })
-                video.onseeking = function () {
-                    // video.pause();
-                    that.sync();
-                }
+                video.addEventListener("pause", this, true);
+                video.addEventListener("play", this, true);
+                video.addEventListener("seeking", this, true);
+                video.addEventListener("waiting", this, true);
+                video.addEventListener("canplay", this, true);
                 break;
             case "vlc":
                 this.handleVLC();
@@ -738,6 +927,51 @@ class SyncHelper {
             case this.SYNCMESSAGE:
                 this.handleSyncMessage(message.content);
                 break;
+
+            case this.SIGNALINGMESSAGE:
+                Debugger.log(`RECEIVED SIGNALING MESSAGE: ${this.ALLCODE[message.content]}`);
+                var data = message.content.data;
+                switch (message.content.event) {
+                    case "offer":
+                        if (videoHandler.peerConnection == null || videoHandler.peerConnection.signalingState == "closed") {
+                            videoHandler.initRTCPeerConnection();
+                            videoHandler.peerConnection.ontrack = event => {
+                                Debugger.log(`WEBRTC: Ontracked remote video steam`, 'color: blue;');
+                                videoHandler.remoteVideo.srcObject = event.streams[0];
+                            };
+                            if (videoHandler.isVideoPopup()) {
+                                videoHandler.call();
+                            }
+                        }
+                        videoHandler.handleOffer(data);
+                        break;
+                    case "answer":
+                        videoHandler.handleAnswer(data);
+                        break;
+                    // when a remote peer sends an ice candidate to us
+                    case "candidate":
+                        videoHandler.handleCandidate(data);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+            case this.CALLMESSAGE:
+                Debugger.log(`RECEIVED CALL MESSAGE`);
+                switch (message.content) {
+                    case this.DAILCODE:
+                        if (!videoHandler.isVideoPopup()) {
+                            videoHandler.notification();
+                        }
+                        break;
+
+                    case this.HANGUPCODE:
+                        videoHandler.hangup();
+                        SyncHelper.notification("video call hang up by peer!");
+                        break;
+                }
+
             default:
                 break;
         }
@@ -797,7 +1031,8 @@ class SyncHelper {
             "isPlay": isplay,
             "currentTime": currentTime,
             "rate": rate,
-            "ack": this.ackFlag
+            "ack": this.ackFlag,
+            "timestamp": (new Date()).getTime()
         }, this.SYNCMESSAGE);
     }
 
@@ -882,6 +1117,10 @@ class SyncHelper {
         this.socketLock = true;
 
         var changeFlag = false;
+
+        if (content.timestamp != undefined) {
+            content.currentTime += ((new Date()).getTime() - content.timestamp) / 1000;
+        }
 
         switch (this.type) {
             case "video":
@@ -1221,9 +1460,7 @@ class SyncHelper {
                 encodeURIComponent(param) + "=" + encodeURIComponent(data[param])
             );
         }
-        // console.log(arr);
         arr.push(("randomNumber=" + Math.random()).replace("."));
-        // console.log(arr);
         return arr.join("&");
     }
 
@@ -1296,6 +1533,21 @@ if (!isVLC()) {
         }, 500);
 }
 
+document.addEventListener('fullscreenchange', (event) => {
+    // document.fullscreenElement will point to the element that
+    // is in fullscreen mode if there is one. If there isn't one,
+    // the value of the property is null.
+    if (document.fullscreenElement) {
+        var fullscreenElement = document.fullscreenElement;
+        fullscreenElement.appendChild(this.chatHandler.chatButton);
+        fullscreenElement.appendChild(this.chatHandler.chatPopup);
+        fullscreenElement.appendChild(this.videoHandler.videoButton);
+        fullscreenElement.appendChild(this.videoHandler.videoPopup);
+        console.log(`Element: ${document.fullscreenElement.id} entered full-screen mode.`);
+    } else {
+        console.log('Leaving full-screen mode.');
+    }
+});
 
 
 
@@ -1311,6 +1563,9 @@ chrome.runtime.onMessage.addListener(
             } else {
                 syncTool = new SyncHelper(request.body, request.message);
             }
+            if (syncTool != null) {
+                sendResponse({ "body": syncTool.status });
+            }
         }
 
         if (request.status === STATUSEND) {
@@ -1323,6 +1578,12 @@ chrome.runtime.onMessage.addListener(
 
         if (request.status === STATUSCHAT) {
             chatHandler.toggleChatDisplay();
+            sendResponse({ "body": syncTool == undefined ? null : syncTool.status });
+        }
+
+        if (request.status === STATUSVIDEO) {
+            videoHandler.toggleVideoDisplay();
+            sendResponse({ "body": syncTool == undefined ? null : syncTool.status });
         }
 
         if (request.status == STATUSASK) {
