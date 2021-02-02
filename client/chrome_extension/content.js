@@ -518,7 +518,7 @@ class videoCaller {
         videoButton.setAttribute("id", "videobutton");
         videoButton.setAttribute("class", "videobutton");
         videoButton.textContent = "test";
-        document.body.appendChild(videoButton);
+        document.body.parentNode.appendChild(videoButton);
         videoButton.innerHTML = `<svg t="1603522170062" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1299" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"><defs><style type="text/css"></style></defs><path d="M782.378667 106.666667a42.666667 42.666667 0 0 1 42.666666 42.666666v170.666667a42.666667 42.666667 0 0 1-42.666666 42.666667h-213.333334a42.666667 42.666667 0 0 1-42.666666-42.666667v-170.666667a42.666667 42.666667 0 0 1 42.666666-42.666666h213.333334z m149.333333 34.56a21.333333 21.333333 0 0 1 21.333333 21.333333v144.213333a21.333333 21.333333 0 0 1-30.890666 19.114667L825.173333 277.333333v-85.333333l97.024-48.554667a21.333333 21.333333 0 0 1 9.557334-2.261333zM732.032 748.245333a42.666667 42.666667 0 0 1 17.877333 53.845334c-13.568 36.181333-27.264 61.184-41.130666 75.050666a149.290667 149.290667 0 0 1-145.450667 38.357334 637.056 637.056 0 0 1-322.176-174.122667 637.013333 637.013333 0 0 1-174.08-322.218667 149.248 149.248 0 0 1 38.314667-145.408c13.866667-13.866667 38.869333-27.562667 75.008-41.088a42.666667 42.666667 0 0 1 53.802666 17.834667l99.84 172.928c11.349333 19.626667 5.546667 37.76-13.397333 56.746667-16.469333 14.762667-29.866667 25.216-40.192 31.402666 21.12 39.168 48.256 75.989333 81.365333 109.098667 33.152 33.152 69.973333 60.288 109.226667 81.450667 4.522667-8.746667 15.018667-22.058667 31.488-40.064 16-16 33.194667-23.978667 51.968-15.957334l4.608 2.304 172.928 99.84z" p-id="1300" fill="#cac8c7"></path></svg>`;
     }
 
@@ -528,7 +528,7 @@ class videoCaller {
         videoPopup.id = "videopopup";
         videoPopup.setAttribute("class", "videopopup");
         videoPopup.style.display = "none";
-        document.body.appendChild(videoPopup);
+        document.body.parentNode.appendChild(videoPopup);
 
         videoPopup.innerHTML = `
             <video id="remoteVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_remote.png")}></video>
