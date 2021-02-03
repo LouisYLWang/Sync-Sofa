@@ -185,13 +185,14 @@ class chat {
                 text-align: center;
             }
             .chatlist p.time span {
-                padding: 0 18px;
+                padding: 3px 18px;
                 display: inline-block;
                 font-size: 11px;
                 color: #fff;
                 border-radius: 10px;
                 background-color: #dcdcdc;
                 margin-bottom: 10px;
+                white-space: initial;
             }
             .chatlist .chatout,
             .chatlist .chatin {
@@ -215,6 +216,7 @@ class chat {
                 background-color: #1cb495;
                 color: #fff;
                 text-align: left;
+                white-space: initial;
             }
             .chatlist .chatout span:before {
                 content: " ";
@@ -238,6 +240,7 @@ class chat {
                 text-align: left;
                 background-color: #cccac7;
                 margin-right: 5px;
+                white-space: initial;
             }
             .chatlist .chatin span:before {
                 content: " ";
