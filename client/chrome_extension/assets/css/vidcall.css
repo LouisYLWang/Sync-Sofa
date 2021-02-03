@@ -47,85 +47,16 @@
     bottom: 15%;
     right: 10%;
     width: 300px;
-    height: 513px;
+    height: 515px;
     border-radius: 1%;
     background-color: #ffffff00;
+    flex-direction: column;
 }
 
 #videopopup > video {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
 }
 
-#videoControl {
-    width: 100%;
-    height: 48px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
-    background-color: whitesmoke;
-    border-radius: 7px;
-    -webkit-transform: translate(0px, 0px);
-    transform: translate(0px, 0px);
-    display: block;
-    transition: max-height 0.2s ease-in-out;
-}
-
-/* .videoControlButton {
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-    border-radius: 6px;
-    border: 0;
-    color: #ffffff !important;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    height: 36px;
-    text-align: center;
-    text-decoration: none;
-    white-space: nowrap;
-    outline:none;
-} */
-
-#videoControl-dialhang {
-    width: 46.5%;
-    margin: 6px 0 6px 6px;
-    background-color: #e14334;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-    border-radius: 6px;
-    border: 0;
-    color: #ffffff !important;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    height: 36px;
-    text-align: center;
-    text-decoration: none;
-    white-space: nowrap;
-    outline:none;
-}
-
-#videoControl-dialhang:hover {
-    background-color: #e85d51;
-}
-
-#videoControl-collapse {
-    width: 46.5%;
-    margin: 6px 0 6px 6px;
-    background-color: #1cb495;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
-    border-radius: 6px;
-    border: 0;
-    color: #ffffff !important;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 12px;
-    height: 36px;
-    text-align: center;
-    text-decoration: none;
-    white-space: nowrap;
-    outline:none;
-}
-
-#videoControl-collapse:hover {
-    background-color: #1fcaa7;
-}
 
 @-webkit-keyframes video-shake {
     0% { -webkit-transform: translate(2px, 1px) rotate(0deg); opacity: 1;} 
@@ -151,20 +82,3 @@
     display:inline-block;
 }
   
-video#localVideo {
-    height: 225px;
-    width: 100%;
-    border-radius: 3%;
-    transition: max-height 0.2s ease-in-out;
-    background-color: aliceblue;
-    transform: rotateY(180deg);
-    position: relative;
-}
-
-video#remoteVideo {
-    height: 225px;
-    width: 100%;
-    border-radius: 3%;
-    background-color: aliceblue;
-    position: relative;
-}

@@ -122,10 +122,138 @@ class chat {
         chatPopup.setAttribute("class", "chatpopup");
         chatPopup.style.display = "none";
         document.body.appendChild(chatPopup);
+        var chatPopupStyle = `
+            .putIn {
+                width: fit-content;
+                height: 48px;
+                position: sticky;
+                padding: 4px;
+                background-color: whitesmoke;
+                left: 5px;
+                border-radius: 7px;
+                bottom: 4px;
+                top: 432px;
+            }
+            .chatpopup-input {
+                border: 0;
+                height: 34px;
+                margin: 3px;
+                margin-right: 0;
+                transition: border-color 0.2s ease, background-color 0.2s ease;
+                background-color: transparent;
+                border-radius: 6px;
+                border: solid 2px rgba(165, 151, 151, 0.35);
+                color: inherit;
+                outline: 0;
+                text-decoration: none;
+                width: 195px;
+                padding-left: 5px;
+                margin-left: 5px;
+            }
+            
+            .chatpopup-sent {
+                width: 54px;
+                margin: 6px;
+                transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+                background-color: #1cb495;
+                border-radius: 6px;
+                border: 0;
+                color: #ffffff !important;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 12px;
+                height: 36px;
+                text-align: center;
+                text-decoration: none;
+                white-space: nowrap;
+                outline:none;
+            }
+            
+            .chatpopup-input:hover {
+                border: solid 2px #1cb495;
+            }
+            
+            .putIn button:hover {
+                background-color: #1fcaa7;
+            }
+            
+            .chatlist {
+                padding: 13px;
+            }
+            .chatlist p.time {
+                margin: 0;
+                text-align: center;
+            }
+            .chatlist p.time span {
+                padding: 0 18px;
+                display: inline-block;
+                font-size: 11px;
+                color: #fff;
+                border-radius: 10px;
+                background-color: #dcdcdc;
+                margin-bottom: 10px;
+            }
+            .chatlist .chatout,
+            .chatlist .chatin {
+                margin: 10px 0;
+            }
+            
+            .chatlist .chatout {
+                text-align: right;
+            }
+            
+            .chatlist .chatout span {
+                display: inline-block;
+                position: relative;
+                padding: 8px;
+                /* max-width: calc(100% - 90px); */
+                /* min-height: 10%; */
+                line-height: 20px;
+                font-size: 13px;
+                word-break: break-all;
+                border-radius: 7px;
+                background-color: #1cb495;
+                color: #fff;
+                text-align: left;
+            }
+            .chatlist .chatout span:before {
+                content: " ";
+                position: absolute;
+                top: 9px;
+                left: 100%;
+                border: 6px solid transparent;
+                border-left-color: #1cb495;
+            }
+            
+            .chatlist .chatin span {
+                display: inline-block;
+                position: relative;
+                padding: 8px;
+                /* max-width: calc(100% - 90px); */
+                /* min-height: 10%; */
+                line-height: 20px;
+                font-size: 13px;
+                word-break: break-all;
+                border-radius: 7px;
+                text-align: left;
+                background-color: #cccac7;
+                margin-right: 5px;
+            }
+            .chatlist .chatin span:before {
+                content: " ";
+                position: absolute;
+                top: 9px;
+                right: 100%;
+                border: 6px solid transparent;
+                border-right-color: #cccac7;
+            }
+        `
 
-        chatPopup.innerHTML = `
+        chatPopup.attachShadow({mode:'open'}).innerHTML = `
         <!-- message box -->
-    
+        <style>
+            ${chatPopupStyle}
+        </style>
         <div class="chatlist">
             <p class="time"><span>waiting for the partner</span></p>
         </div>
@@ -135,9 +263,9 @@ class chat {
             <button type="button" class="chatpopup-sent">send</button>
         </div>
         `;
-        this.chatSentButton = document.querySelector(".chatpopup-sent");
-        this.chatSentInput = document.querySelector(".chatpopup-input");
-        this.chatList = document.querySelector(".chatlist");
+        this.chatSentButton = chatPopup.shadowRoot.querySelector(".chatpopup-sent");
+        this.chatSentInput = chatPopup.shadowRoot.querySelector(".chatpopup-input");
+        this.chatList = chatPopup.shadowRoot.querySelector(".chatlist");
     }
 
     toggleChatUIstate() {
@@ -529,8 +657,103 @@ class videoCaller {
         videoPopup.setAttribute("class", "videopopup");
         videoPopup.style.display = "none";
         document.body.parentNode.appendChild(videoPopup);
+        var videoPopupStyle = `
+            #videoControl {
+                width: 100%;
+                height: 48px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+                background-color: whitesmoke;
+                border-radius: 7px;
+                -webkit-transform: translate(0px, 0px);
+                transform: translate(0px, 0px);
+                display: block;
+                transition: max-height 0.2s ease-in-out;
+            }
+            
+            /* .videoControlButton {
+                transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+                border-radius: 6px;
+                border: 0;
+                color: #ffffff !important;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 12px;
+                height: 36px;
+                text-align: center;
+                text-decoration: none;
+                white-space: nowrap;
+                outline:none;
+            } */
+            
+            #videoControl-dialhang {
+                width: 46.5%;
+                margin: 6px 0 6px 6px;
+                background-color: #e14334;
+                transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+                border-radius: 6px;
+                border: 0;
+                color: #ffffff !important;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 12px;
+                height: 36px;
+                text-align: center;
+                text-decoration: none;
+                white-space: nowrap;
+                outline:none;
+            }
+            
+            #videoControl-dialhang:hover {
+                background-color: #e85d51;
+            }
+            
+            #videoControl-collapse {
+                width: 46.5%;
+                margin: 6px 0 6px 6px;
+                background-color: #1cb495;
+                transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+                border-radius: 6px;
+                border: 0;
+                color: #ffffff !important;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 12px;
+                height: 36px;
+                text-align: center;
+                text-decoration: none;
+                white-space: nowrap;
+                outline:none;
+            }
+            
+            #videoControl-collapse:hover {
+                background-color: #1fcaa7;
+            }
 
-        videoPopup.innerHTML = `
+            video#localVideo {
+                height: 225px;
+                width: 100%;
+                border-radius: 3%;
+                transition: max-height 0.2s ease-in-out;
+                background-color: aliceblue;
+                transform: rotateY(180deg);
+                position: relative;
+                margin-bottom: 5px;
+            }
+            
+            video#remoteVideo {
+                height: 225px;
+                width: 100%;
+                border-radius: 3%;
+                background-color: aliceblue;
+                position: relative;
+                margin-bottom: 5px;
+            }
+        `
+
+        videoPopup.attachShadow({mode:'open'}).innerHTML = `
+            <style>
+                ${videoPopupStyle}
+            </style>
             <video id="remoteVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_remote.png")}></video>
             <video id="localVideo" playsinline autoplay poster=${chrome.runtime.getURL("/images/no_video_local.png")} muted></video>
             <div id="videoControl">
@@ -539,11 +762,11 @@ class videoCaller {
             </div>
         `;
 
-        this.videoControl = document.querySelector("#videoControl");
-        this.videoControlCollapseBtn = document.querySelector("#videoControl-collapse");
-        this.videoControlDailHangBtn = document.querySelector("#videoControl-dialhang");
-        this.localVideo = document.getElementById('localVideo');
-        this.remoteVideo = document.getElementById('remoteVideo');
+        this.videoControl = videoPopup.shadowRoot.querySelector("#videoControl");
+        this.videoControlCollapseBtn = videoPopup.shadowRoot.querySelector("#videoControl-collapse");
+        this.videoControlDailHangBtn = videoPopup.shadowRoot.querySelector("#videoControl-dialhang");
+        this.localVideo = videoPopup.shadowRoot.getElementById('localVideo');
+        this.remoteVideo = videoPopup.shadowRoot.getElementById('remoteVideo');
     }
 
     toggleCallHangUp() {
@@ -580,7 +803,7 @@ class videoCaller {
 
         if (!this.isVideoPopup()) {
             videoButton.innerHTML = `<svg t="1593111631184" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="27674" width="30" height="30"><path d="M378.965333 512l-272.213333-272.213333a85.333333 85.333333 0 0 1 0-120.746667l12.288-12.373333a85.333333 85.333333 0 0 1 120.746667 0L512 378.965333l272.213333-272.213333a85.333333 85.333333 0 0 1 120.746667 0l12.373333 12.288a85.333333 85.333333 0 0 1 0 120.746667L645.034667 512l272.213333 272.213333a85.333333 85.333333 0 0 1 0 120.746667l-12.288 12.373333a85.333333 85.333333 0 0 1-120.746667 0L512 645.034667l-272.213333 272.213333a85.333333 85.333333 0 0 1-120.746667 0l-12.373333-12.288a85.333333 85.333333 0 0 1 0-120.746667L378.965333 512z" p-id="27675" fill="#cac8c7"></path></svg>`;
-            videoPopup.style.display = "block";
+            videoPopup.style.display = "flex";
         } else {
             videoPopup.style.display = "none";
             videoButton.innerHTML = `<svg t="1603522170062" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1299" xmlns:xlink="http://www.w3.org/1999/xlink" width="30"><defs><style type="text/css"></style></defs><path d="M782.378667 106.666667a42.666667 42.666667 0 0 1 42.666666 42.666666v170.666667a42.666667 42.666667 0 0 1-42.666666 42.666667h-213.333334a42.666667 42.666667 0 0 1-42.666666-42.666667v-170.666667a42.666667 42.666667 0 0 1 42.666666-42.666666h213.333334z m149.333333 34.56a21.333333 21.333333 0 0 1 21.333333 21.333333v144.213333a21.333333 21.333333 0 0 1-30.890666 19.114667L825.173333 277.333333v-85.333333l97.024-48.554667a21.333333 21.333333 0 0 1 9.557334-2.261333zM732.032 748.245333a42.666667 42.666667 0 0 1 17.877333 53.845334c-13.568 36.181333-27.264 61.184-41.130666 75.050666a149.290667 149.290667 0 0 1-145.450667 38.357334 637.056 637.056 0 0 1-322.176-174.122667 637.013333 637.013333 0 0 1-174.08-322.218667 149.248 149.248 0 0 1 38.314667-145.408c13.866667-13.866667 38.869333-27.562667 75.008-41.088a42.666667 42.666667 0 0 1 53.802666 17.834667l99.84 172.928c11.349333 19.626667 5.546667 37.76-13.397333 56.746667-16.469333 14.762667-29.866667 25.216-40.192 31.402666 21.12 39.168 48.256 75.989333 81.365333 109.098667 33.152 33.152 69.973333 60.288 109.226667 81.450667 4.522667-8.746667 15.018667-22.058667 31.488-40.064 16-16 33.194667-23.978667 51.968-15.957334l4.608 2.304 172.928 99.84z" p-id="1300" fill="#cac8c7"></path></svg>`;
