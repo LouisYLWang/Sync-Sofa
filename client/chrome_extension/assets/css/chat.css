@@ -53,6 +53,7 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
     background-color: white;
     overflow: hidden;
+    padding: 10px;
 }
 
 #chatpopup:hover {
@@ -61,14 +62,14 @@
 }
 
 .putIn {
-    width: 280px;
+    width: fit-content;
     height: 48px;
     position: sticky;
     padding: 4px;
     background-color: whitesmoke;
-    left: 10px;
+    left: 5px;
     border-radius: 7px;
-    bottom: 10px;
+    bottom: 4px;
     top: 432px;
   }
   .chatpopup-input {
@@ -115,8 +116,7 @@
   }
 
   .chatlist {
-    margin-top: 20px;
-    padding: 0 5px 15px 16px;
+    padding: 13px;
   }
   .chatlist p.time {
     margin: 0;

@@ -55,7 +55,6 @@
     },
     "page_action":{
         "default_icon": "/icons/icon128_on.png",
-        "default_title": "Only support youtube, bilibili, iqiyi, tencent video, \nyouku, dandanzan, duonaolive, weiyun and local \nmp4 file.Please click when you on sites above.",
         "default_popup": "popup.html"
     },
     "background": {
