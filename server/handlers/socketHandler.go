@@ -29,9 +29,9 @@ func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn) 
 func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocket.Conn) {
 	ctx.SocketStore.Lock.Lock()
 	defer ctx.SocketStore.Lock.Unlock()
-	//defer delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
+	defer delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
 	usrID, roomID := GetSelfIDs(sessionID)
-	for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++{
+	for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
 		partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
 		partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
 		if exist {
@@ -53,7 +53,7 @@ func GetSelfIDs(selfID session.SessionID) (session.SessionID, session.SessionID)
 	return usrID, roomID
 }
 
-func GetRoomID(selfID session.SessionID) (session.SessionID) {
+func GetRoomID(selfID session.SessionID) session.SessionID {
 	return selfID[0 : len(selfID)-1]
 }
 
@@ -83,7 +83,7 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 			log.Printf("client %s operate \n", id)
 			//conn.WriteMessage(websocket.TextMessage, p)
 			_, roomID := GetSelfIDs(sessionID)
-			for i := 0; i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++{
+			for i := 0; i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
 				partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
 				if messageType == websocket.TextMessage {
 					partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
