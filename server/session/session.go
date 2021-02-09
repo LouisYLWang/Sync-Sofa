@@ -1,6 +1,7 @@
 package session
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"regexp"
@@ -17,13 +18,13 @@ type (
 	SessionID string
 
 	Store struct {
-		SessionMap      map[SessionID]*Pair
+		SessionMap      map[SessionID]*Room
 		SessionDuration time.Duration
 		Lock            sync.Mutex
 	}
 
-	Pair struct {
-		PairID    SessionID `json:"pairID,omitempty"`
+	Room struct {
+		RoomID    SessionID `json:"roomID,omitempty"`
 		UsrNum    int       `json:"usrNum,omitempty"`
 		BeginTime time.Time `json:"beginTime,omitempty"`
 	}
@@ -31,91 +32,96 @@ type (
 
 func NewStore(sessionDuration time.Duration) *Store {
 	return &Store{
-		SessionMap:      make(map[SessionID]*Pair),
+		SessionMap:      make(map[SessionID]*Room),
 		SessionDuration: sessionDuration,
 	}
 }
 
-func RandStringBytesRmndr(n int, pairID string) string {
+func RandStringBytesRmndr(n int, roomID string) string {
 	bytes := make([]byte, n)
 	for i := range bytes {
 		bytes[i] = letterBytes[rand.Int63()%int64(len(letterBytes))]
 	}
-	return (pairID + string(bytes))[0:4]
+	return (roomID + string(bytes))[0:4]
 }
 
-// should be create pair
+// should be create room
 func (s Store) CreateHostSession() (SessionID, error) {
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
-	pairID := SessionID(RandStringBytesRmndr(idLength,""))
-	newPair := &Pair{
-		PairID: pairID,
+	roomID := SessionID(RandStringBytesRmndr(idLength,""))
+	newRoom := &Room{
+		RoomID: roomID,
 		UsrNum: 1,
 	}
-	s.SessionMap[pairID] = newPair
-	log.Printf("add pair %s", pairID)
-	hostSessionID := pairID + "0"
-	log.Printf("add session %s to pair %s", hostSessionID, pairID)
+	s.SessionMap[roomID] = newRoom
+	log.Printf("add room %s", roomID)
+	hostSessionID := roomID + "0"
+	log.Printf("add session %s to room %s", hostSessionID, roomID)
 	return hostSessionID, nil
 }
 
-// should be removeSessionAndPair
-func (s Store) RemoveSession(pairID SessionID) {
+// should be removeSessionAndRoom
+func (s Store) RemoveSession(roomID SessionID) {
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
 
-	if pair, pairExist := s.SessionMap[pairID]; pairExist {
-		if pair.UsrNum == 1 {
-			delete(s.SessionMap, pairID)
-			log.Printf("remove pair %s", pairID)
+	if room, roomExist := s.SessionMap[roomID]; roomExist {
+		if room.UsrNum == 1 {
+			delete(s.SessionMap, roomID)
+			log.Printf("remove room %s", roomID)
 		} else {
-			pair.UsrNum--
+			room.UsrNum--
 		}
 		return
 	} else {
-		log.Printf("remove a non-existing pair %s", pairID)
+		log.Printf("remove a non-existing room %s", roomID)
 		return
 	}
 }
 
-// change to join pair
-func (s Store) BeginSessions(pairID SessionID) (SessionID, error, bool) {
-	if (len(pairID) < 4){
-		pairID = SessionID(RandStringBytesRmndr(idLength, string(pairID)))
+// change to join room
+func (s Store) BeginSessions(roomID SessionID) (SessionID, error, bool) {
+	if (len(roomID) < 4){
+		roomID = SessionID(RandStringBytesRmndr(idLength, string(roomID)))
 	}
 
-	pairID = pairID[0:4]
+	roomID = roomID[0:4]
 	s.Lock.Lock()
 	defer s.Lock.Unlock()
-	if _, pairExist := s.SessionMap[pairID]; pairExist {
-		pair := s.SessionMap[pairID]
-		if pair.UsrNum == 1 {
-			pair.UsrNum++
-			pair.BeginTime = time.Now()
-			questSessionID := pairID + "1"
-			log.Printf("add session %s to pair %s", questSessionID, pairID)
-			return questSessionID, nil, pairExist
-		} else {
-			log.Printf("full pair")
-			return InvalidSessionID, nil, pairExist
-		}
+	if _, roomExist := s.SessionMap[roomID]; roomExist {
+		room := s.SessionMap[roomID]
+		//if room.UsrNum == 1 {
+		//	room.UsrNum++
+		//	room.BeginTime = time.Now()
+		//	guestSessionID := roomID + "1"
+		//	log.Printf("add session %s to room %s", guestSessionID, roomID)
+		//	return guestSessionID, nil, roomExist
+		//} else {
+		//	log.Printf("full room")
+		//	return InvalidSessionID, nil, roomExist
+		//}
+		room.UsrNum++
+		room.BeginTime = time.Now()
+		guestSessionID := SessionID(fmt.Sprintf("%s%d", roomID, room.UsrNum - 1))
+		log.Printf("add session %s to room %s", guestSessionID, roomID)
+		return guestSessionID, nil, roomExist
 	} else {
 		//validation
 		pattern := `[a-z0-9]{4}`
-		 if !regexp.MustCompile(pattern).MatchString(string(pairID)) {
-			 log.Printf("invalid pairID")
-			 pairID = ""
+		 if !regexp.MustCompile(pattern).MatchString(string(roomID)) {
+			 log.Printf("invalid roomID")
+			 roomID = ""
 		 }
-		pairID := SessionID(RandStringBytesRmndr(idLength, string(pairID)))
-		newPair := &Pair{
-			PairID: pairID,
+		roomID := SessionID(RandStringBytesRmndr(idLength, string(roomID)))
+		newRoom := &Room{
+			RoomID: roomID,
 			UsrNum: 1,
 		}
-		s.SessionMap[pairID] = newPair
-		log.Printf("add pair %s", pairID)
-		hostSessionID := pairID + "0"
-		log.Printf("add session %s to pair %s", hostSessionID, pairID)
-		return hostSessionID, nil, pairExist
+		s.SessionMap[roomID] = newRoom
+		log.Printf("add room %s", roomID)
+		hostSessionID := roomID + "0"
+		log.Printf("add session %s to room %s", hostSessionID, roomID)
+		return hostSessionID, nil, roomExist
 	}
 }

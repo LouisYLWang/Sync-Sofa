@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/LouisYLWang/Sync-Sofa/server/session"
 	"log"
 	"net/http"
@@ -60,6 +61,7 @@ func (ctx *Context) SessionSpecificHandler(w http.ResponseWriter, r *http.Reques
 		}
 
 	case http.MethodDelete:
+		fmt.Println("test here!")
 		ctx.SessionStore.RemoveSession(pairID)
 		w.WriteHeader(http.StatusOK)
 
