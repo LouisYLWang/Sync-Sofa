@@ -10,6 +10,7 @@ var urlPattern = [
     "https://v.youku.com/*",
     "https://www.mgtv.com/*",
     "http://127.0.0.1/*",
+    "http://localhost/*",
     "http://music.jsososo.com/*",
     "https://v.douyu.com/*",
     "https://www.xuetangx.com/*",
@@ -22,6 +23,7 @@ var urlPattern = [
     "https://*.zoom.us/*",
     "https://*.panopto.com/*",
     "https://www.coursera.org/*",
+    "https://www.aliyundrive.com/*",
     "file:///*"
 ];
 
