@@ -57,8 +57,6 @@ func GetRoomID(selfID session.SessionID) (session.SessionID) {
 	return selfID[0 : len(selfID)-1]
 }
 
-func LeaveRoom()
-
 func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request) {
 	sessionID := session.SessionID(r.URL.Query().Get(paramID))
 	if len(sessionID) != 5 {
