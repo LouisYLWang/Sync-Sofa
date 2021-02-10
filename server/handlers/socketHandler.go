@@ -29,19 +29,26 @@ func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn) 
 func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocket.Conn) {
 	ctx.SocketStore.Lock.Lock()
 	defer ctx.SocketStore.Lock.Unlock()
-	defer delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
-	usrID, roomID := GetSelfIDs(sessionID)
-	for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
-		partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
-		partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
-		if exist {
-			log.Printf("partner cient %s been force closed\n", sessionID)
-			partnerConn.WriteMessage(websocket.TextMessage, []byte("-1"))
-		}
-		conn.WriteMessage(websocket.TextMessage, []byte("-1"))
-		delete(ctx.SocketStore.ConnectionsMap, sessionID)
-		log.Println("socket remove connection to session: ", sessionID)
+	// defer delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
+	_, roomID := GetSelfIDs(sessionID)
+	ctx.SessionStore.SessionMap[roomID].UsrNum--
+	delete(ctx.SocketStore.ConnectionsMap, sessionID)
+	log.Println("socket remove connection to session: %s", sessionID)
+	if ctx.SessionStore.SessionMap[roomID].UsrNum == 0 {
+		delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
+		log.Println("socket remove connection to session: %s", roomID)
 	}
+	// for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
+	// 	partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
+	// 	partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
+	// 	// if exist {
+	// 	// 	log.Printf("partner cient %s been force closed\n", sessionID)
+	// 	// 	partnerConn.WriteMessage(websocket.TextMessage, []byte("-1"))
+	// 	// }
+	// 	conn.WriteMessage(websocket.TextMessage, []byte("-1"))
+	// 	delete(ctx.SocketStore.ConnectionsMap, sessionID)
+	// 	log.Println("socket remove connection to session: ", sessionID)
+	// }
 }
 
 func GetSelfIDs(selfID session.SessionID) (session.SessionID, session.SessionID) {
@@ -82,8 +89,8 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 			}
 			log.Printf("client %s operate \n", id)
 			//conn.WriteMessage(websocket.TextMessage, p)
-			_, roomID := GetSelfIDs(sessionID)
-			for i := 0; i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
+			usrID, roomID := GetSelfIDs(sessionID)
+			for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
 				partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
 				if messageType == websocket.TextMessage {
 					partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
@@ -92,7 +99,16 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 						conn.WriteMessage(websocket.TextMessage, []byte("-2"))
 						break
 					}
-					partnerConn.WriteMessage(websocket.TextMessage, p)
+					// log.Printf("client %s operate \n", string(p))
+					// 这里用json解析判断一下close的消息，然后转义一下
+					if string(p) == "{\"type\":\"1\",\"content\":\"-1\"}" && ctx.SessionStore.SessionMap[roomID].UsrNum > 2 {
+					// log.Printf("client2 %s operate \n", string(p))
+						partnerConn.WriteMessage(websocket.TextMessage, []byte("{\"type\":\"1\",\"content\":\"-9\"}"))
+					} else {
+					// log.Printf("client1 %s operate \n", string(p))
+
+						partnerConn.WriteMessage(websocket.TextMessage, p)
+					}
 				} else if messageType == websocket.CloseMessage {
 					log.Printf("close message received from cient %s \n", id)
 					delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))

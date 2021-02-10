@@ -955,6 +955,7 @@ class SyncHelper {
     WAITINGCODE = "-6";
     DAILCODE = "-7";
     HANGUPCODE = "-8";
+    LEAVECODE = "-9";
     ALLCODE = {
         "-1": "CLOSEDCODE",
         "-2": "DISCONNECTCODE",
@@ -963,7 +964,8 @@ class SyncHelper {
         "-5": "PAUSECODE",
         "-6": "WAITINGCODE",
         "-7": "DAILCODE",
-        "-8": "HANGUPCODE"
+        "-8": "HANGUPCODE",
+        "-9": "LEAVECODE"
     };
     SYSTEMMESSAGE = "1";
     CHATMESSAGE = "2";
@@ -991,13 +993,14 @@ class SyncHelper {
     speed = 1;
     rateTimer = null;
     videoHandler = null;
+    nickname = "Onns";
 
     constructor(serverCode, option, type = "video") {
         this.type = type;
         var that = this;
         var getURLPromise = new Promise(
             (resolve) => {
-                chrome.storage.local.get(['apihost', 'protocol', 'notification'], result => {
+                chrome.storage.local.get(['apihost', 'protocol', 'notification', 'nickname'], result => {
                     var apihost = result.apihost;
                     var protocol = result.protocol;
                     systemNotification = result.notification;
@@ -1155,6 +1158,9 @@ class SyncHelper {
                         SyncHelper.updateIcon();
                         chatHandler.popConnectedSubmsg();
                         break;
+                    case this.LEAVECODE:
+                        SyncHelper.notification("someone leave the room");
+                        break;
                     case this.WAITINGCODE:
                         this.handleVideoPause();
                         // SyncHelper.notification("Other partner is buffering, please wait", 1000);
@@ -1219,9 +1225,11 @@ class SyncHelper {
         }
     }
 
-    send(message, type = "1") {
+    send(message, type = "1", to = "[all]") {
         var data = {
             "type": type,
+            "from": this.nickname,
+            "to": to,
             "content": message
         };
         if (status != STATUSSYNC) {
