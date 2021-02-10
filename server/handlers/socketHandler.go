@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+	"strconv"
 	"github.com/LouisYLWang/Sync-Sofa/server/session"
 	"github.com/gorilla/websocket"
 )
@@ -14,8 +14,8 @@ const paramID = "id"
 
 type (
 	msg struct {
-		Type    int `json:"type"`
-		Content int `json:"content"`
+		Type    string `json:"type"`
+		Content string `json:"content"`
 	}
 )
 
@@ -41,10 +41,10 @@ func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocke
 	_, roomID := GetSelfIDs(sessionID)
 	ctx.SessionStore.SessionMap[roomID].CurNum--
 	delete(ctx.SocketStore.ConnectionsMap, sessionID)
-	log.Printf("socket remove connection to session: %s", sessionID)
+	log.Printf("socket remove connection to session: %s, current user %d", sessionID, ctx.SessionStore.SessionMap[roomID].CurNum)
 	if ctx.SessionStore.SessionMap[roomID].CurNum == 0 {
 		delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
-		log.Printf("socket remove connection to session: %s", roomID)
+		log.Printf("room %s removed", roomID)
 	}
 	// for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
 	// 	partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
@@ -99,17 +99,21 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 			log.Printf("client %s operate \n", id)
 			//conn.WriteMessage(websocket.TextMessage, p)
 			usrID, roomID := GetSelfIDs(sessionID)
-			for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
+			for i := 0; i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
+				if strconv.Itoa(i) == string(usrID) {
+					continue
+				}
 				partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
-				if partnerConn, clientExist := ctx.SocketStore.ConnectionsMap[partnerID]; clientExist {
+				partnerConn, clientExist := ctx.SocketStore.ConnectionsMap[partnerID]
+				if clientExist {
+					if ctx.SessionStore.SessionMap[roomID].CurIndex == i {
+						ctx.SessionStore.SessionMap[roomID].CurIndex = ctx.SessionStore.SessionMap[roomID].UsrNum
+					}
 					if messageType == websocket.TextMessage {
-						// log.Printf("client %s operate \n", string(p))
-						// 这里用json解析判断一下close的消息，然后转义一下
 						pMsg := &msg{}
 						json.Unmarshal(p, pMsg)
-						log.Printf("Content: %d\nType: %d\n", pMsg.Content, pMsg.Type)
-						if pMsg.Content == 1 && pMsg.Type == -1 && ctx.SessionStore.SessionMap[roomID].CurNum > 2 {
-							pMsg.Content = -9
+						if pMsg.Content == "-1" && pMsg.Type == "1" && ctx.SessionStore.SessionMap[roomID].CurNum > 2 {
+							pMsg.Content = "-9"
 							p, _ = json.Marshal(pMsg)
 						}
 						partnerConn.WriteMessage(websocket.TextMessage, p)
@@ -121,6 +125,8 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 						log.Printf("error reading message %v \n", err)
 						break
 					}
+				} else {
+					ctx.SessionStore.SessionMap[roomID].CurIndex = i
 				}
 			}
 		}

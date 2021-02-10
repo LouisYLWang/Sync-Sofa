@@ -28,6 +28,7 @@ type (
 		RoomID    SessionID `json:"roomID,omitempty"`
 		UsrNum    int       `json:"usrNum,omitempty"`
 		CurNum    int       `json:"CurNum,omitempty"`
+		CurIndex  int       `json:"CurIndex,omitempty"`
 		BeginTime time.Time `json:"beginTime,omitempty"`
 	}
 )
@@ -103,14 +104,18 @@ func (s Store) BeginSessions(roomID SessionID) (SessionID, error, bool) {
 		//	log.Printf("full room")
 		//	return InvalidSessionID, nil, roomExist
 		//}
-		room.UsrNum++
+		room.CurNum++
+		guestSessionID := SessionID(fmt.Sprintf("%s%d", roomID, room.CurIndex))
+		if room.CurNum == room.CurIndex + 1 {
+			room.CurIndex++
+			room.UsrNum++
+		}
 		room.BeginTime = time.Now()
 		// 这里换一种方式，从 0 开始，看看哪个位置是空的，给新的id
 		// 判断一下CurNum 与 UsrNum是否相等
 		// re: 不好获取socket store map，引入复杂度
-		guestSessionID := SessionID(fmt.Sprintf("%s%d", roomID, room.UsrNum-1))
-		room.UsrNum++
-		room.CurNum++
+		
+		
 		log.Printf("add session %s to room %s", guestSessionID, roomID)
 		return guestSessionID, nil, roomExist
 	} else {
@@ -125,6 +130,7 @@ func (s Store) BeginSessions(roomID SessionID) (SessionID, error, bool) {
 			RoomID: roomID,
 			UsrNum: 1,
 			CurNum: 1,
+			CurIndex: 1,
 		}
 		s.SessionMap[roomID] = newRoom
 		log.Printf("add room %s", roomID)
