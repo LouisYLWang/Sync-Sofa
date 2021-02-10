@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 	"github.com/LouisYLWang/Sync-Sofa/server/session"
 	"github.com/gorilla/websocket"
 )
@@ -27,10 +28,11 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn) {
+func (ctx *Context) InserConnection(id session.SessionID, conn *websocket.Conn, lock *sync.Mutex) {
 	ctx.SocketStore.Lock.Lock()
 	defer ctx.SocketStore.Lock.Unlock()
 	ctx.SocketStore.ConnectionsMap[id] = conn
+	ctx.SocketStore.SocketLock[id] = lock
 	log.Println("socket connected to session: ", id)
 }
 
@@ -79,12 +81,13 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	conn, err := upgrader.Upgrade(w, r, nil)
+	var lock = &sync.Mutex{}
 	if err != nil {
 		http.Error(w, "failed to open websocket connection", http.StatusUnauthorized)
 		return
 	}
 	fmt.Printf("open websocket connection to %s \n", sessionID)
-	ctx.InserConnection(sessionID, conn)
+	ctx.InserConnection(sessionID, conn, lock)
 
 	go (func(conn *websocket.Conn, id session.SessionID) {
 		defer conn.Close()
