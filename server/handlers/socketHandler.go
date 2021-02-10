@@ -116,7 +116,7 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 					if messageType == websocket.TextMessage {
 						pMsg := &msg{}
 						json.Unmarshal(p, pMsg)
-						if pMsg.Content == "-1" && pMsg.Type == "1" && ctx.SessionStore.SessionMap[roomID].CurNum > 2 {
+						if pMsg.Content == "-1" && pMsg.Type == "1" {
 							pMsg.Content = "-9"
 							p, _ = json.Marshal(pMsg)
 						}
