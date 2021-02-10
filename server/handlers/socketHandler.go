@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,13 @@ import (
 )
 
 const paramID = "id"
+
+type (
+	msg struct {
+		Type    int `json:"type"`
+		Content int `json:"content"`
+	}
+)
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -31,12 +39,12 @@ func (ctx *Context) RemoveConnection(sessionID session.SessionID, conn *websocke
 	defer ctx.SocketStore.Lock.Unlock()
 	// defer delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
 	_, roomID := GetSelfIDs(sessionID)
-	ctx.SessionStore.SessionMap[roomID].UsrNum--
+	ctx.SessionStore.SessionMap[roomID].CurNum--
 	delete(ctx.SocketStore.ConnectionsMap, sessionID)
-	log.Println("socket remove connection to session: %s", sessionID)
-	if ctx.SessionStore.SessionMap[roomID].UsrNum == 0 {
+	log.Printf("socket remove connection to session: %s", sessionID)
+	if ctx.SessionStore.SessionMap[roomID].CurNum == 0 {
 		delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
-		log.Println("socket remove connection to session: %s", roomID)
+		log.Printf("socket remove connection to session: %s", roomID)
 	}
 	// for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
 	// 	partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
@@ -84,6 +92,7 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 		for {
 			messageType, p, err := conn.ReadMessage()
 			if err != nil {
+				log.Printf("err %v \n", err)
 				log.Printf("forced close by cient %s \n", id)
 				break
 			}
@@ -92,30 +101,26 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 			usrID, roomID := GetSelfIDs(sessionID)
 			for i := 0; session.SessionID(i) != usrID && i < ctx.SessionStore.SessionMap[roomID].UsrNum; i++ {
 				partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
-				if messageType == websocket.TextMessage {
-					partnerConn, exist := ctx.SocketStore.ConnectionsMap[partnerID]
-					if !exist {
-						log.Printf("partner cient %s been disconnected\n", id)
-						conn.WriteMessage(websocket.TextMessage, []byte("-2"))
+				if partnerConn, clientExist := ctx.SocketStore.ConnectionsMap[partnerID]; clientExist {
+					if messageType == websocket.TextMessage {
+						// log.Printf("client %s operate \n", string(p))
+						// 这里用json解析判断一下close的消息，然后转义一下
+						pMsg := &msg{}
+						json.Unmarshal(p, pMsg)
+						log.Printf("Content: %d\nType: %d\n", pMsg.Content, pMsg.Type)
+						if pMsg.Content == 1 && pMsg.Type == -1 && ctx.SessionStore.SessionMap[roomID].CurNum > 2 {
+							pMsg.Content = -9
+							p, _ = json.Marshal(pMsg)
+						}
+						partnerConn.WriteMessage(websocket.TextMessage, p)
+					} else if messageType == websocket.CloseMessage {
+						log.Printf("close message received from cient %s \n", id)
+						delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
+						break
+					} else if err != nil {
+						log.Printf("error reading message %v \n", err)
 						break
 					}
-					// log.Printf("client %s operate \n", string(p))
-					// 这里用json解析判断一下close的消息，然后转义一下
-					if string(p) == "{\"type\":\"1\",\"content\":\"-1\"}" && ctx.SessionStore.SessionMap[roomID].UsrNum > 2 {
-					// log.Printf("client2 %s operate \n", string(p))
-						partnerConn.WriteMessage(websocket.TextMessage, []byte("{\"type\":\"1\",\"content\":\"-9\"}"))
-					} else {
-					// log.Printf("client1 %s operate \n", string(p))
-
-						partnerConn.WriteMessage(websocket.TextMessage, p)
-					}
-				} else if messageType == websocket.CloseMessage {
-					log.Printf("close message received from cient %s \n", id)
-					delete(ctx.SessionStore.SessionMap, GetRoomID(sessionID))
-					break
-				} else if err != nil {
-					log.Printf("error reading message %v \n", err)
-					break
 				}
 			}
 		}

@@ -2,7 +2,7 @@ package handlers
 
 import "net/http"
 
-/* TODO: implement a CORS middleware handler, as described
+/*
 in https://drstearns.github.io/tutorials/cors/ that responds
 with the following headers to all requests:
 
