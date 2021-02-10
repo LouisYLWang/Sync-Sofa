@@ -105,6 +105,7 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 				}
 				partnerID := session.SessionID(fmt.Sprintf("%v%d", roomID, i))
 				partnerConn, clientExist := ctx.SocketStore.ConnectionsMap[partnerID]
+				partnerLock, _ := ctx.SocketStore.SocketLock[partnerID]
 				if clientExist {
 					if ctx.SessionStore.SessionMap[roomID].CurIndex == i {
 						ctx.SessionStore.SessionMap[roomID].CurIndex = ctx.SessionStore.SessionMap[roomID].UsrNum
@@ -117,7 +118,9 @@ func (ctx *Context) WebSocketConnHandler(w http.ResponseWriter, r *http.Request)
 							p, _ = json.Marshal(pMsg)
 						}
 						// TODO：给每个socket链接一把锁 与 partnerConn 绑定的锁，这里锁一下
+						partnerLock.Lock()
 						partnerConn.WriteMessage(websocket.TextMessage, p)
+						partnerLock.Unlock()
 						// 这里解锁
 					} else if messageType == websocket.CloseMessage {
 						log.Printf("close message received from cient %s \n", id)
