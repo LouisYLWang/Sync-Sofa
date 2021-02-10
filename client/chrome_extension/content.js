@@ -1069,7 +1069,7 @@ class SyncHelper {
     }
 
     close() {
-        this.send(this.CLOSEDCODE);
+        this.send(this.LEAVECODE);
         this.clearHeartBeats();
         websocket.close();
         clearInterval(this.socketTimer);
