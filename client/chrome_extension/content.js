@@ -1372,6 +1372,10 @@ class SyncHelper {
             content.currentTime += ((new Date()).getTime() - content.timestamp) / 1000;
         }
 
+        if (content.ack) {
+            this.socketLock = false;
+            return;
+        }
         switch (this.type) {
             case "video":
                 if (content.currentTime <= video.duration && content.currentTime >= 0 && Math.abs(content.currentTime - video.currentTime) > 3) {
