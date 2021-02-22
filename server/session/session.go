@@ -104,6 +104,10 @@ func (s Store) BeginSessions(roomID SessionID) (SessionID, error, bool) {
 		//	log.Printf("full room")
 		//	return InvalidSessionID, nil, roomExist
 		//}
+		if room.CurNum == 10 {
+			log.Printf("full pair")
+			return InvalidSessionID, nil, roomExist
+		}
 		room.CurNum++
 		guestSessionID := SessionID(fmt.Sprintf("%s%d", roomID, room.CurIndex))
 		if room.CurNum == room.CurIndex + 1 {
