@@ -1043,7 +1043,7 @@ class SyncHelper {
         // console.log(e);
         switch (e.type) {
             case "waiting":
-                e.stopPropagation();
+                // e.stopPropagation();
                 let buffered = false;
                 let BufferedInvLen = video.buffered.length;
                 var i;
@@ -1055,11 +1055,11 @@ class SyncHelper {
                 }
                 break;
             case "canplay":
-                e.stopPropagation();
+                // e.stopPropagation();
                 video.play();
                 break;
             default:
-                e.stopPropagation();
+                // e.stopPropagation();
                 this.sync();
                 break;
         }
