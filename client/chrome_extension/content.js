@@ -1378,19 +1378,22 @@ class SyncHelper {
         }
         switch (this.type) {
             case "video":
-                if (content.currentTime <= video.duration && content.currentTime >= 0 && Math.abs(content.currentTime - video.currentTime) > 3) {
+                if (content.currentTime <= video.duration && content.currentTime >= 0 && Math.abs(content.currentTime - video.currentTime) > 1) {
                     if (content.ack) {
                         this.socketLock = false;
+                        this.ackFlag = false;
                         this.clearHeartBeats();
                         this.sync();
                     } else {
                         video.currentTime = content.currentTime;
+                        // video.pause();
                         changeFlag = true;
                     }
                 }
                 if (video.paused == content.isPlay) {
                     if (content.ack) {
                         this.socketLock = false;
+                        this.ackFlag = false;
                         this.clearHeartBeats();
                         this.sync();
                     } else {
@@ -1414,6 +1417,7 @@ class SyncHelper {
                         }
                     }
                 }
+
                 if (content.rate != undefined && video.playbackRate != content.rate) {
                     if (content.ack) {
                         this.socketLock = false;
