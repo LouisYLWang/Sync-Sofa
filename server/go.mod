@@ -1,4 +1,4 @@
-module github.com/LouisYLWang/Sync-Sofa/server
+module SyncSofa/server
 
 go 1.14
 

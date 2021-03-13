@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/LouisYLWang/Sync-Sofa/server/handlers"
-	"github.com/LouisYLWang/Sync-Sofa/server/session"
-	"github.com/LouisYLWang/Sync-Sofa/server/socket"
+	"SyncSofa/server/handlers"
+	"SyncSofa/server/session"
+	"SyncSofa/server/socket"
 
 	"github.com/gorilla/mux"
 )

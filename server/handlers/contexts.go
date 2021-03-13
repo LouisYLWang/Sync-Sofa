@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/LouisYLWang/Sync-Sofa/server/session"
-	"github.com/LouisYLWang/Sync-Sofa/server/socket"
+	"SyncSofa/server/session"
+	"SyncSofa/server/socket"
 )
 
 type Context struct {

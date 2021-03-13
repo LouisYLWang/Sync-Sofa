@@ -104,7 +104,7 @@ func (s Store) BeginSessions(roomID SessionID) (SessionID, error, bool) {
 		//	log.Printf("full room")
 		//	return InvalidSessionID, nil, roomExist
 		//}
-		if room.CurNum == 10 {
+		if room.CurNum == 5 {
 			log.Printf("full pair")
 			return InvalidSessionID, nil, roomExist
 		}

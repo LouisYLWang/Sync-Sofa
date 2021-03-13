@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/LouisYLWang/Sync-Sofa/server/session"
+	"SyncSofa/server/session"
 	"log"
 	"net/http"
 )

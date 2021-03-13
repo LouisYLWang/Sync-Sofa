@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
-	"github.com/LouisYLWang/Sync-Sofa/server/session"
+	"SyncSofa/server/session"
 	"github.com/gorilla/websocket"
 )
 
