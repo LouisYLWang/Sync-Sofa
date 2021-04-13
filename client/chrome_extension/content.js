@@ -1330,7 +1330,7 @@ class SyncHelper {
                     // alert("Error Code: " + status); // 此处为执行成功后的代码
                 }
             });
-        }, 1000);
+        }, 100);
     }
 
     handleVideoPause() {
@@ -1372,7 +1372,7 @@ class SyncHelper {
             content.currentTime += ((new Date()).getTime() - content.timestamp) / 1000;
         }
 
-        if (content.ack) {
+        if (content.ack) { // 不响应ack包
             this.socketLock = false;
             return;
         }
