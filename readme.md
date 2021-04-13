@@ -1,5 +1,7 @@
 # Sync Sofa (streaming video playback synchronizer extension)
 
+[![Join the chat at https://gitter.im/Sync-Sofa/community](https://badges.gitter.im/Sync-Sofa/community.svg)](https://gitter.im/Sync-Sofa/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 > This chrome extension allows multi-user sync streaming video in a fast, simple, and stable way.
 
 ![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
