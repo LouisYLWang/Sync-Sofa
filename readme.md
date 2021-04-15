@@ -2,7 +2,7 @@
 
 > This chrome extension allows multi-user sync streaming video in a fast, simple, and stable way.
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m787861126-8d48fa150c9a82edd7e1315c?label=sync-us2&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m787861121-335727572de1d1ea7378ebf0?label=sync-cn3&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m787861123-ea67c98024d33c70b4366305?label=sync-cn4&style=flat-square)
 
 [English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
@@ -72,14 +72,23 @@ Recently, Many Chinese users said our service is unstable, that is because our d
 * sync-cn: 
     - `https` 
     - `sync-cn.onns.xyz`
-* sync-cn-2 (Thanks to [@huoranxuanyuan](https://github.com/huoranxuanyuan)): 
+* sync-cn-2 [deprecated] (Thanks to [@huoranxuanyuan](https://github.com/huoranxuanyuan)): 
     - `https` 
     - `api.huoranxuanyuan.cn` 
+* sync-cn-3 [Beijing] (Thanks to [@liqimore](https://github.com/liqimore)): 
+    - `https` 
+    - `sync-bj.204800.xyz` 
+* sync-cn-4 [Shanghai] (Thanks to [@liqimore](https://github.com/liqimore)): 
+    - `https` 
+    - `sync-shanghai.204800.xyz` 
 * sync-us: 
     - `https` 
     - `app.ylwang.me`
+* sync-us-2 [Missouri] (Thanks to [@liqimore](https://github.com/liqimore)): 
+    - `https` 
+    - `sync-us-central.pq02.com` 
 
-Before setting, check server status here: [https://sync-status.onns.xyz/](https://sync-status.onns.xyz/).
+Before setting, check server status here: [Sync Sofa (streaming video playback synchronizer extension)](#sync-sofa-streaming-video-playback-synchronizer-extension).
 
 We will be grateful for supporting us to build more server if it is convenient (Cause this project is unprofitable).
 
@@ -554,7 +563,7 @@ If not, please change the default port of the VLC web interface to `9891`. (Will
 
 > 以稳定，快捷的方式远程同步观看在线/本地视频
 
-![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square)
+![GitHub go.mod Go version (subfolder of monorepo)](https://img.shields.io/github/go-mod/go-version/LouisYLWang/Sync-Sofa?filename=server%2Fgo.mod&style=flat-square) [![Chrome web store users][chrome-image]][chrome-url] ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506902-abf56ee3c6b33304675185c6?label=sync-us&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m787861126-8d48fa150c9a82edd7e1315c?label=sync-us2&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785506916-32a7dc946ed8718c859e7cdd?label=sync-cn&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m785512978-f4cf51568a716df159f1c762?label=sync-cn2&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m787861121-335727572de1d1ea7378ebf0?label=sync-cn3&style=flat-square) ![Uptime Robot status](https://img.shields.io/uptimerobot/status/m787861123-ea67c98024d33c70b4366305?label=sync-cn4&style=flat-square)
 
 [English](#sync-sofa-streaming-video-playback-synchronizer-extension) | [中文](#sync-sofa-在线视频同步播放插件)
 
@@ -616,17 +625,26 @@ Sync Sofa是一个稳定易用的Chrome浏览器拓展插件，可同步两端�
 
 最近许多用户反映国内的访问不稳定，是因为我们的默认服务器在美国，因此我们提供了备用服务器列表，你可以根据你的位置切换到离你距离更近的服务器。
 
-* 中国杭州: 
+* 中国杭州【1】
     - `https` 
     - `sync-cn.onns.xyz`
-* 中国北京 (感谢 [@huoranxuanyuan](https://github.com/huoranxuanyuan)): 
+* 中国北京【2】【弃用】 (感谢 [@huoranxuanyuan](https://github.com/huoranxuanyuan))
     - `https` 
     - `api.huoranxuanyuan.cn` 
-* 美国: 
+* 中国北京【3】 (感谢 [@liqimore](https://github.com/liqimore))
+    - `https` 
+    - `sync-bj.204800.xyz` 
+* 中国上海【4】 (感谢 [@liqimore](https://github.com/liqimore))
+    - `https` 
+    - `sync-shanghai.204800.xyz` 
+* 美国【1】 
     - `https` 
     - `app.ylwang.me`
+* 美国密苏里州【2】 (感谢 [@liqimore](https://github.com/liqimore))
+    - `https` 
+    - `sync-us-central.pq02.com` 
 
-在设置服务器前，请检查服务器的状态：[https://sync-status.onns.xyz/](https://sync-status.onns.xyz/).
+在设置服务器前，请检查服务器的状态：[Sync Sofa (在线视频同步播放插件)](#sync-sofa-在线视频同步播放插件).
 
 我们会感谢你对该开源项目作出的贡献，你可以通过**提供自己部署的服务**来支持我们，也可以帮我们**分担一点服务器费用**的压力。（~~也可以一键三连~~）
 
