@@ -8,3 +8,4 @@ server/server
 .idea
 server/config.json
 server/deploy.sh
+**/.DS_Store

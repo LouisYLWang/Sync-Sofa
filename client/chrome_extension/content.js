@@ -28,6 +28,7 @@ var status = STATUSEND;
 var video = null;
 // video = document.querySelector('video');
 var websocket = null;
+var url = "";
 var systemNotification = false;
 var videoHandler = null;
 // Date format function
@@ -252,7 +253,7 @@ class chat {
             }
         `
 
-        chatPopup.attachShadow({mode:'open'}).innerHTML = `
+        chatPopup.attachShadow({ mode: 'open' }).innerHTML = `
         <!-- message box -->
         <style>
             ${chatPopupStyle}
@@ -315,9 +316,9 @@ class chat {
         var curTopPos = this.chatButton.getBoundingClientRect().top.toString();
         // css animation from https://stackoverflow.com/a/36964181/13182099
         if (!this.chatButton.classList.contains("video-shake")) {
-           this.chatButton.classList.add("chat-shake");
-           this.chatButton.style.top = curTopPos + "px";
-           this.chatButton.style.left = curLeftPos + "px";
+            this.chatButton.classList.add("chat-shake");
+            this.chatButton.style.top = curTopPos + "px";
+            this.chatButton.style.left = curLeftPos + "px";
         }
     }
 
@@ -588,13 +589,13 @@ class videoCaller {
     }
 
     hangup() {
-        if(this.peerConnection != null){
+        if (this.peerConnection != null) {
             this.peerConnection.close();
         }
         this.localVideo.srcObject = null;
         this.remoteVideo.srcObject = null;
         this.toggleVideoUIstate("hangup");
-        if(this.stream != null){
+        if (this.stream != null) {
             const videoTracks = this.stream.getVideoTracks();
             videoTracks.forEach(videoTrack => {
                 videoTrack.stop();
@@ -758,7 +759,7 @@ class videoCaller {
             }
         `
 
-        videoPopup.attachShadow({mode:'open'}).innerHTML = `
+        videoPopup.attachShadow({ mode: 'open' }).innerHTML = `
             <style>
                 ${videoPopupStyle}
             </style>
@@ -797,7 +798,7 @@ class videoCaller {
         this.videoButton.className = 'videobutton';
     }
 
-    async toggleVideoUIstate(type="change") {
+    async toggleVideoUIstate(type = "change") {
         var videoButton = this.videoButton;
         var videoPopup = this.videoPopup;
         this.videoButton.style.top = "80%";
@@ -809,7 +810,7 @@ class videoCaller {
             this.call();
         }
 
-        
+
         switch (type) {
             case "hangup":
                 videoPopup.style.display = "none";
@@ -965,17 +966,18 @@ class SyncHelper {
         "-7": "DAILCODE",
         "-8": "HANGUPCODE"
     };
-    SYSTEMMESSAGE = "1";
-    CHATMESSAGE = "2";
+    SystemMessageType = 1;
+    OperateMessageType = 2;
     SYNCMESSAGE = "3";
     SIGNALINGMESSAGE = "4";
     CALLMESSAGE = "5";
     MESSAGETYPE = {
-        "1": "SYSTEMMESSAGE",
-        "2": "CHATMESSAGE",
-        "3": "SYNCMESSAGE",
-        "4": "SIGNALINGMESSAGE",
-        "5": "CALLMESSAGE"
+        1: "SYSTEMMESSAGE",
+        2: "PALY"
+        // "3": "CHATMESSAGE",
+        // "3": "SYNCMESSAGE",
+        // "4": "SIGNALINGMESSAGE",
+        // "5": "CALLMESSAGE"
     }
     socketLock = false;
     ackFlag = false;
@@ -992,19 +994,21 @@ class SyncHelper {
     rateTimer = null;
     videoHandler = null;
 
-    constructor(serverCode, option, type = "video") {
+    constructor(type = "video") {
         this.type = type;
         var that = this;
         var getURLPromise = new Promise(
             (resolve) => {
-                chrome.storage.local.get(['apihost', 'protocol', 'notification'], result => {
+                chrome.storage.local.get(['apihost', 'protocol', 'notification', 'sid', 'username'], result => {
                     var apihost = result.apihost;
+                    var sid = result.sid;
+                    var username = result.username;
                     var protocol = result.protocol;
                     systemNotification = result.notification;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
-                    var url = `wss://app.ylwang.me/ws/?id=${serverCode}`;
+                    url = `wss://app.ylwang.me/ws/?id=${sid}&name=${username}`;
                     if (apihost != undefined && socketprotocol != undefined) {
-                        url = `${socketprotocol}://${apihost}/ws/?id=${serverCode}`;
+                        url = `${socketprotocol}://${apihost}/v2/ws/?id=${sid}&name=${username}`;
                     }
                     resolve(url);
                 });
@@ -1012,28 +1016,15 @@ class SyncHelper {
 
         getURLPromise.then((url) => {
             var timer = null;
-            Debugger.log(`RECEIVED sessionID ${serverCode}`);
+            Debugger.log(`RECEIVED sessionID ${url}`);
 
             if (websocket) {
                 websocket.close();
             }
             websocket = new WebSocket(url);
-            if (option && option.beginFlag && option.pairExisted) {
-                timer = setInterval(function () {
-                    if (that.isOpen()) {
-                        clearInterval(timer);
-                        status = STATUSSYNC;
-                        SyncHelper.updateIcon();
-                        that.send(that.HELLOCODE);
-                        SyncHelper.notification("connected to other partner successfully, now you both can enjoy yourselves");
-                        chatHandler.popConnectedSubmsg();
-                    }
-                }, 500);
-            } else {
-                SyncHelper.notification(`Room created and room code copied to clipboard`);
-                status = STATUSCONNECT;
-                SyncHelper.updateIcon();
-            }
+            SyncHelper.notification(`Room created and room code copied to clipboard`);
+            status = STATUSSYNC;
+            SyncHelper.updateIcon();
             that.handleSessions();
             that.checkSocket();
             that.checkSpeed();
@@ -1087,7 +1078,7 @@ class SyncHelper {
             default:
                 break;
         }
-        if(videoHandler != null){
+        if (videoHandler != null) {
             videoHandler.hangup();
         }
     }
@@ -1134,27 +1125,11 @@ class SyncHelper {
         }
         // end.
 
-        Debugger.log(`RECEIVED MESSAGE: ${JSON.stringify(message.content)}, TYPE: ${this.MESSAGETYPE[message.type]}`, 'color: red;');
+        Debugger.log(`RECEIVED MESSAGE: ${JSON.stringify(message.data)}, TYPE: ${this.MESSAGETYPE[message.type]}`, 'color: red;');
         switch (message.type) {
             case this.SYSTEMMESSAGE:
-                Debugger.log(`RECEIVED ${this.ALLCODE[message.content]}`);
-                switch (message.content) {
-                    case this.CLOSEDCODE:
-                        this.handleVideoPause();
-                        SyncHelper.notification("connection closed by other partner");
-                        this.close();
-                        break;
-                    case this.DISCONNECTCODE:
-                        this.handleVideoPause();
-                        SyncHelper.notification("not connected to other partner");
-                        this.close();
-                        break;
-                    case this.HELLOCODE:
-                        SyncHelper.notification("connected to partner successfully, now you both can enjoy yourselves");
-                        status = STATUSSYNC;
-                        SyncHelper.updateIcon();
-                        chatHandler.popConnectedSubmsg();
-                        break;
+                Debugger.log(`RECEIVED ${this.ALLCODE[message.data]}`);
+                switch (message.data) {
                     case this.WAITINGCODE:
                         this.handleVideoPause();
                         // SyncHelper.notification("Other partner is buffering, please wait", 1000);
@@ -1166,8 +1141,8 @@ class SyncHelper {
             case this.CHATMESSAGE:
                 chatHandler.receive(message.content);
                 break;
-            case this.SYNCMESSAGE:
-                this.handleSyncMessage(message.content);
+            case this.OperateMessageType:
+                this.handleSyncMessage(JSON.parse(message.data));
                 break;
 
             case this.SIGNALINGMESSAGE:
@@ -1219,18 +1194,13 @@ class SyncHelper {
         }
     }
 
-    send(message, type = "1") {
+    send(message, type = 1) {
         var data = {
+            "version": "2",
             "type": type,
-            "content": message
+            "data": message
         };
-        if (status != STATUSSYNC) {
-            if (status == STATUSCONNECT) {
-                SyncHelper.notification("not connected to other partner, please wait and pause the video");
-                Debugger.log(`WAITING FOR THE PARTNER`);
-            }
-            return;
-        }
+        Debugger.log(`${JSON.stringify(message)}, TYPE: ${this.MESSAGETYPE[type]}`);
         if (this.socketLock && type == this.SYNCMESSAGE) {
             Debugger.log(`BLOCKED BECAUSE OF THE LOCK`);
             return;
@@ -1269,13 +1239,13 @@ class SyncHelper {
             default:
                 break;
         }
-        this.send({
+        this.send(JSON.stringify({
             "isPlay": isplay,
             "currentTime": currentTime,
             "rate": rate,
             "ack": this.ackFlag,
             "timestamp": (new Date()).getTime()
-        }, this.SYNCMESSAGE);
+        }), this.OperateMessageType);
     }
 
     handleVLC() {
@@ -1714,12 +1684,18 @@ class SyncHelper {
                 // status = STATUSSYNC;
                 // SyncHelper.updateIcon();
             } else {
-                SyncHelper.notification(`Socket disconnected, unknown reason.`);
-                that.close();
+                SyncHelper.notification(`Socket disconnected, unknown reason, try to reconnect.`);
+                websocket = new WebSocket(url);
+                websocket.onmessage = function (message) {
+                    that.receive(message.data);
+                }
             }
         }, 1000 * 5);
     }
 
+    reconnect() {
+
+    }
     checkSpeed() {
         // check connection every 1s.
         var that = this;
@@ -1801,9 +1777,9 @@ chrome.runtime.onMessage.addListener(
             "from the extension");
         if (request.status === STATUSSTART) {
             if (isVLC()) {
-                syncTool = new SyncHelper(request.body, request.message, "vlc");
+                syncTool = new SyncHelper("vlc");
             } else {
-                syncTool = new SyncHelper(request.body, request.message);
+                syncTool = new SyncHelper();
             }
             if (syncTool != null) {
                 sendResponse({ "body": syncTool.status });
