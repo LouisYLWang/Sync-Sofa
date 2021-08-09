@@ -35,7 +35,7 @@ if (audio != null) {
         }
     }
     Debugger.log('audiojs loaded');
-    const apihost = "app.ylwang.me"
+    const apihost = "sync-cn.onns.xyz"
 
     const CLOSEDCODE = "-1";
     const DISCONNECTCODE = "-2";

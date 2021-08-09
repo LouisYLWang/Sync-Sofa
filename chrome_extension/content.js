@@ -1002,11 +1002,19 @@ class SyncHelper {
                 chrome.storage.local.get(['apihost', 'protocol', 'notification', 'sid', 'username'], result => {
                     var apihost = result.apihost;
                     var sid = result.sid;
+                    if (sid == undefined) {
+                        SyncHelper.notification(`RoomID error`);
+                        return;
+                    }
                     var username = result.username;
+                    if (username == undefined) {
+                        SyncHelper.notification(`username error`);
+                        return;
+                    }
                     var protocol = result.protocol;
                     systemNotification = result.notification;
                     var socketprotocol = (protocol == "http") ? "ws" : "wss";
-                    url = `wss://app.ylwang.me/ws/?id=${sid}&name=${username}`;
+                    url = `wss://sync-cn.onns.xyz/v2/ws/?id=${sid}&name=${username}`;
                     if (apihost != undefined && socketprotocol != undefined) {
                         url = `${socketprotocol}://${apihost}/v2/ws/?id=${sid}&name=${username}`;
                     }

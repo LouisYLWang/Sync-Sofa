@@ -23,7 +23,7 @@ const STATUSASK = "ask"
 const STATUSUNREADY = "unready"
 const STATUSREADY = "ready"
 const STATUSMESSAGE = "message"
-var apihost = "app.ylwang.me"
+var apihost = "sync-cn.onns.xyz"
 var protocol = "https"
 var sid = ""
 var username = ""
@@ -50,7 +50,7 @@ chrome.storage.local.get("video", result => {
 })
 
 chrome.storage.local.get(['apihost'], function (result) {
-    if (result.apihost != undefined && result.apihost != "app.ylwang.me") {
+    if (result.apihost != undefined && result.apihost != "sync-cn.onns.xyz") {
         apihost = result.apihost;
     };
 });

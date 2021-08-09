@@ -21,10 +21,10 @@ function saveOptions() {
 }
 
 function restoreOptions() {
-    inputbox.value = "app.ylwang.me";
+    inputbox.value = "sync-cn.onns.xyz";
     protocol.value = "https";
     chrome.storage.local.set({
-        'apihost': "app.ylwang.me",
+        'apihost': "sync-cn.onns.xyz",
         'protocol': "https"
     }, () => {
         notification("restore to default setting!")
@@ -90,9 +90,9 @@ function initialize() {
         if (result.apihost != undefined && result.apihost != "") {
             inputbox.value = result.apihost;
         } else {
-            inputbox.value = "app.ylwang.me";
+            inputbox.value = "sync-cn.onns.xyz";
             chrome.storage.local.set({
-                'apihost': "app.ylwang.me"
+                'apihost': "sync-cn.onns.xyz"
             }, () => { })
         }
 
