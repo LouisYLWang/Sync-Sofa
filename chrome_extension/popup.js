@@ -159,6 +159,18 @@ function sentMsgToContent(status, message = "") {
     });
 }
 
+function renderQrcode() {
+    document.getElementById("header").innerHTML = "";
+    var qrcode = new QRCode(document.getElementById("header"), {
+        text: `https://onns.xyz/remoter/v1/index.html?id=${sid}&site=${apihost}&name=${usernamebox.value}-remoter`,
+        width: 100,
+        height: 100,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
 function handleBeginSessions(e) {
     e.preventDefault();
     let url = `${protocol}://${apihost}/v2/session/?id=${inputbox.value}&name=${usernamebox.value}`
@@ -180,16 +192,18 @@ function handleBeginSessions(e) {
             inputbox.value = sessionPair.sid
         }
         chrome.storage.local.set({ "sid": sessionPair.sid, "username": usernamebox.value }, function () { });
+        renderQrcode();
         sentMsgToContent(STATUSSTART);
         UIStatusToLinked();
-        setTimeout(function () {
-            window.close();
-        }, 3000);
+        // setTimeout(function () {
+        //     window.close();
+        // }, 3000);
     })
 }
 
 
 function UIStatusToLinked() {
+    renderQrcode();
     startbutton.style.display = "none";
     // requestbutton.style.display = "none";
     stopbutton.style.display = "block";
@@ -247,10 +261,11 @@ function UIStatusToready() {
 }
 
 function initialize() {
-    chrome.storage.local.get(['sid', 'username'], function (result) {
+    chrome.storage.local.get(['sid', 'username', 'apihost'], function (result) {
         if (result.sid != undefined) {
             sid = result.sid;
             username = result.username;
+            apihost = result.apihost;
             inputbox.value = sid;
             usernamebox.value = username;
             // requestbutton.value = "REQUEST NEW CODE";
