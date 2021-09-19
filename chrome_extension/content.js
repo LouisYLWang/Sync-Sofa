@@ -982,7 +982,7 @@ class SyncHelper {
     socketLock = false;
     ackFlag = false;
     heartBeatTimer = [null, null, null, null];
-    heartBeatTimes = [1, 7, 20, 30];
+    heartBeatTimes = [1, 7, 10, 10];
     VLCTimer = null;
     VLCStatus = "paused";
     VLCTime = 0;
