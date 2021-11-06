@@ -24,6 +24,7 @@ var urlPattern = [
     "https://*.panopto.com/*",
     "https://www.coursera.org/*",
     "https://www.aliyundrive.com/*",
+    "https://play.hbomax.com/*",
     "file:///*"
 ];
 
